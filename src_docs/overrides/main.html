@@ -1,0 +1,6 @@
+{# this_file: src_docs/overrides/main.html #}
+{% extends "base.html" %}
+{% block site_nav %}
+  {# MaterialX duplicates the global ToC toggle inside the primary navigation. #}
+  {{ super() | replace('<input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">', '') }}
+{% endblock %}

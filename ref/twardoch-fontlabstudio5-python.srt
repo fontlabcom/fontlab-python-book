@@ -1,0 +1,4199 @@
+1
+00:00:00,267 --> 00:00:03,367
+<font color="#7DD3FC">I’m Adam Twardoch, and I’m</font>
+
+2
+00:00:04,167 --> 00:00:06,000
+<font color="#7DD3FC">product manager at FontLab,</font>
+
+3
+00:00:06,733 --> 00:00:11,300
+<font color="#7DD3FC">and I want to talk you today through</font>
+
+4
+00:00:12,333 --> 00:00:18,333
+<font color="#7DD3FC">Python scripting in FontLab Studio Five.
+It’s gonna be three parts that I’ll try</font>
+
+5
+00:00:18,400 --> 00:00:23,233
+<font color="#7DD3FC">to cover. First, I’ll talk
+about Python in general.</font>
+
+6
+00:00:23,300 --> 00:00:29,700
+<font color="#7DD3FC">Then I’ll show you some useful macros
+that are already existing</font>
+
+7
+00:00:29,767 --> 00:00:32,267
+<font color="#7DD3FC">and. That can be downloaded</font>
+
+8
+00:00:32,333 --> 00:00:37,133
+<font color="#7DD3FC">and installed, and also I’ll talk
+you through the user interface</font>
+
+9
+00:00:37,200 --> 00:00:43,767
+<font color="#7DD3FC">in FontLab Studio, and then finally
+I’m gonna try to show you step by step</font>
+
+10
+00:00:44,800 --> 00:00:48,667
+<font color="#7DD3FC">how to write some simple macros
+and also macros</font>
+
+11
+00:00:48,733 --> 00:00:55,733
+<font color="#7DD3FC">or scripts. It’s the same thing in Python,
+and point you to some resources</font>
+
+12
+00:00:55,867 --> 00:00:59,600
+<font color="#7DD3FC">with the modern operating systems
+and new versions.</font>
+
+13
+00:01:00,267 --> 00:01:06,100
+<font color="#7DD3FC">Of Python, it’s really easy to set
+everything up. FontLab Studio 5.1.4 on</font>
+
+14
+00:01:07,467 --> 00:01:08,300
+<font color="#7DD3FC">a</font>
+
+15
+00:01:09,533 --> 00:01:11,600
+<font color="#7DD3FC">Mac and 5.2.1</font>
+
+16
+00:01:12,333 --> 00:01:16,733
+<font color="#7DD3FC">on Windows are the most current versions.
+There are two major versions</font>
+
+17
+00:01:16,800 --> 00:01:21,133
+<font color="#7DD3FC">of Python. One is version two,
+and the other is version three.</font>
+
+18
+00:01:22,000 --> 00:01:28,800
+<font color="#7DD3FC">Python 2.7. Something
+is the most current version that.</font>
+
+19
+00:01:30,667 --> 00:01:31,533
+<font color="#7DD3FC">We’ll be dealing</font>
+
+20
+00:01:31,600 --> 00:01:35,000
+<font color="#7DD3FC">with it. Doesn’t really the last digit
+doesn’t really matter so much.</font>
+
+21
+00:01:36,000 --> 00:01:39,867
+<font color="#7DD3FC">On the most current
+on macOS ten point ten,</font>
+
+22
+00:01:40,800 --> 00:01:45,300
+<font color="#7DD3FC">Python two seven six is pre-installed,</font>
+
+23
+00:01:45,367 --> 00:01:50,167
+<font color="#7DD3FC">and you don’t really need to upgrade to
+two seven nine. It doesn’t really matter.</font>
+
+24
+00:01:50,733 --> 00:01:55,700
+<font color="#7DD3FC">Two seven nine is the most current
+version. So if you’re on Windows,</font>
+
+25
+00:01:56,333 --> 00:02:03,200
+<font color="#7DD3FC">essentially, I’m gonna just.
+Do that quickly. If you go to python.org</font>
+
+26
+00:02:04,100 --> 00:02:05,067
+<font color="#7DD3FC">and go to downloads</font>
+
+27
+00:02:05,867 --> 00:02:08,267
+<font color="#7DD3FC">Windows, there are</font>
+
+28
+00:02:09,200 --> 00:02:10,033
+<font color="#FFFFFF">The</font>
+
+29
+00:02:11,067 --> 00:02:17,300
+<font color="#7DD3FC">Windows two point seven point nine
+Python installers that were released</font>
+
+30
+00:02:17,867 --> 00:02:24,867
+<font color="#7DD3FC">in December, and there are two installers,
+x eighty six and x eighty six sixty four.</font>
+
+31
+00:02:25,200 --> 00:02:32,200
+<font color="#7DD3FC">That’s important because this is the first
+one. X eighty six is the 32-bit version</font>
+
+32
+00:02:32,267 --> 00:02:37,867
+<font color="#7DD3FC">of Python. The other, x86-64,
+is the 64-bit version of Python.</font>
+
+33
+00:02:38,733 --> 00:02:41,933
+<font color="#7DD3FC">And now the important thing is,
+you always need</font>
+
+34
+00:02:42,000 --> 00:02:48,500
+<font color="#7DD3FC">to install the 32-bit version.
+So Windows x86 MSI installer,</font>
+
+35
+00:02:49,533 --> 00:02:53,700
+<font color="#7DD3FC">even if you’re on 64-bit Windows. So some</font>
+
+36
+00:02:53,767 --> 00:02:59,300
+<font color="#7DD3FC">of you may have Windows 7 64-bit or
+something like that, or Windows 8 64-bit.</font>
+
+37
+00:02:59,367 --> 00:03:03,700
+<font color="#7DD3FC">But even then. Install the 32-bit version,
+the first installer here,</font>
+
+38
+00:03:03,767 --> 00:03:09,700
+<font color="#7DD3FC">because that is because PyFontLab Studio
+5.1,</font>
+
+39
+00:03:09,767 --> 00:03:10,900
+<font color="#7DD3FC">5.2.1 on</font>
+
+40
+00:03:11,700 --> 00:03:14,100
+<font color="#7DD3FC">Windows is a 32-bit application,</font>
+
+41
+00:03:14,167 --> 00:03:19,133
+<font color="#7DD3FC">so it needs 32-bit Python
+regardless of whether your system is 64</font>
+
+42
+00:03:19,200 --> 00:03:25,233
+<font color="#7DD3FC">or 32-bit. As I said on the Mac,
+Python is already installed,</font>
+
+43
+00:03:25,300 --> 00:03:31,300
+<font color="#7DD3FC">and you don’t really need to do anything
+apart from that sort of an Optional step,</font>
+
+44
+00:03:31,367 --> 00:03:37,200
+<font color="#7DD3FC">but there is something called pip
+or PIP, the Python Python</font>
+
+45
+00:03:38,167 --> 00:03:39,200
+<font color="#7DD3FC">package manager,</font>
+
+46
+00:03:39,867 --> 00:03:40,700
+<font color="#FFFFFF">And</font>
+
+47
+00:03:41,200 --> 00:03:45,300
+<font color="#7DD3FC">That Python package manager is used</font>
+
+48
+00:03:45,367 --> 00:03:51,133
+<font color="#7DD3FC">to install additional packages
+that are in the Python</font>
+
+49
+00:03:52,800 --> 00:03:55,467
+<font color="#7DD3FC">package repository, PyPI,</font>
+
+50
+00:03:55,533 --> 00:04:02,200
+<font color="#7DD3FC">python.org/pyPI. That’s the Python
+package inte. Index and here there’s a lot</font>
+
+51
+00:04:02,267 --> 00:04:07,800
+<font color="#7DD3FC">of additional packages that may be useful
+or you may end up needing it somehow.</font>
+
+52
+00:04:07,867 --> 00:04:09,300
+<font color="#7DD3FC">And once you have pip,</font>
+
+53
+00:04:10,167 --> 00:04:15,867
+<font color="#7DD3FC">it’s very easy. So pip comes pre-installed
+if you install Python two seven nine</font>
+
+54
+00:04:15,933 --> 00:04:22,500
+<font color="#7DD3FC">on Windows. If you’re on a Mac,
+that’s actually fairly easy. If we</font>
+
+55
+00:04:25,700 --> 00:04:31,600
+<font color="#7DD3FC">if we go to yeah that’s the if we Google
+for get pip. The first link.</font>
+
+56
+00:04:32,567 --> 00:04:35,233
+<font color="#7DD3FC">There is a little file here</font>
+
+57
+00:04:35,300 --> 00:04:40,267
+<font color="#7DD3FC">in the pip installation on the pip
+installation website called getpip.py.</font>
+
+58
+00:04:41,067 --> 00:04:46,800
+<font color="#7DD3FC">What we need to do is save it somewhere,
+for instance, onto the desktop,</font>
+
+59
+00:04:47,600 --> 00:04:51,300
+<font color="#7DD3FC">and then that’s the other part. We need</font>
+
+60
+00:04:52,100 --> 00:04:54,000
+<font color="#7DD3FC">terminal. So terminal is</font>
+
+61
+00:04:54,967 --> 00:04:58,733
+<font color="#7DD3FC">by default is in the Applications
+folder in Utilities.</font>
+
+62
+00:04:59,533 --> 00:05:05,133
+<font color="#7DD3FC">I need to go to my desktop,
+cd desktop, sudo</font>
+
+63
+00:05:07,200 --> 00:05:08,033
+<font color="#7DD3FC">python</font>
+
+64
+00:05:09,133 --> 00:05:15,700
+<font color="#7DD3FC">get-pip.py. I type
+in my administrator’s password.</font>
+
+65
+00:05:16,267 --> 00:05:22,333
+<font color="#7DD3FC">If I need to install an extra package,
+both on Windows or on the Mac,</font>
+
+66
+00:05:22,900 --> 00:05:29,400
+<font color="#7DD3FC">from different Python packages, I I will
+be able to type something like pip install</font>
+
+67
+00:05:29,467 --> 00:05:34,400
+<font color="#7DD3FC">and the name. So then, I have access
+to more packages more easily.</font>
+
+68
+00:05:35,767 --> 00:05:36,600
+<font color="#7DD3FC">GitHub</font>
+
+69
+00:05:37,300 --> 00:05:39,133
+<font color="#7DD3FC">is a popular place</font>
+
+70
+00:05:39,200 --> 00:05:45,233
+<font color="#7DD3FC">to source for authors
+to publish their source code</font>
+
+71
+00:05:45,300 --> 00:05:49,133
+<font color="#7DD3FC">for different scripts and packages.
+And if I go to GitHub, for instance,</font>
+
+72
+00:05:50,000 --> 00:05:56,100
+<font color="#7DD3FC">I can search GitHub. I did that before
+for something like FontLab</font>
+
+73
+00:05:56,900 --> 00:05:58,167
+<font color="#7DD3FC">Python, for instance,</font>
+
+74
+00:05:59,067 --> 00:06:01,367
+<font color="#7DD3FC">and I get a number. Of hits, there are</font>
+
+75
+00:06:02,333 --> 00:06:04,000
+<font color="#7DD3FC">or maybe FontLab</font>
+
+76
+00:06:04,967 --> 00:06:06,100
+<font color="#7DD3FC">macros,</font>
+
+77
+00:06:07,533 --> 00:06:09,933
+<font color="#7DD3FC">or just FontLab,</font>
+
+78
+00:06:10,000 --> 00:06:15,067
+<font color="#7DD3FC">for instance. There, there’s a number
+of scripts that people</font>
+
+79
+00:06:15,133 --> 00:06:19,400
+<font color="#7DD3FC">have published that are on GitHub
+that you will be able to install later,</font>
+
+80
+00:06:19,467 --> 00:06:24,500
+<font color="#7DD3FC">and I’ll show you parts of that
+installation because installing these is</font>
+
+81
+00:06:25,700 --> 00:06:29,933
+<font color="#7DD3FC">is a bit complicated, or at least
+it needs some time to get used.</font>
+
+82
+00:06:30,900 --> 00:06:35,000
+<font color="#7DD3FC">But first, let’s go back.
+After we’ve installed Python</font>
+
+83
+00:06:35,067 --> 00:06:38,100
+<font color="#7DD3FC">and pip, that’s the two things
+that we need. We need</font>
+
+84
+00:06:38,167 --> 00:06:44,733
+<font color="#7DD3FC">to install Robofab,
+Fontools, TTX. I’ll get I get</font>
+
+85
+00:06:44,800 --> 00:06:51,133
+<font color="#7DD3FC">instructions written by Thomas Finney
+that really go step by step and</font>
+
+86
+00:06:52,000 --> 00:06:57,133
+<font color="#7DD3FC">tell you after you’ve installed Python how</font>
+
+87
+00:06:57,200 --> 00:07:00,100
+<font color="#7DD3FC">to install Fontools.</font>
+
+88
+00:07:00,167 --> 00:07:03,867
+<font color="#7DD3FC">Robofab and also two additional packages,
+vanilla and dialog kit,</font>
+
+89
+00:07:03,933 --> 00:07:08,800
+<font color="#7DD3FC">that are needed by Fontools
+and Robofab, or specifically by Robofab.</font>
+
+90
+00:07:10,000 --> 00:07:14,567
+<font color="#7DD3FC">So after that, when Fontlab Studio starts,</font>
+
+91
+00:07:15,933 --> 00:07:17,600
+<font color="#7DD3FC">you get the</font>
+
+92
+00:07:18,967 --> 00:07:22,033
+<font color="#7DD3FC">properties panel.
+Should say Python is installed.</font>
+
+93
+00:07:22,100 --> 00:07:26,567
+<font color="#7DD3FC">If it is installed,
+then we’re fine. Then we have</font>
+
+94
+00:07:27,867 --> 00:07:33,933
+<font color="#7DD3FC">one particular toolbar called the macro
+toolbar can be viewed through View,</font>
+
+95
+00:07:34,000 --> 00:07:35,367
+<font color="#7DD3FC">Toolbars, macro,</font>
+
+96
+00:07:36,400 --> 00:07:39,067
+<font color="#7DD3FC">and that’s where the macros will live.</font>
+
+97
+00:07:39,133 --> 00:07:44,100
+<font color="#7DD3FC">By default, you’ll see
+far less entries here. But we,</font>
+
+98
+00:07:44,167 --> 00:07:49,367
+<font color="#7DD3FC">I have installed a couple of these free
+macro packages already. If I go to Finder,</font>
+
+99
+00:07:50,967 --> 00:07:51,800
+<font color="#7DD3FC">it’s</font>
+
+100
+00:07:52,333 --> 00:07:54,267
+<font color="#7DD3FC">Bitri. I go to my user folder,</font>
+
+101
+00:07:54,333 --> 00:07:59,533
+<font color="#7DD3FC">and by default, I believe on most macOS
+10, the library folder is hidden.</font>
+
+102
+00:07:59,600 --> 00:08:05,933
+<font color="#7DD3FC">So if it is hidden. I go to go,
+go to folder and type in library.</font>
+
+103
+00:08:06,733 --> 00:08:10,167
+<font color="#7DD3FC">Then it opens, and then I go
+to application support.</font>
+
+104
+00:08:11,700 --> 00:08:13,700
+<font color="#7DD3FC">And here I find FontLab,</font>
+
+105
+00:08:15,300 --> 00:08:17,800
+<font color="#7DD3FC">and in here the subfolder of it,</font>
+
+106
+00:08:17,867 --> 00:08:23,367
+<font color="#7DD3FC">Studio 5. And that’s inside of the Studio
+5. You have again a bunch of folders,</font>
+
+107
+00:08:24,667 --> 00:08:26,900
+<font color="#7DD3FC">data, where some additional</font>
+
+108
+00:08:27,767 --> 00:08:29,933
+<font color="#7DD3FC">whatever you put in here will overflow.</font>
+
+109
+00:08:30,000 --> 00:08:36,100
+<font color="#7DD3FC">Override or add to the different kinds
+of files that FontLab Studio uses.</font>
+
+110
+00:08:36,167 --> 00:08:39,233
+<font color="#7DD3FC">For instance, encodings,
+my custom encodings could be in here,</font>
+
+111
+00:08:39,933 --> 00:08:43,767
+<font color="#7DD3FC">my custom kerning files,
+standard MAM or others.</font>
+
+112
+00:08:44,267 --> 00:08:45,100
+<font color="#FFFFFF">But</font>
+
+113
+00:08:45,467 --> 00:08:46,500
+<font color="#7DD3FC">The most important</font>
+
+114
+00:08:46,567 --> 00:08:52,000
+<font color="#7DD3FC">for now for us is the macros folder. Now,
+the macros folder, by default, will have</font>
+
+115
+00:08:53,467 --> 00:08:54,300
+<font color="#7DD3FC">just a</font>
+
+116
+00:08:55,767 --> 00:08:57,800
+<font color="#7DD3FC">few empty folders. One</font>
+
+117
+00:08:57,867 --> 00:09:01,933
+<font color="#7DD3FC">of them, the most important one, this is.
+Already after I’ve installed some stuff,</font>
+
+118
+00:09:02,967 --> 00:09:05,533
+<font color="#7DD3FC">inside macros there
+is something called system,</font>
+
+119
+00:09:06,167 --> 00:09:11,933
+<font color="#7DD3FC">and this sort of the macros folder and the
+macro system folder are fairly important.</font>
+
+120
+00:09:12,000 --> 00:09:16,667
+<font color="#7DD3FC">And once again, inside the system folder,
+modules. So that’s</font>
+
+121
+00:09:17,600 --> 00:09:22,733
+<font color="#7DD3FC">Studio 5 inside. There’s macros, there’s
+system, and there’s modules. And I’m going</font>
+
+122
+00:09:22,800 --> 00:09:28,167
+<font color="#7DD3FC">to talk about modules a bit later.
+But this is this is the location where</font>
+
+123
+00:09:29,067 --> 00:09:34,600
+<font color="#7DD3FC">modules should go. Should you ever need
+to install some modules, in some cases,</font>
+
+124
+00:09:34,667 --> 00:09:38,900
+<font color="#7DD3FC">some tools or some scripts that
+we can download freely from the internet,</font>
+
+125
+00:09:38,967 --> 00:09:44,667
+<font color="#7DD3FC">we’ll do it automatically. Some we have
+to put that stuff into the module folder.</font>
+
+126
+00:09:46,167 --> 00:09:47,000
+<font color="#FFFFFF">So</font>
+
+127
+00:09:47,867 --> 00:09:50,400
+<font color="#7DD3FC">That’s the module folder. The rest is</font>
+
+128
+00:09:51,867 --> 00:09:52,400
+<font color="#7DD3FC">user</font>
+
+129
+00:09:53,367 --> 00:09:58,667
+<font color="#7DD3FC">interface for macros. And now,
+anything, any folder or any</font>
+
+130
+00:09:59,700 --> 00:10:02,567
+<font color="#7DD3FC">script. That is put directly
+into the macros folder,</font>
+
+131
+00:10:03,067 --> 00:10:05,867
+<font color="#7DD3FC">will be shown in the macros toolbar.</font>
+
+132
+00:10:07,133 --> 00:10:09,200
+<font color="#7DD3FC">The folders will be shown here</font>
+
+133
+00:10:10,167 --> 00:10:13,600
+<font color="#7DD3FC">in this first,
+or actually second drop-down menu.</font>
+
+134
+00:10:14,500 --> 00:10:19,933
+<font color="#7DD3FC">So if I if you have a look at this,
+you know you will notice that</font>
+
+135
+00:10:20,900 --> 00:10:21,733
+<font color="#7DD3FC">my</font>
+
+136
+00:10:23,200 --> 00:10:24,833
+<font color="#7DD3FC">you know I have Adobe Anchors,</font>
+
+137
+00:10:24,900 --> 00:10:29,933
+<font color="#7DD3FC">Adobe Kerning, Adobe MM Designs,
+etc. That structure is the same structure.</font>
+
+138
+00:10:30,667 --> 00:10:35,700
+<font color="#7DD3FC">As the folders here in macros, apart
+from the special folders system,</font>
+
+139
+00:10:35,767 --> 00:10:38,800
+<font color="#7DD3FC">which doesn’t show up here
+because the system folder is</font>
+
+140
+00:10:39,700 --> 00:10:40,533
+<font color="#7DD3FC">used</font>
+
+141
+00:10:42,500 --> 00:10:44,800
+<font color="#7DD3FC">in a special way. Now the system folder</font>
+
+142
+00:10:45,933 --> 00:10:49,467
+<font color="#7DD3FC">has this modules folder that I mentioned,
+but also has additional</font>
+
+143
+00:10:49,533 --> 00:10:51,700
+<font color="#7DD3FC">folders. And these folders,</font>
+
+144
+00:10:52,733 --> 00:10:55,933
+<font color="#7DD3FC">anything that you put
+inside here, will show up</font>
+
+145
+00:10:56,000 --> 00:11:01,600
+<font color="#7DD3FC">in special places within the FontLab
+Studio interface. So for for example,</font>
+
+146
+00:11:02,667 --> 00:11:06,400
+<font color="#7DD3FC">if I put something in the font folder,</font>
+
+147
+00:11:07,600 --> 00:11:14,000
+<font color="#7DD3FC">then the macros that I put in here,
+I’m going to open a font here.</font>
+
+148
+00:11:14,967 --> 00:11:17,367
+<font color="#7DD3FC">They will show up in the font window,</font>
+
+149
+00:11:18,500 --> 00:11:22,333
+<font color="#7DD3FC">in this little context menu
+drop down. Also,</font>
+
+150
+00:11:22,400 --> 00:11:26,900
+<font color="#7DD3FC">some additional ones that are in the same
+location, but in the main FontLab folder,</font>
+
+151
+00:11:26,967 --> 00:11:30,833
+<font color="#7DD3FC">the one that comes with the pre-installed
+stuff. Show up here,</font>
+
+152
+00:11:30,900 --> 00:11:34,433
+<font color="#7DD3FC">but your additional ones that you put
+inside your application support</font>
+
+153
+00:11:34,500 --> 00:11:39,533
+<font color="#7DD3FC">FontLab Studio 5 macros
+system font will show up here.</font>
+
+154
+00:11:39,600 --> 00:11:46,033
+<font color="#7DD3FC">If you put something into the metrics
+subfolder, oh yeah, they will show up</font>
+
+155
+00:11:46,100 --> 00:11:51,300
+<font color="#7DD3FC">in the context menu of the metrics folder.
+So count pairs, for instance,</font>
+
+156
+00:11:52,567 --> 00:11:56,900
+<font color="#7DD3FC">is somewhere not in this custom,
+but in the default location</font>
+
+157
+00:11:57,767 --> 00:12:01,133
+<font color="#7DD3FC">in the metrics folder, etc.
+So there’s there’s a bunch of locations.</font>
+
+158
+00:12:01,200 --> 00:12:07,867
+<font color="#7DD3FC">Glyph, for instance, anything that I put
+in here will show up in the macros</font>
+
+159
+00:12:10,000 --> 00:12:12,733
+<font color="#7DD3FC">pop-up of the glyph window. So this way</font>
+
+160
+00:12:13,867 --> 00:12:17,700
+<font color="#7DD3FC">you can put instead if you have lots
+of macros. Sometimes instead</font>
+
+161
+00:12:17,767 --> 00:12:23,067
+<font color="#7DD3FC">of navigating through these and then
+running them, it’s much easier to</font>
+
+162
+00:12:24,000 --> 00:12:26,600
+<font color="#7DD3FC">to have them in this context folder.</font>
+
+163
+00:12:26,667 --> 00:12:32,667
+<font color="#7DD3FC">For instance, that let’s say we all
+know the. The mark the ability</font>
+
+164
+00:12:32,733 --> 00:12:39,600
+<font color="#7DD3FC">to mark glyphs by color we can do this
+here let’s say we’re gonna mark these red</font>
+
+165
+00:12:40,100 --> 00:12:44,667
+<font color="#7DD3FC">and we’re gonna mark a bunch of other
+glyphs red and we’re gonna mark a bunch</font>
+
+166
+00:12:44,733 --> 00:12:48,900
+<font color="#7DD3FC">of others glyphs red
+and now you know after I’ve worked</font>
+
+167
+00:12:48,967 --> 00:12:54,900
+<font color="#7DD3FC">on a font for some time I really wish that
+I could just simply get these selected</font>
+
+168
+00:12:54,967 --> 00:13:00,733
+<font color="#7DD3FC">right so I’ve written a little macro
+that allows you to do that easily. You</font>
+
+169
+00:13:02,400 --> 00:13:02,900
+<font color="#7DD3FC">right-click,</font>
+
+170
+00:13:03,767 --> 00:13:08,567
+<font color="#7DD3FC">you say macro, and then say select
+similarly marked, and the glyphs</font>
+
+171
+00:13:09,533 --> 00:13:14,033
+<font color="#7DD3FC">that have the same mark color
+are selected. That’s the Python.</font>
+
+172
+00:13:14,100 --> 00:13:19,700
+<font color="#7DD3FC">That’s the power of Python. Great way
+to extend easily certain functionalities.</font>
+
+173
+00:13:19,767 --> 00:13:24,667
+<font color="#7DD3FC">Not only, of course, in FontLab Studio,
+because Python is now used in</font>
+
+174
+00:13:25,467 --> 00:13:27,767
+<font color="#7DD3FC">pretty much all the font
+editors that exist.</font>
+
+175
+00:13:28,800 --> 00:13:31,000
+<font color="#7DD3FC">In RoboFont, in glyphs</font>
+
+176
+00:13:31,067 --> 00:13:36,667
+<font color="#7DD3FC">in font forge, they all work with Python.
+Sometimes the internal structure</font>
+
+177
+00:13:36,733 --> 00:13:40,900
+<font color="#7DD3FC">of how you talk to your Python objects
+is a bit different, but</font>
+
+178
+00:13:42,967 --> 00:13:45,400
+<font color="#7DD3FC">Python works everywhere, pretty much</font>
+
+179
+00:13:45,467 --> 00:13:51,400
+<font color="#7DD3FC">for us type designers. Python is really
+the first and most important programming</font>
+
+180
+00:13:51,467 --> 00:13:56,000
+<font color="#7DD3FC">or scripting language
+that that it’s sensible to learn.</font>
+
+181
+00:13:57,067 --> 00:13:57,900
+<font color="#FFFFFF">So</font>
+
+182
+00:13:59,600 --> 00:14:02,667
+<font color="#7DD3FC">Python. Sorry, scripts can do a lot</font>
+
+183
+00:14:02,733 --> 00:14:08,267
+<font color="#7DD3FC">of cool things. For instance, Pablo
+Impallari, who has written a great number</font>
+
+184
+00:14:08,333 --> 00:14:12,800
+<font color="#7DD3FC">of free scripts, has written, for
+instance, a very handy script. I find that</font>
+
+185
+00:14:13,767 --> 00:14:16,100
+<font color="#7DD3FC">for instance, one where I select two nodes</font>
+
+186
+00:14:16,167 --> 00:14:19,767
+<font color="#7DD3FC">and can say
+it’s in his guidelines section.</font>
+
+187
+00:14:20,567 --> 00:14:24,267
+<font color="#7DD3FC">I can say center of two nodes.
+I select the macro,</font>
+
+188
+00:14:24,333 --> 00:14:30,400
+<font color="#7DD3FC">run it, and it adds a guideline
+at the center of these two nodes. If I</font>
+
+189
+00:14:31,300 --> 00:14:34,433
+<font color="#7DD3FC">select these here,
+it will put two guidelines</font>
+
+190
+00:14:34,500 --> 00:14:38,033
+<font color="#7DD3FC">in the middle of these two nodes.
+And if I there is a bunch of others,</font>
+
+191
+00:14:38,100 --> 00:14:44,033
+<font color="#7DD3FC">for instance, center of current glyph,
+it will add a guideline at the middle</font>
+
+192
+00:14:44,100 --> 00:14:47,067
+<font color="#7DD3FC">of the current glyph.
+I already mentioned the macro toolbar</font>
+
+193
+00:14:47,133 --> 00:14:51,300
+<font color="#7DD3FC">and the context menus,
+but there are two other places, two other</font>
+
+194
+00:14:52,667 --> 00:14:56,500
+<font color="#7DD3FC">panels that are actually quite important.
+One is the edit macro panel.</font>
+
+195
+00:14:56,567 --> 00:14:58,433
+<font color="#7DD3FC">The other is the output panel.</font>
+
+196
+00:14:58,500 --> 00:15:04,267
+<font color="#7DD3FC">So let’s have a look at these. Now, I have
+my font here open, and I’m gonna open.</font>
+
+197
+00:15:04,800 --> 00:15:09,600
+<font color="#7DD3FC">I’m gonna go to Windows panels, window
+panels. I’m gonna open the output panel,</font>
+
+198
+00:15:10,733 --> 00:15:12,900
+<font color="#7DD3FC">and I’m going</font>
+
+199
+00:15:12,967 --> 00:15:18,800
+<font color="#7DD3FC">to. I’m gonna close this one,
+and I’m gonna open the edit macro panel.</font>
+
+200
+00:15:19,700 --> 00:15:22,100
+<font color="#7DD3FC">Edit macro is where you can type</font>
+
+201
+00:15:22,167 --> 00:15:25,933
+<font color="#7DD3FC">in your own Python code,
+and the output panel is where</font>
+
+202
+00:15:26,900 --> 00:15:30,600
+<font color="#7DD3FC">Python macros can write
+something out. So. For instance,</font>
+
+203
+00:15:30,667 --> 00:15:37,067
+<font color="#7DD3FC">if I say this is the very the basic sort</font>
+
+204
+00:15:37,133 --> 00:15:39,467
+<font color="#7DD3FC">of little program that</font>
+
+205
+00:15:40,900 --> 00:15:45,467
+<font color="#7DD3FC">people use in all programming languages,
+sample program, and that’s hello world.</font>
+
+206
+00:15:45,533 --> 00:15:51,533
+<font color="#7DD3FC">And in Python, it goes like this: print,
+then opening double quote or single quote,</font>
+
+207
+00:15:52,567 --> 00:15:53,533
+<font color="#7DD3FC">hello world,</font>
+
+208
+00:15:54,400 --> 00:15:58,733
+<font color="#7DD3FC">and then again close
+the same quote quotation</font>
+
+209
+00:15:58,800 --> 00:16:02,967
+<font color="#7DD3FC">mark single quotation mark the regular
+ones, not the smart typographic ones,</font>
+
+210
+00:16:04,333 --> 00:16:07,467
+<font color="#7DD3FC">and then I can also hit Enter,
+and that’s my little macro,</font>
+
+211
+00:16:07,533 --> 00:16:10,800
+<font color="#7DD3FC">one line. I hit the run macro,</font>
+
+212
+00:16:11,933 --> 00:16:17,067
+<font color="#7DD3FC">and it prints out in the output panel,
+“Hello World.” I run it again;</font>
+
+213
+00:16:17,133 --> 00:16:21,467
+<font color="#7DD3FC">it does it again. That’s a program,
+essentially. There is</font>
+
+214
+00:16:24,000 --> 00:16:25,867
+<font color="#7DD3FC">there is an ability</font>
+
+215
+00:16:25,933 --> 00:16:31,467
+<font color="#7DD3FC">to open also start a new program,
+open an existing one. And save it.</font>
+
+216
+00:16:31,533 --> 00:16:37,533
+<font color="#7DD3FC">So this is a little text editor,
+but there are much better text editors</font>
+
+217
+00:16:39,933 --> 00:16:43,767
+<font color="#7DD3FC">where you can write Python
+that do some things more smartly.</font>
+
+218
+00:16:44,267 --> 00:16:47,800
+<font color="#7DD3FC">I am a big fan of using</font>
+
+219
+00:16:47,867 --> 00:16:54,800
+<font color="#7DD3FC">on the Mac an editor called
+Sublime Text. I will just</font>
+
+220
+00:16:55,700 --> 00:16:59,067
+<font color="#7DD3FC">open the whole macros folder,</font>
+
+221
+00:16:59,133 --> 00:17:04,600
+<font color="#7DD3FC">my custom macros. Folder
+in Sublime Text, and it now allows me</font>
+
+222
+00:17:04,667 --> 00:17:10,900
+<font color="#7DD3FC">to to edit, change any kinds</font>
+
+223
+00:17:10,967 --> 00:17:14,267
+<font color="#7DD3FC">of preview, any kinds
+of macros that are already written.</font>
+
+224
+00:17:14,900 --> 00:17:14,933
+<font color="#FFFFFF">There’s</font>
+
+225
+00:17:15,000 --> 00:17:20,900
+<font color="#7DD3FC">Another. Don’t worry about these. This is.</font>
+
+226
+00:17:22,333 --> 00:17:26,667
+<font color="#7DD3FC">I’ve got some extra packages installed.
+You won’t see that by default.</font>
+
+227
+00:17:26,733 --> 00:17:32,000
+<font color="#7DD3FC">Another one that is popular is Text
+Wrangler. It’s free. For macOS 10 on</font>
+
+228
+00:17:32,900 --> 00:17:35,600
+<font color="#7DD3FC">Windows, I believe there
+is one called Notepad++. And</font>
+
+229
+00:17:36,567 --> 00:17:42,167
+<font color="#7DD3FC">also one that I used to use
+when I used Windows called UltraEdit.</font>
+
+230
+00:17:42,733 --> 00:17:47,367
+<font color="#7DD3FC">So we have Edit macro output
+context menus, macro toolbar. Now,</font>
+
+231
+00:17:47,933 --> 00:17:48,767
+<font color="#FFFFFF">What</font>
+
+232
+00:17:49,600 --> 00:17:50,433
+<font color="#7DD3FC">Is Python</font>
+
+233
+00:17:51,133 --> 00:17:57,133
+<font color="#7DD3FC">itself? And let’s talk about some
+very basic structures. So we have</font>
+
+234
+00:17:57,200 --> 00:17:58,000
+<font color="#FFFFFF">So</font>
+
+235
+00:17:58,333 --> 00:18:01,067
+<font color="#7DD3FC">Python programs
+are plain text. Text files,</font>
+
+236
+00:18:01,133 --> 00:18:01,967
+<font color="#FFFFFF">They</font>
+
+237
+00:18:02,567 --> 00:18:05,067
+<font color="#7DD3FC">Usually have the file extension .py.</font>
+
+238
+00:18:05,133 --> 00:18:10,500
+<font color="#7DD3FC">Python is a case-sensitive language,</font>
+
+239
+00:18:10,567 --> 00:18:13,233
+<font color="#7DD3FC">so whether you type something</font>
+
+240
+00:18:13,300 --> 00:18:19,467
+<font color="#7DD3FC">in uppercase or lowercase does matter.
+And there are some basic elements</font>
+
+241
+00:18:20,400 --> 00:18:23,700
+<font color="#7DD3FC">of Python that I’m going to talk</font>
+
+242
+00:18:24,900 --> 00:18:30,333
+<font color="#7DD3FC">talk through right now. We have something
+called statements. There are</font>
+
+243
+00:18:31,367 --> 00:18:32,667
+<font color="#7DD3FC">something like print.</font>
+
+244
+00:18:32,733 --> 00:18:37,533
+<font color="#7DD3FC">What I’ve done—it’s commands
+that your program tells the computer</font>
+
+245
+00:18:38,333 --> 00:18:40,800
+<font color="#7DD3FC">to perform a certain operations.
+And there’s</font>
+
+246
+00:18:41,867 --> 00:18:48,600
+<font color="#7DD3FC">there’s a number of these, not a huge one,
+but because there are also other ways</font>
+
+247
+00:18:48,667 --> 00:18:52,033
+<font color="#7DD3FC">to tell the computer what to do.
+Statements is the simplest one,</font>
+
+248
+00:18:52,100 --> 00:18:56,500
+<font color="#7DD3FC">like print. We’ve seen that I’ve
+said print hello world, clicked</font>
+
+249
+00:18:57,467 --> 00:19:02,500
+<font color="#7DD3FC">on run, and I got the output.
+Comments are important, very important.</font>
+
+250
+00:19:03,467 --> 00:19:08,167
+<font color="#7DD3FC">Comments are just a great way.
+If I, if we look at this macro here,</font>
+
+251
+00:19:08,733 --> 00:19:14,333
+<font color="#7DD3FC">we’ll see that these first lines start
+with the hash character,</font>
+
+252
+00:19:14,400 --> 00:19:20,733
+<font color="#7DD3FC">and Sublime Text neatly makes</font>
+
+253
+00:19:20,800 --> 00:19:24,100
+<font color="#7DD3FC">them gray and italicizes them.</font>
+
+254
+00:19:25,767 --> 00:19:29,700
+<font color="#7DD3FC">So these are comments.
+In FontLab Studio, there is a special kind</font>
+
+255
+00:19:29,767 --> 00:19:36,000
+<font color="#7DD3FC">of and that’s the first line. If it starts
+with #FLM and then colon,</font>
+
+256
+00:19:36,567 --> 00:19:43,567
+<font color="#7DD3FC">whatever follows afterwards will be
+the menu name that your macro uses here.</font>
+
+257
+00:19:43,933 --> 00:19:45,067
+<font color="#7DD3FC">So if</font>
+
+258
+00:19:46,000 --> 00:19:48,667
+<font color="#7DD3FC">this special comment isn’t here,</font>
+
+259
+00:19:48,733 --> 00:19:53,467
+<font color="#7DD3FC">then FontLab Studio will display just
+the file name without the .py extension.</font>
+
+260
+00:19:53,533 --> 00:19:54,900
+<font color="#7DD3FC">But sometimes you may want</font>
+
+261
+00:19:54,967 --> 00:19:58,033
+<font color="#7DD3FC">to customize this.
+So this is a special comment specific</font>
+
+262
+00:19:58,100 --> 00:20:01,400
+<font color="#7DD3FC">to FontLab Studio.
+Anything rest A line that starts</font>
+
+263
+00:20:01,467 --> 00:20:06,900
+<font color="#7DD3FC">with hash, similar to Adobe FDK.
+The language is a comment;</font>
+
+264
+00:20:06,967 --> 00:20:11,933
+<font color="#7DD3FC">it’s ignored. Now we have some statements
+here, such as import</font>
+
+265
+00:20:12,000 --> 00:20:16,400
+<font color="#7DD3FC">for. A good text editor will highlight
+them as colors. And then we have</font>
+
+266
+00:20:18,167 --> 00:20:18,967
+<font color="#7DD3FC">we have some</font>
+
+267
+00:20:19,367 --> 00:20:20,933
+<font color="#7DD3FC">additional elements, and that’s</font>
+
+268
+00:20:21,767 --> 00:20:27,300
+<font color="#7DD3FC">strings, integers, floats,
+and lists. And well, let’s start.</font>
+
+269
+00:20:28,500 --> 00:20:30,667
+<font color="#7DD3FC">Let’s start with string,</font>
+
+270
+00:20:31,200 --> 00:20:36,900
+<font color="#7DD3FC">a string. So for that, I will. Oh,
+I will actually. I will actually</font>
+
+271
+00:20:38,000 --> 00:20:40,167
+<font color="#7DD3FC">start a new macro here, a new file.</font>
+
+272
+00:20:41,067 --> 00:20:44,800
+<font color="#7DD3FC">I’m gonna tell Sublime Text
+that this is Python,</font>
+
+273
+00:20:47,300 --> 00:20:53,133
+<font color="#7DD3FC">and I’m gonna save it right
+away into my macros folder as</font>
+
+274
+00:20:53,867 --> 00:20:54,700
+<font color="#FFFFFF">AdamTest.py.</font>
+
+275
+00:21:00,000 --> 00:21:04,733
+<font color="#7DD3FC">So I can verify it’s it’s here.</font>
+
+276
+00:21:04,800 --> 00:21:09,467
+<font color="#7DD3FC">Once I’ve saved a macro into
+my macros folder within the FontLab Studio</font>
+
+277
+00:21:09,533 --> 00:21:16,267
+<font color="#7DD3FC">structure, I can I need only
+to do that if I’ve added a new one.</font>
+
+278
+00:21:16,333 --> 00:21:20,200
+<font color="#7DD3FC">Click on this reset macro button.
+Once I’ve done that,</font>
+
+279
+00:21:20,267 --> 00:21:21,100
+<font color="#FFFFFF">On</font>
+
+280
+00:21:21,933 --> 00:21:26,267
+<font color="#7DD3FC">In the top level folder,
+it will show up as Adam test.</font>
+
+281
+00:21:26,333 --> 00:21:30,900
+<font color="#7DD3FC">I can run it, but well, it doesn’t do
+anything because it’s an empty macro.</font>
+
+282
+00:21:30,967 --> 00:21:37,067
+<font color="#7DD3FC">If I did something like
+FLM Adam’s first test</font>
+
+283
+00:21:38,100 --> 00:21:41,233
+<font color="#7DD3FC">and save this, reset, it will show up.</font>
+
+284
+00:21:41,300 --> 00:21:46,667
+<font color="#7DD3FC">You don’t have to do the reset macro
+every time that you modify your macro.</font>
+
+285
+00:21:47,933 --> 00:21:51,700
+<font color="#7DD3FC">Yes, this first special line.
+If I modified it, that was necessary.</font>
+
+286
+00:21:51,767 --> 00:21:56,333
+<font color="#7DD3FC">And also, if I add something to the
+folder, the macros folder, it’s necessary.</font>
+
+287
+00:21:56,400 --> 00:22:00,333
+<font color="#7DD3FC">But other than that, I don’t have to do
+that. So I’m gonna. I’m gonna</font>
+
+288
+00:22:01,200 --> 00:22:02,733
+<font color="#7DD3FC">just be running it here later,</font>
+
+289
+00:22:03,300 --> 00:22:07,133
+<font color="#7DD3FC">and writing it here. So let’s have a look
+at what’s actually Python made</font>
+
+290
+00:22:07,200 --> 00:22:12,100
+<font color="#7DD3FC">of. First of all, is strings.
+So strings are</font>
+
+291
+00:22:14,333 --> 00:22:17,133
+<font color="#7DD3FC">pieces of text that are surrounded</font>
+
+292
+00:22:18,267 --> 00:22:22,900
+<font color="#7DD3FC">by quotation marks,
+either single quotation</font>
+
+293
+00:22:23,933 --> 00:22:24,400
+<font color="#7DD3FC">marks</font>
+
+294
+00:22:25,367 --> 00:22:31,867
+<font color="#7DD3FC">or double quotation marks, and anything
+here, like for instance. Adam or</font>
+
+295
+00:22:32,667 --> 00:22:38,800
+<font color="#7DD3FC">Yuri is a string. Now, what can I do
+with the string? I can print it,</font>
+
+296
+00:22:39,767 --> 00:22:40,600
+<font color="#7DD3FC">certainly.</font>
+
+297
+00:22:42,733 --> 00:22:44,133
+<font color="#7DD3FC">So I have this little macro.</font>
+
+298
+00:22:44,667 --> 00:22:50,833
+<font color="#7DD3FC">I save it. I don’t need to run it
+in FontLab Studio because I could run it</font>
+
+299
+00:22:50,900 --> 00:22:55,700
+<font color="#7DD3FC">in the regular Python interpreter,
+which I will do here now. Just so we</font>
+
+300
+00:22:56,567 --> 00:22:57,767
+<font color="#7DD3FC">build, of course. Yes.</font>
+
+301
+00:22:58,900 --> 00:23:02,500
+<font color="#7DD3FC">So yes. So the Sublime Text
+has this neat feature that allows it.</font>
+
+302
+00:23:02,567 --> 00:23:05,467
+<font color="#7DD3FC">It’s the same thing,
+you know. In FontLab Studio,</font>
+
+303
+00:23:05,533 --> 00:23:09,633
+<font color="#7DD3FC">we have an Edit macro panel
+and an output window. In Sublime Text,</font>
+
+304
+00:23:09,700 --> 00:23:15,000
+<font color="#7DD3FC">we have this panel down here and the
+editing text. It’s the same principle:</font>
+
+305
+00:23:15,067 --> 00:23:18,567
+<font color="#7DD3FC">input, output. I’m going to be showing
+it here because it looks better.</font>
+
+306
+00:23:19,867 --> 00:23:25,867
+<font color="#7DD3FC">I have two print statements: print Adam,
+print Yuri. I can write something else,</font>
+
+307
+00:23:25,933 --> 00:23:32,033
+<font color="#7DD3FC">for instance, print Thomas without
+the quotes. And I’m gonna hit.</font>
+
+308
+00:23:32,100 --> 00:23:38,600
+<font color="#7DD3FC">I’m gonna run this. Oh, I get some problem
+here. So this is called a traceback.</font>
+
+309
+00:23:38,667 --> 00:23:45,633
+<font color="#7DD3FC">This is Python’s way of telling me
+that something’s not right in my syntax.</font>
+
+310
+00:23:45,700 --> 00:23:51,533
+<font color="#7DD3FC">The information here, is usually
+the most important thing that you get</font>
+
+311
+00:23:51,600 --> 00:23:55,467
+<font color="#7DD3FC">from here is a line number where
+Python has found a problem.</font>
+
+312
+00:23:56,000 --> 00:24:02,900
+<font color="#7DD3FC">That’s line five, and then the information
+where. What exactly the line was,</font>
+
+313
+00:24:02,967 --> 00:24:08,167
+<font color="#7DD3FC">print Thomas, and then some kind of
+an error. So here, we have the error name</font>
+
+314
+00:24:09,133 --> 00:24:13,467
+<font color="#7DD3FC">Thomas is not defined. Because I haven’t
+surrounded this with quotes,</font>
+
+315
+00:24:14,267 --> 00:24:19,467
+<font color="#7DD3FC">then Python expects me
+to this Thomas to be a kind</font>
+
+316
+00:24:19,533 --> 00:24:25,933
+<font color="#7DD3FC">of an object or a variable. So for now,
+I will just surround it with quotes,</font>
+
+317
+00:24:26,667 --> 00:24:31,767
+<font color="#7DD3FC">and if I run it now, it runs fine.
+That’s well. We have</font>
+
+318
+00:24:32,733 --> 00:24:33,600
+<font color="#7DD3FC">three names here.</font>
+
+319
+00:24:34,500 --> 00:24:35,333
+<font color="#FFFFFF">So</font>
+
+320
+00:24:36,100 --> 00:24:38,333
+<font color="#7DD3FC">What if I wanted to?</font>
+
+321
+00:24:39,600 --> 00:24:41,867
+<font color="#7DD3FC">What else? What else are literals? So</font>
+
+322
+00:24:42,967 --> 00:24:44,367
+<font color="#7DD3FC">these are literals, strings,</font>
+
+323
+00:24:44,967 --> 00:24:50,000
+<font color="#7DD3FC">but also integers
+or floating point numbers. So</font>
+
+324
+00:24:51,533 --> 00:24:55,133
+<font color="#7DD3FC">integers, fairly easy,
+something like four.</font>
+
+325
+00:24:56,500 --> 00:25:01,133
+<font color="#7DD3FC">And floating numbers, something like
+you know three point. Point fourteen.</font>
+
+326
+00:25:02,167 --> 00:25:03,367
+<font color="#7DD3FC">I can</font>
+
+327
+00:25:05,367 --> 00:25:07,533
+<font color="#7DD3FC">run print. It’ll print.</font>
+
+328
+00:25:08,567 --> 00:25:09,400
+<font color="#FFFFFF">So</font>
+
+329
+00:25:09,933 --> 00:25:14,833
+<font color="#7DD3FC">That’s the two most important strings and
+numbers are the two most important types</font>
+
+330
+00:25:14,900 --> 00:25:21,133
+<font color="#7DD3FC">of literals. What is a literal?
+Literal is something like this. It’s</font>
+
+331
+00:25:22,167 --> 00:25:23,600
+<font color="#7DD3FC">some kind of information</font>
+
+332
+00:25:24,733 --> 00:25:27,933
+<font color="#7DD3FC">that is just given directly to Python.</font>
+
+333
+00:25:29,200 --> 00:25:30,900
+<font color="#7DD3FC">Python. Does something with it</font>
+
+334
+00:25:30,967 --> 00:25:37,133
+<font color="#7DD3FC">and forgets about it. It doesn’t really
+know. Once you’ve typed in print Yuri,</font>
+
+335
+00:25:37,700 --> 00:25:42,667
+<font color="#7DD3FC">it has printed Yuri, but then it doesn’t
+really know that it printed Yuri.</font>
+
+336
+00:25:43,533 --> 00:25:49,400
+<font color="#7DD3FC">Sometimes it’s useful to assign
+these literals to something else,</font>
+
+337
+00:25:49,467 --> 00:25:55,867
+<font color="#7DD3FC">and there we use names without quotes.
+So here, with the assign assignment,</font>
+
+338
+00:25:55,933 --> 00:26:00,100
+<font color="#7DD3FC">we have this difference. If I say
+print 23, I’m going to get print 23,</font>
+
+339
+00:26:01,367 --> 00:26:04,333
+<font color="#7DD3FC">but if I assign some value</font>
+
+340
+00:26:04,400 --> 00:26:10,267
+<font color="#7DD3FC">in using the equal sign,
+it will put that value into a box</font>
+
+341
+00:26:10,333 --> 00:26:16,433
+<font color="#7DD3FC">and put a label on it. So in this
+particular example, we have x equals 23.</font>
+
+342
+00:26:16,500 --> 00:26:22,900
+<font color="#7DD3FC">Then Python takes the value 23
+and puts it into a box and puts a label x</font>
+
+343
+00:26:22,967 --> 00:26:29,700
+<font color="#7DD3FC">to it, and then it remembers it.
+So whenever later I will refer to x,</font>
+
+344
+00:26:29,767 --> 00:26:35,233
+<font color="#7DD3FC">it will know until I change it
+that the value that inside that box is 23.</font>
+
+345
+00:26:35,300 --> 00:26:40,267
+<font color="#7DD3FC">So it’s so using that’s called
+a variable or an object that x,</font>
+
+346
+00:26:40,333 --> 00:26:43,933
+<font color="#7DD3FC">and that’s a very very very useful thing</font>
+
+347
+00:26:44,000 --> 00:26:50,100
+<font color="#7DD3FC">because for instance you know if I say
+something like print print hello Adam,</font>
+
+348
+00:26:51,700 --> 00:26:53,367
+<font color="#7DD3FC">and then say print</font>
+
+349
+00:26:54,900 --> 00:26:56,100
+<font color="#7DD3FC">Adam is here,</font>
+
+350
+00:26:56,900 --> 00:26:57,733
+<font color="#7DD3FC">well</font>
+
+351
+00:26:59,767 --> 00:27:02,333
+<font color="#7DD3FC">that’s easy, but let’s say instead</font>
+
+352
+00:27:02,400 --> 00:27:07,400
+<font color="#7DD3FC">of Adam, I wanted to change it to Yuri.
+I would have to change it twice.</font>
+
+353
+00:27:07,467 --> 00:27:13,467
+<font color="#7DD3FC">That’s not that practical. So what I can
+do here is make up a name without quotes.</font>
+
+354
+00:27:13,533 --> 00:27:19,933
+<font color="#7DD3FC">That’s going to be my the label
+for my variable or object person,</font>
+
+355
+00:27:20,000 --> 00:27:24,733
+<font color="#7DD3FC">and I say person equals Adam.
+And what I can do now is</font>
+
+356
+00:27:27,700 --> 00:27:28,800
+<font color="#7DD3FC">something like this.</font>
+
+357
+00:27:29,367 --> 00:27:34,567
+<font color="#7DD3FC">I’m going to build. Oh, cool. The same
+output, but if I change Adam to Yuri now,</font>
+
+358
+00:27:35,533 --> 00:27:39,600
+<font color="#7DD3FC">it you know any time
+that this object person is mentioned,</font>
+
+359
+00:27:40,100 --> 00:27:42,967
+<font color="#7DD3FC">the contents Yuri is actually used. So</font>
+
+360
+00:27:43,933 --> 00:27:47,533
+<font color="#7DD3FC">this is the label. This is what’s
+on the box. This is what’s in the box.</font>
+
+361
+00:27:48,167 --> 00:27:51,633
+<font color="#7DD3FC">Here, one thing that we’ve
+already noticed is well,</font>
+
+362
+00:27:51,700 --> 00:27:57,800
+<font color="#7DD3FC">I can use the plus sign on strings.
+Let’s try that. I say print two</font>
+
+363
+00:27:57,867 --> 00:28:03,600
+<font color="#7DD3FC">in quotes plus three, okay.
+What do you think the</font>
+
+364
+00:28:04,500 --> 00:28:05,333
+<font color="#7DD3FC">output will be?</font>
+
+365
+00:28:07,467 --> 00:28:09,467
+<font color="#7DD3FC">Okay. Let’s try.</font>
+
+366
+00:28:11,533 --> 00:28:15,700
+<font color="#7DD3FC">I’m gonna do something else.
+What’s gonna be the second line?</font>
+
+367
+00:28:15,767 --> 00:28:19,800
+<font color="#7DD3FC">Yes. So this is the difference.
+Plus is an operator,</font>
+
+368
+00:28:19,867 --> 00:28:25,533
+<font color="#7DD3FC">and operators in Python are smart.
+I’m not gonna get into the details,</font>
+
+369
+00:28:25,600 --> 00:28:29,533
+<font color="#7DD3FC">but they’re smart. Plus
+for strings means concatenation,</font>
+
+370
+00:28:29,600 --> 00:28:35,067
+<font color="#7DD3FC">gluing. The strings together. Plus
+for numbers means adding them together,</font>
+
+371
+00:28:35,133 --> 00:28:39,467
+<font color="#7DD3FC">numerical addition, and that’s important</font>
+
+372
+00:28:39,533 --> 00:28:43,600
+<font color="#7DD3FC">to remember because sometimes
+we may make mistakes. Because indeed,</font>
+
+373
+00:28:44,567 --> 00:28:49,933
+<font color="#7DD3FC">what will happen now if I say
+print string two plus number three?</font>
+
+374
+00:28:51,533 --> 00:28:57,300
+<font color="#7DD3FC">So that’s it says type error cannot
+concatenate string and integer objects.</font>
+
+375
+00:28:57,367 --> 00:29:01,067
+<font color="#7DD3FC">That’s something that Python doesn’t
+really know. What you want to do</font>
+
+376
+00:29:01,133 --> 00:29:06,100
+<font color="#7DD3FC">with this? It. There is no reasonable
+result that everybody would agree</font>
+
+377
+00:29:06,167 --> 00:29:08,667
+<font color="#7DD3FC">on. What’s the best thing</font>
+
+378
+00:29:09,600 --> 00:29:11,300
+<font color="#7DD3FC">if you add a string</font>
+
+379
+00:29:11,367 --> 00:29:16,800
+<font color="#7DD3FC">to a number? So it’s important.
+If I really wanted to get</font>
+
+380
+00:29:17,867 --> 00:29:22,400
+<font color="#7DD3FC">23, but I had the three
+somewhere, let’s say,</font>
+
+381
+00:29:23,300 --> 00:29:25,067
+<font color="#7DD3FC">and if I wanted to write</font>
+
+382
+00:29:26,667 --> 00:29:27,500
+<font color="#7DD3FC">your</font>
+
+383
+00:29:28,667 --> 00:29:29,600
+<font color="#7DD3FC">ah okay.</font>
+
+384
+00:29:30,967 --> 00:29:32,833
+<font color="#7DD3FC">Oh yeah, that’s another trick,</font>
+
+385
+00:29:32,900 --> 00:29:37,700
+<font color="#7DD3FC">you know. If you actually want
+to to use the single quote,</font>
+
+386
+00:29:38,333 --> 00:29:41,767
+<font color="#7DD3FC">then you can surround your string
+with double quotes and vice versa.</font>
+
+387
+00:29:42,267 --> 00:29:48,567
+<font color="#7DD3FC">Your and then I say age plus years old.</font>
+
+388
+00:29:49,200 --> 00:29:55,700
+<font color="#7DD3FC">If I run that, I get again the trace
+back report that it doesn’t know what</font>
+
+389
+00:29:55,767 --> 00:30:01,933
+<font color="#7DD3FC">to do. There’s a couple of way
+to deal with this. One is I can convert</font>
+
+390
+00:30:03,133 --> 00:30:04,833
+<font color="#7DD3FC">this number that is held</font>
+
+391
+00:30:04,900 --> 00:30:09,867
+<font color="#7DD3FC">in the box called age in the variable age
+into a string using a function.</font>
+
+392
+00:30:10,400 --> 00:30:16,167
+<font color="#7DD3FC">So this is here str and the parentheses,
+the round bracket, the round parentheses.</font>
+
+393
+00:30:16,800 --> 00:30:23,067
+<font color="#7DD3FC">This is a function call which takes
+this particular object as an argument.</font>
+
+394
+00:30:23,133 --> 00:30:26,033
+<font color="#7DD3FC">And when I run it now,
+I get the expected result.</font>
+
+395
+00:30:26,100 --> 00:30:32,433
+<font color="#7DD3FC">So Python comes with a huge number of
+functions. And this particular construct,</font>
+
+396
+00:30:32,500 --> 00:30:37,700
+<font color="#7DD3FC">this particular way
+of writing, is quite important</font>
+
+397
+00:30:37,767 --> 00:30:42,267
+<font color="#7DD3FC">in Python because there will be many
+situations where you will call a function</font>
+
+398
+00:30:42,333 --> 00:30:44,667
+<font color="#7DD3FC">or call a method of an object,</font>
+
+399
+00:30:44,733 --> 00:30:49,700
+<font color="#7DD3FC">and then whenever you do that, you need to
+use the round parentheses without a space,</font>
+
+400
+00:30:49,767 --> 00:30:52,667
+<font color="#7DD3FC">and then inside you can provide
+some arguments,</font>
+
+401
+00:30:52,733 --> 00:30:54,600
+<font color="#7DD3FC">one or more. If there will be more,</font>
+
+402
+00:30:54,667 --> 00:30:59,600
+<font color="#7DD3FC">you separate them with commas.
+We’ll have a look at that a bit later.</font>
+
+403
+00:31:00,267 --> 00:31:04,100
+<font color="#7DD3FC">So that’s the that’s really
+the most important sort</font>
+
+404
+00:31:04,167 --> 00:31:10,500
+<font color="#7DD3FC">of key points, the basics. And now let’s
+have a look at one more thing,</font>
+
+405
+00:31:10,567 --> 00:31:14,333
+<font color="#7DD3FC">and that’s lists. And lists
+are quite interesting because lists,</font>
+
+406
+00:31:15,933 --> 00:31:17,367
+<font color="#7DD3FC">with lists you can do</font>
+
+407
+00:31:18,167 --> 00:31:20,500
+<font color="#7DD3FC">some nice things,</font>
+
+408
+00:31:21,067 --> 00:31:26,100
+<font color="#7DD3FC">and they are actually very related
+to glyphs. So to fonts and glyphs,</font>
+
+409
+00:31:26,900 --> 00:31:29,300
+<font color="#7DD3FC">because a font is a list</font>
+
+410
+00:31:29,367 --> 00:31:34,900
+<font color="#7DD3FC">of glyphs. Let’s start before we do fonts.
+Let’s start with a simple example.</font>
+
+411
+00:31:34,967 --> 00:31:35,800
+<font color="#FFFFFF">I’m</font>
+
+412
+00:31:37,767 --> 00:31:40,733
+<font color="#7DD3FC">Gonna start a. I’m gonna make up a name.</font>
+
+413
+00:31:41,767 --> 00:31:45,567
+<font color="#7DD3FC">These names again, they can be upper,
+lower case, but they’re case sensitive.</font>
+
+414
+00:31:45,933 --> 00:31:49,800
+<font color="#7DD3FC">No special characters, no spaces,
+just letters and numbers.</font>
+
+415
+00:31:49,867 --> 00:31:54,167
+<font color="#7DD3FC">Stick to them. This is gonna be the label,
+the name of my variable or object.</font>
+
+416
+00:31:54,667 --> 00:31:59,933
+<font color="#7DD3FC">I’m now assigned
+to it a list and the list.</font>
+
+417
+00:32:00,000 --> 00:32:06,400
+<font color="#7DD3FC">Is written using square brackets. In
+the square brackets, I can enumerate some</font>
+
+418
+00:32:08,900 --> 00:32:11,700
+<font color="#7DD3FC">values. These can be other objects.</font>
+
+419
+00:32:11,767 --> 00:32:15,600
+<font color="#7DD3FC">These can be strings. This can be numbers.
+Pretty much anything.</font>
+
+420
+00:32:16,800 --> 00:32:20,333
+<font color="#7DD3FC">So in this particular case,
+I’m gonna say first</font>
+
+421
+00:32:22,000 --> 00:32:23,467
+<font color="#7DD3FC">we have Yuri,</font>
+
+422
+00:32:24,400 --> 00:32:25,233
+<font color="#7DD3FC">Jimmy,</font>
+
+423
+00:32:26,100 --> 00:32:26,933
+<font color="#7DD3FC">Adam,</font>
+
+424
+00:32:28,000 --> 00:32:30,000
+<font color="#7DD3FC">Thomas. So this is.</font>
+
+425
+00:32:31,600 --> 00:32:32,433
+<font color="#7DD3FC">This is</font>
+
+426
+00:32:33,200 --> 00:32:34,167
+<font color="#7DD3FC">we have a list now.</font>
+
+427
+00:32:35,533 --> 00:32:38,233
+<font color="#7DD3FC">What can I do with the list?
+Of course, I can print it,</font>
+
+428
+00:32:39,600 --> 00:32:42,500
+<font color="#7DD3FC">which is not superbly spectacular.</font>
+
+429
+00:32:43,200 --> 00:32:45,867
+<font color="#7DD3FC">I’ll just pretty much get
+the same thing, just a list.</font>
+
+430
+00:32:46,800 --> 00:32:49,000
+<font color="#7DD3FC">This is a representation</font>
+
+431
+00:32:49,067 --> 00:32:53,467
+<font color="#7DD3FC">of that list that Python prints me,
+just so I know what’s inside.</font>
+
+432
+00:32:53,533 --> 00:32:59,933
+<font color="#7DD3FC">But that’s not really super useful. But
+what I can do is I can also tell Python to</font>
+
+433
+00:33:00,800 --> 00:33:04,333
+<font color="#7DD3FC">print a particular element
+of that list, and</font>
+
+434
+00:33:05,300 --> 00:33:06,267
+<font color="#7DD3FC">how do I do that?</font>
+
+435
+00:33:07,300 --> 00:33:11,800
+<font color="#7DD3FC">If I have the object name
+and the object is a list,</font>
+
+436
+00:33:11,867 --> 00:33:17,867
+<font color="#7DD3FC">I can use the square brackets
+and type in an index. The index,</font>
+
+437
+00:33:17,933 --> 00:33:23,933
+<font color="#7DD3FC">as with many computing things, starts
+with zero. So if I say print people zero,</font>
+
+438
+00:33:24,967 --> 00:33:29,867
+<font color="#7DD3FC">I get Yuri because this is the element
+zero. If I write three.</font>
+
+439
+00:33:31,467 --> 00:33:34,800
+<font color="#7DD3FC">I get Thomas, if I write four.</font>
+
+440
+00:33:36,567 --> 00:33:43,300
+<font color="#7DD3FC">I get again a traceback. Python tells
+me list index out of range because that</font>
+
+441
+00:33:44,267 --> 00:33:47,867
+<font color="#7DD3FC">list only has four elements, so it’s zero,</font>
+
+442
+00:33:47,933 --> 00:33:52,167
+<font color="#7DD3FC">one, two, three. That doesn’t exist,
+so it doesn’t know what to do with it.</font>
+
+443
+00:33:53,133 --> 00:33:54,733
+<font color="#7DD3FC">If I have a list,</font>
+
+444
+00:33:55,933 --> 00:33:58,900
+<font color="#7DD3FC">what else can I do with it? Well, first.</font>
+
+445
+00:34:00,967 --> 00:34:05,233
+<font color="#7DD3FC">I can not just access
+one particular element,</font>
+
+446
+00:34:05,300 --> 00:34:09,867
+<font color="#7DD3FC">like the fourth or the third one,
+but I can go through each element.</font>
+
+447
+00:34:09,933 --> 00:34:15,300
+<font color="#7DD3FC">And for that, there is a construct
+that is called a loop or for loop.</font>
+
+448
+00:34:16,967 --> 00:34:18,167
+<font color="#7DD3FC">If I say for</font>
+
+449
+00:34:20,800 --> 00:34:26,733
+<font color="#7DD3FC">person in people,
+and now is an important bit colon,</font>
+
+450
+00:34:27,300 --> 00:34:31,467
+<font color="#7DD3FC">and now after the colon, I type</font>
+
+451
+00:34:31,533 --> 00:34:37,400
+<font color="#7DD3FC">and I hit enter, and well, some editors
+will actually nicely indent it for me.</font>
+
+452
+00:34:37,467 --> 00:34:41,867
+<font color="#7DD3FC">That’s that can be a tab or a space
+or two spaces, doesn’t matter so much.</font>
+
+453
+00:34:41,933 --> 00:34:47,933
+<font color="#7DD3FC">But that’s Python’s way of structuring
+your code is through indentation.</font>
+
+454
+00:34:48,000 --> 00:34:51,300
+<font color="#7DD3FC">Some other languages like the Adobe FDK</font>
+
+455
+00:34:52,500 --> 00:34:55,933
+<font color="#7DD3FC">or JavaScript they use
+curly brackets, but Python is</font>
+
+456
+00:34:57,067 --> 00:35:01,467
+<font color="#7DD3FC">many people like Python
+because it the code looks. Cleaner and</font>
+
+457
+00:35:02,500 --> 00:35:07,867
+<font color="#7DD3FC">nicely formatted because it actually uses
+these indentations using tabs or spaces.</font>
+
+458
+00:35:08,733 --> 00:35:11,233
+<font color="#7DD3FC">I usually just use tabs.</font>
+
+459
+00:35:11,300 --> 00:35:16,167
+<font color="#7DD3FC">It’s better, but it’s just a convention.
+Now for personing people,</font>
+
+460
+00:35:17,200 --> 00:35:21,367
+<font color="#7DD3FC">I say print person. Now and then</font>
+
+461
+00:35:22,500 --> 00:35:26,500
+<font color="#7DD3FC">I print something like done.
+Well, okay. Then I’m going</font>
+
+462
+00:35:26,567 --> 00:35:31,533
+<font color="#7DD3FC">to run it. Ah, it says Yuri done,
+Jimmy done. Oh, that’s not what I wanted.</font>
+
+463
+00:35:32,400 --> 00:35:37,933
+<font color="#7DD3FC">I need to outdent this,
+meaning align this last bit</font>
+
+464
+00:35:38,000 --> 00:35:42,733
+<font color="#7DD3FC">to the first column of text.
+And I’m gonna run this.</font>
+
+465
+00:35:43,600 --> 00:35:47,133
+<font color="#7DD3FC">Now it’s correct. Now I have Yuri,
+Jimmy, Adam, Thomas, and then done.</font>
+
+466
+00:35:47,933 --> 00:35:48,800
+<font color="#7DD3FC">That’s meaning</font>
+
+467
+00:35:50,100 --> 00:35:54,600
+<font color="#7DD3FC">whatever is so that that’s a loop here.
+That’s a for loop. That’s a construction.</font>
+
+468
+00:35:54,667 --> 00:35:58,733
+<font color="#7DD3FC">There will be others that you learn of,
+but for is one of the important ones.</font>
+
+469
+00:36:00,100 --> 00:36:02,900
+<font color="#7DD3FC">Anything that is in that is indented,</font>
+
+470
+00:36:02,967 --> 00:36:06,733
+<font color="#7DD3FC">is part of that for loop.
+Then anything that is outdented,</font>
+
+471
+00:36:07,367 --> 00:36:13,133
+<font color="#7DD3FC">is outside of that. So it’s the next step.
+So what Python does is,</font>
+
+472
+00:36:14,100 --> 00:36:15,200
+<font color="#7DD3FC">it creates this list.</font>
+
+473
+00:36:16,400 --> 00:36:19,800
+<font color="#7DD3FC">Then it we have this for person</font>
+
+474
+00:36:19,867 --> 00:36:25,533
+<font color="#7DD3FC">in people, meaning, take the people list,
+and then iterate through it,</font>
+
+475
+00:36:25,600 --> 00:36:30,333
+<font color="#7DD3FC">meaning go through every element
+and assign do an assignment. In</font>
+
+476
+00:36:31,200 --> 00:36:35,533
+<font color="#7DD3FC">steps, so person on the first go</font>
+
+477
+00:36:36,333 --> 00:36:37,700
+<font color="#7DD3FC">becomes Yuri. So it’s</font>
+
+478
+00:36:38,500 --> 00:36:40,200
+<font color="#7DD3FC">if we go through people,</font>
+
+479
+00:36:40,267 --> 00:36:44,100
+<font color="#7DD3FC">we retrieve the elements of the list,
+and then it’s like the first round.</font>
+
+480
+00:36:44,167 --> 00:36:48,500
+<font color="#7DD3FC">It’s person equals Yuri, and then do
+something. And person equals Jimmy,</font>
+
+481
+00:36:48,567 --> 00:36:53,200
+<font color="#7DD3FC">do something. And what we do,
+print. So we could do something</font>
+
+482
+00:36:56,167 --> 00:36:57,000
+<font color="#7DD3FC">hello</font>
+
+483
+00:36:58,000 --> 00:36:58,833
+<font color="#7DD3FC">plus person.</font>
+
+484
+00:37:00,900 --> 00:37:02,500
+<font color="#7DD3FC">Very nice. Now,</font>
+
+485
+00:37:04,100 --> 00:37:08,033
+<font color="#7DD3FC">so that’s four.
+Four is a powerful construct</font>
+
+486
+00:37:08,100 --> 00:37:11,467
+<font color="#7DD3FC">because it can do something
+to a list of many elements.</font>
+
+487
+00:37:11,533 --> 00:37:18,033
+<font color="#7DD3FC">And as I said, fonts are a list of glyphs.
+So just to become more practical,</font>
+
+488
+00:37:18,100 --> 00:37:24,200
+<font color="#7DD3FC">I’m going to write a particular statement
+that so from f uppercase FL import star.</font>
+
+489
+00:37:24,267 --> 00:37:29,000
+<font color="#7DD3FC">I’m going to not. I’m not going to explain
+it right now why it is so. But let’s stick</font>
+
+490
+00:37:29,067 --> 00:37:34,833
+<font color="#7DD3FC">with it. What I will do is instead
+of people, I will say glyphs,</font>
+
+491
+00:37:34,900 --> 00:37:39,633
+<font color="#7DD3FC">and now call an object.
+And there is a special object</font>
+
+492
+00:37:39,700 --> 00:37:45,233
+<font color="#7DD3FC">in FontLab Studio called FL dot font.
+That’s the current open font,</font>
+
+493
+00:37:45,300 --> 00:37:49,533
+<font color="#7DD3FC">and that object has certain
+additional properties such as glyphs.</font>
+
+494
+00:37:50,267 --> 00:37:53,533
+<font color="#7DD3FC">So I have FL dot font dot glyphs,</font>
+
+495
+00:37:54,267 --> 00:37:58,333
+<font color="#7DD3FC">and then I say for glyph in glyphs,</font>
+
+496
+00:37:59,200 --> 00:38:00,967
+<font color="#7DD3FC">print hello,</font>
+
+497
+00:38:03,067 --> 00:38:04,900
+<font color="#7DD3FC">glyph dot name.</font>
+
+498
+00:38:05,933 --> 00:38:10,600
+<font color="#7DD3FC">I’m gonna run it here. Ah,
+it says no module named fl.</font>
+
+499
+00:38:10,667 --> 00:38:16,033
+<font color="#7DD3FC">That’s important because you know if I run
+this script inside of my Sublime Text,</font>
+
+500
+00:38:16,100 --> 00:38:21,000
+<font color="#7DD3FC">that’s not gonna work because Sublime Text
+or the other text editors no Python,</font>
+
+501
+00:38:21,067 --> 00:38:24,833
+<font color="#7DD3FC">but they don’t have access to special
+objects that are inside of FontLab.</font>
+
+502
+00:38:24,900 --> 00:38:29,933
+<font color="#7DD3FC">So I need to run this macro inside
+of FontLab, FontLab Studio. So I’m gonna.</font>
+
+503
+00:38:30,000 --> 00:38:36,100
+<font color="#7DD3FC">Switch to FontLab Studio. I can close this
+macro, actually this Edit macro panel,</font>
+
+504
+00:38:36,167 --> 00:38:41,533
+<font color="#7DD3FC">and here Adam’s first test.
+I’m hitting start, and well,</font>
+
+505
+00:38:41,600 --> 00:38:47,133
+<font color="#7DD3FC">it goes quickly through my fairly large
+font and enumerates all the glyphs.</font>
+
+506
+00:38:47,200 --> 00:38:50,333
+<font color="#7DD3FC">That’s pretty cool.
+Now Python within FontLab Studio,</font>
+
+507
+00:38:50,400 --> 00:38:52,267
+<font color="#7DD3FC">as I said, has a special API,</font>
+
+508
+00:38:52,333 --> 00:38:58,167
+<font color="#7DD3FC">a set of modules that allow
+you to access fonts. There is the</font>
+
+509
+00:38:59,133 --> 00:39:01,300
+<font color="#7DD3FC">FontLab Studio User’s manual that</font>
+
+510
+00:39:02,333 --> 00:39:07,400
+<font color="#7DD3FC">the chapter 12 that of the PDF
+is you know I recommend</font>
+
+511
+00:39:07,467 --> 00:39:09,600
+<font color="#7DD3FC">to have a look at it. So it’s</font>
+
+512
+00:39:11,067 --> 00:39:12,900
+<font color="#7DD3FC">yeah macro programming it is called,</font>
+
+513
+00:39:13,600 --> 00:39:18,200
+<font color="#7DD3FC">and there is some extra information
+about how</font>
+
+514
+00:39:18,267 --> 00:39:23,200
+<font color="#7DD3FC">to work with the macro panel etc.
+But also there is a</font>
+
+515
+00:39:24,567 --> 00:39:29,933
+<font color="#7DD3FC">a list of the most important objects,
+special objects and methods that are</font>
+
+516
+00:39:31,600 --> 00:39:32,433
+<font color="#7DD3FC">Accessible</font>
+
+517
+00:39:33,700 --> 00:39:34,600
+<font color="#7DD3FC">in FontLab Studio.</font>
+
+518
+00:39:35,300 --> 00:39:39,800
+<font color="#7DD3FC">Now there is also the so-called
+unofficial FontLab API reference.</font>
+
+519
+00:39:39,867 --> 00:39:43,533
+<font color="#7DD3FC">That’s a web page that will</font>
+
+520
+00:39:44,500 --> 00:39:45,333
+<font color="#7DD3FC">give you</font>
+
+521
+00:39:46,000 --> 00:39:46,900
+<font color="#FFFFFF">The</font>
+
+522
+00:39:47,467 --> 00:39:50,400
+<font color="#7DD3FC">Information about how
+these special objects are called.</font>
+
+523
+00:39:50,900 --> 00:39:53,467
+<font color="#7DD3FC">For instance, what I’ve done is well,</font>
+
+524
+00:39:54,400 --> 00:39:56,567
+<font color="#7DD3FC">there is the FontLab module.</font>
+
+525
+00:39:57,867 --> 00:39:59,467
+<font color="#7DD3FC">You is the main module,</font>
+
+526
+00:39:59,533 --> 00:40:05,633
+<font color="#7DD3FC">and there. You call the object
+inside it using the FL prefix.</font>
+
+527
+00:40:05,700 --> 00:40:07,300
+<font color="#7DD3FC">So the FL prefix,</font>
+
+528
+00:40:07,367 --> 00:40:14,200
+<font color="#7DD3FC">anything that follows it after a dot,
+there’s special properties such as font,</font>
+
+529
+00:40:14,267 --> 00:40:18,267
+<font color="#7DD3FC">which is the currently active font.
+So that’s what I used here, FL font.</font>
+
+530
+00:40:18,800 --> 00:40:22,500
+<font color="#7DD3FC">In order to make it even more readable,
+I would do something like this.</font>
+
+531
+00:40:22,567 --> 00:40:27,300
+<font color="#7DD3FC">I would say that’s the way I code
+is because font is so often used.</font>
+
+532
+00:40:27,367 --> 00:40:29,767
+<font color="#7DD3FC">I usually assign it
+to the variable called F.</font>
+
+533
+00:40:30,267 --> 00:40:36,433
+<font color="#7DD3FC">So f is my current font,
+and then I can assign</font>
+
+534
+00:40:36,500 --> 00:40:42,667
+<font color="#7DD3FC">to my variable glyphs
+an object that is f dot glyphs.</font>
+
+535
+00:40:42,733 --> 00:40:46,500
+<font color="#7DD3FC">Now this is because f font
+is of type font,</font>
+
+536
+00:40:47,200 --> 00:40:52,200
+<font color="#7DD3FC">and the type of the object
+font has glyphs a list</font>
+
+537
+00:40:52,267 --> 00:40:56,600
+<font color="#7DD3FC">of glyph objects. Now again,
+anything that is part</font>
+
+538
+00:40:56,667 --> 00:41:02,500
+<font color="#7DD3FC">of that array or list is of type glyph.
+Written in uppercase.</font>
+
+539
+00:41:05,367 --> 00:41:11,067
+<font color="#7DD3FC">If I go through this, I could actually
+I’m gonna change this a bit.</font>
+
+540
+00:41:11,133 --> 00:41:13,700
+<font color="#7DD3FC">I’m taking the FL font,
+the currently open font,</font>
+
+541
+00:41:13,767 --> 00:41:20,100
+<font color="#7DD3FC">assign it to F. Then, I’m taking I’m
+accessing the list of all glyphs inside</font>
+
+542
+00:41:20,167 --> 00:41:26,500
+<font color="#7DD3FC">of the currently open font and assign it
+to a variable or object called GS.</font>
+
+543
+00:41:26,567 --> 00:41:32,567
+<font color="#7DD3FC">And now I use the for construct to say
+for G in GS. Since Gs is a list of</font>
+
+544
+00:41:33,600 --> 00:41:39,067
+<font color="#7DD3FC">fontlab glyphs, every time
+I go through this, G becomes</font>
+
+545
+00:41:39,867 --> 00:41:42,600
+<font color="#7DD3FC">an object of the type glyph</font>
+
+546
+00:41:42,667 --> 00:41:47,600
+<font color="#7DD3FC">and has special attributes such
+as the one I accessed here,</font>
+
+547
+00:41:48,267 --> 00:41:54,900
+<font color="#7DD3FC">name. So name is a string.
+It will give me the glyph name. G dot name</font>
+
+548
+00:41:56,000 --> 00:41:56,900
+<font color="#7DD3FC">is a</font>
+
+549
+00:41:58,333 --> 00:41:59,167
+<font color="#7DD3FC">string.</font>
+
+550
+00:42:00,800 --> 00:42:02,333
+<font color="#7DD3FC">Is of type string,</font>
+
+551
+00:42:02,400 --> 00:42:08,900
+<font color="#7DD3FC">I can do certain things that I can do in
+Python with all strings. We’ve done four,</font>
+
+552
+00:42:08,967 --> 00:42:14,333
+<font color="#7DD3FC">and now I’m going to do if the other sort
+of interesting construct.</font>
+
+553
+00:42:14,400 --> 00:42:20,100
+<font color="#7DD3FC">We’ve seen that the output is long,
+and well, sometimes I might want</font>
+
+554
+00:42:20,167 --> 00:42:24,833
+<font color="#7DD3FC">to find some particular glyph, right?
+Some something that has some property.</font>
+
+555
+00:42:24,900 --> 00:42:29,700
+<font color="#7DD3FC">For instance, I see that in this font,
+in Source Sans Pro,</font>
+
+556
+00:42:29,767 --> 00:42:35,300
+<font color="#7DD3FC">there. Are some old-style figures,
+for instance, right here. These are onum.</font>
+
+557
+00:42:36,333 --> 00:42:37,767
+<font color="#7DD3FC">They have the suffix onum,</font>
+
+558
+00:42:38,267 --> 00:42:42,333
+<font color="#7DD3FC">and I want to do something with them.
+So first, I need to find them. I need</font>
+
+559
+00:42:42,400 --> 00:42:49,367
+<font color="#7DD3FC">to access them. I will do some tests,
+and the test it will be if</font>
+
+560
+00:42:51,067 --> 00:42:53,700
+<font color="#7DD3FC">in quotes dot onum</font>
+
+561
+00:42:54,900 --> 00:42:56,967
+<font color="#7DD3FC">in g dot name</font>
+
+562
+00:42:58,800 --> 00:43:00,500
+<font color="#7DD3FC">print g dot name.</font>
+
+563
+00:43:02,500 --> 00:43:04,333
+<font color="#7DD3FC">So I’ve changed my macro here,</font>
+
+564
+00:43:05,300 --> 00:43:09,800
+<font color="#7DD3FC">and I’m going to clear the output panel,
+run it again, and here,</font>
+
+565
+00:43:09,867 --> 00:43:16,567
+<font color="#7DD3FC">aha! Now I get much shorter list,
+or much shorter output. Sorry, because the</font>
+
+566
+00:43:18,000 --> 00:43:23,067
+<font color="#7DD3FC">output is first. I’m going
+through the list of all glyphs,</font>
+
+567
+00:43:23,133 --> 00:43:27,633
+<font color="#7DD3FC">and then I’m doing that’s the for loop,
+and then the other is the if statement,</font>
+
+568
+00:43:27,700 --> 00:43:32,400
+<font color="#7DD3FC">which allows me to.
+Do some checking. We’ll</font>
+
+569
+00:43:33,533 --> 00:43:37,200
+<font color="#7DD3FC">show you the basics of if
+because it’s there is one confusing thing</font>
+
+570
+00:43:37,700 --> 00:43:43,200
+<font color="#7DD3FC">in about if. So let’s say
+I have something like</font>
+
+571
+00:43:44,000 --> 00:43:46,667
+<font color="#7DD3FC">age equals 39.</font>
+
+572
+00:43:47,200 --> 00:43:51,867
+<font color="#7DD3FC">If age is larger than 39, print.</font>
+
+573
+00:43:53,933 --> 00:43:55,233
+<font color="#7DD3FC">I’m going to run this now.</font>
+
+574
+00:43:56,800 --> 00:43:58,267
+<font color="#7DD3FC">I nothing got printed</font>
+
+575
+00:43:58,333 --> 00:44:03,367
+<font color="#7DD3FC">because I’ve made a condition. If age is
+larger than 39, it would print something.</font>
+
+576
+00:44:04,567 --> 00:44:07,700
+<font color="#7DD3FC">It’s equal to 39,
+so it didn’t print anything.</font>
+
+577
+00:44:07,767 --> 00:44:13,600
+<font color="#7DD3FC">What I could do is I could supplement it
+with a second part,</font>
+
+578
+00:44:14,500 --> 00:44:17,467
+<font color="#7DD3FC">else. Now I have an if-else statement.</font>
+
+579
+00:44:18,000 --> 00:44:23,000
+<font color="#7DD3FC">I’m going to run it. Ah, you’re still
+young because it’s not larger than 39.</font>
+
+580
+00:44:23,067 --> 00:44:28,400
+<font color="#7DD3FC">If I type 30, run it,
+still young. If I type 80,</font>
+
+581
+00:44:29,533 --> 00:44:31,600
+<font color="#7DD3FC">oh, you’re Old, right, or even 40.</font>
+
+582
+00:44:33,367 --> 00:44:36,000
+<font color="#7DD3FC">So what we have here, this particular bit,</font>
+
+583
+00:44:36,900 --> 00:44:43,000
+<font color="#7DD3FC">is a condition. So conditions
+in Python are all kinds</font>
+
+584
+00:44:43,067 --> 00:44:48,033
+<font color="#7DD3FC">of checks which return
+in the end the logical value true</font>
+
+585
+00:44:48,100 --> 00:44:54,333
+<font color="#7DD3FC">or false. They can also be combined,
+so I can do something like and</font>
+
+586
+00:44:55,200 --> 00:45:00,500
+<font color="#7DD3FC">something else happens if age
+is larger than 39 in parentheses and or</font>
+
+587
+00:45:01,933 --> 00:45:03,533
+<font color="#7DD3FC">if I change this particular</font>
+
+588
+00:45:04,500 --> 00:45:05,300
+<font color="#7DD3FC">to</font>
+
+589
+00:45:05,700 --> 00:45:10,800
+<font color="#7DD3FC">larger or equal thirty nine,
+well then I’m getting or you’re old.</font>
+
+590
+00:45:11,367 --> 00:45:16,500
+<font color="#7DD3FC">If I’m changing it back to larger, you’re
+still young, right? Because it’s either</font>
+
+591
+00:45:17,767 --> 00:45:21,933
+<font color="#7DD3FC">larger or equal. If I want to check</font>
+
+592
+00:45:22,000 --> 00:45:28,500
+<font color="#7DD3FC">if some if something is equal something
+else, then I need to use two equal signs.</font>
+
+593
+00:45:28,567 --> 00:45:34,100
+<font color="#7DD3FC">That’s important. That’s the tricky bit.
+That’s where some people make mistakes.</font>
+
+594
+00:45:34,800 --> 00:45:39,300
+<font color="#7DD3FC">If I type in something like this,
+I run it. Ah, bad. If I</font>
+
+595
+00:45:40,400 --> 00:45:46,333
+<font color="#7DD3FC">type it, ah, congrats. So that condition
+has been met. If I do this here,</font>
+
+596
+00:45:47,767 --> 00:45:50,267
+<font color="#7DD3FC">then I’ll get a problem because</font>
+
+597
+00:45:52,167 --> 00:45:54,800
+<font color="#7DD3FC">one equal sign means assignment.</font>
+
+598
+00:45:55,767 --> 00:45:58,000
+<font color="#7DD3FC">Take this and put it
+in a box and label it.</font>
+
+599
+00:45:58,800 --> 00:46:05,800
+<font color="#7DD3FC">Two equal signs mean Means is it equal
+to that other thing? That was ifs else,</font>
+
+600
+00:46:06,000 --> 00:46:11,533
+<font color="#7DD3FC">and I will explore a bit.
+What can the glyph object do?</font>
+
+601
+00:46:12,667 --> 00:46:17,133
+<font color="#7DD3FC">Among others, it has the mark property.</font>
+
+602
+00:46:17,200 --> 00:46:20,033
+<font color="#7DD3FC">So instead of just printing out this list,</font>
+
+603
+00:46:20,100 --> 00:46:24,600
+<font color="#7DD3FC">I could actually get
+this information here right here</font>
+
+604
+00:46:24,667 --> 00:46:26,733
+<font color="#7DD3FC">on my screen in my glyph window.</font>
+
+605
+00:46:27,533 --> 00:46:28,233
+<font color="#7DD3FC">In</font>
+
+606
+00:46:28,667 --> 00:46:32,567
+<font color="#7DD3FC">in order. For that, I would need
+to change my code.</font>
+
+607
+00:46:33,600 --> 00:46:36,400
+<font color="#7DD3FC">Take the font, iterate over glyphs, every,</font>
+
+608
+00:46:37,300 --> 00:46:40,433
+<font color="#7DD3FC">go through every single glyph
+object, perform this test.</font>
+
+609
+00:46:40,500 --> 00:46:46,500
+<font color="#7DD3FC">If onum, okay. So I didn’t use equal
+or greater than, but actually here</font>
+
+610
+00:46:46,567 --> 00:46:53,300
+<font color="#7DD3FC">in my if statement, I I’m checking whether
+a particular string is in another string.</font>
+
+611
+00:46:53,867 --> 00:46:59,133
+<font color="#7DD3FC">This is the string glyph name
+every time retrieved by for every glyph,</font>
+
+612
+00:46:59,200 --> 00:47:04,967
+<font color="#7DD3FC">and in Means, is this string
+in another string? If that’s true,</font>
+
+613
+00:47:06,167 --> 00:47:07,633
+<font color="#7DD3FC">do something. What I want</font>
+
+614
+00:47:07,700 --> 00:47:11,500
+<font color="#7DD3FC">to do, I actually instead of printing
+the glyph name, I can do something like</font>
+
+615
+00:47:12,167 --> 00:47:15,533
+<font color="#7DD3FC">g dot mark the glyph that is currently</font>
+
+616
+00:47:15,600 --> 00:47:21,933
+<font color="#7DD3FC">in question equals well, let’s say ten.
+These are numbers that stand for colors.</font>
+
+617
+00:47:23,133 --> 00:47:25,867
+<font color="#7DD3FC">Print done, and I need as the last step,</font>
+
+618
+00:47:25,933 --> 00:47:30,267
+<font color="#7DD3FC">I can actually remove that print done,
+but I need to do something.</font>
+
+619
+00:47:30,333 --> 00:47:34,100
+<font color="#7DD3FC">A sort of a magical line that’s
+`fl.update_font(fl.i_font)`. That’s just</font>
+
+620
+00:47:35,600 --> 00:47:41,300
+<font color="#7DD3FC">required so that the user interface</font>
+
+621
+00:47:41,367 --> 00:47:46,033
+<font color="#7DD3FC">of FontLab Studio gets updated.
+That’s useful to have this as a sort</font>
+
+622
+00:47:46,100 --> 00:47:50,267
+<font color="#7DD3FC">of magical line at the beginning,
+and this as a magical line at the end.</font>
+
+623
+00:47:52,100 --> 00:47:53,933
+<font color="#7DD3FC">Do that, run it.</font>
+
+624
+00:47:55,700 --> 00:47:59,767
+<font color="#7DD3FC">Aha! So now I got the mark property.</font>
+
+625
+00:48:00,267 --> 00:48:02,967
+<font color="#7DD3FC">The one that you know
+you normally can access here,</font>
+
+626
+00:48:03,467 --> 00:48:09,233
+<font color="#7DD3FC">through just a few presets and also
+custom. Oh, here I have mark value.</font>
+
+627
+00:48:09,300 --> 00:48:13,700
+<font color="#7DD3FC">That’s actually cool. I can go here.
+I can check the number that I want.</font>
+
+628
+00:48:13,767 --> 00:48:17,933
+<font color="#7DD3FC">Let’s say I want this color.
+That’s going to be hundred fifty.</font>
+
+629
+00:48:18,000 --> 00:48:21,800
+<font color="#7DD3FC">I take this value. This is the same value
+that is represented here.</font>
+
+630
+00:48:21,867 --> 00:48:26,400
+<font color="#7DD3FC">So if I run this, it becomes blue. So</font>
+
+631
+00:48:28,800 --> 00:48:29,600
+<font color="#7DD3FC">this is.</font>
+
+632
+00:48:30,400 --> 00:48:33,067
+<font color="#7DD3FC">This is already a kind</font>
+
+633
+00:48:33,133 --> 00:48:37,467
+<font color="#7DD3FC">of a useful little macro that is reporting</font>
+
+634
+00:48:37,533 --> 00:48:41,767
+<font color="#7DD3FC">to me. Something particular.</font>
+
+635
+00:48:42,567 --> 00:48:46,733
+<font color="#7DD3FC">So now the next steps
+would essentially be exploring</font>
+
+636
+00:48:47,600 --> 00:48:49,767
+<font color="#7DD3FC">the the space</font>
+
+637
+00:48:50,267 --> 00:48:55,867
+<font color="#7DD3FC">of the different kinds of objects,
+and we’re gonna stick to this reporting,</font>
+
+638
+00:48:56,667 --> 00:49:02,833
+<font color="#7DD3FC">and let’s have a look at what else the
+objects in FontLab can do. For instance,</font>
+
+639
+00:49:02,900 --> 00:49:07,400
+<font color="#7DD3FC">the glyph object, which is probably
+the more the most interesting one,</font>
+
+640
+00:49:07,467 --> 00:49:12,600
+<font color="#7DD3FC">it has a bunch of different properties
+or attributes. Sorry,</font>
+
+641
+00:49:12,667 --> 00:49:19,667
+<font color="#7DD3FC">attributes are values
+where you can set a value</font>
+
+642
+00:49:19,767 --> 00:49:26,267
+<font color="#7DD3FC">or read a value. So they’re like
+drawers. If you imagine</font>
+
+643
+00:49:27,367 --> 00:49:29,300
+<font color="#7DD3FC">this box that I talked about,</font>
+
+644
+00:49:29,367 --> 00:49:33,867
+<font color="#7DD3FC">instead of the box it would be actually
+a whole wardrobe,</font>
+
+645
+00:49:33,933 --> 00:49:36,600
+<font color="#7DD3FC">and inside there would be little drawers,</font>
+
+646
+00:49:36,667 --> 00:49:39,467
+<font color="#7DD3FC">and each of the drawer
+would have its own label,</font>
+
+647
+00:49:39,533 --> 00:49:42,667
+<font color="#7DD3FC">and there you could put something
+and retrieve something.</font>
+
+648
+00:49:42,733 --> 00:49:46,267
+<font color="#7DD3FC">And of course these labels
+would these drawers would be dedicated.</font>
+
+649
+00:49:46,333 --> 00:49:49,233
+<font color="#7DD3FC">So for instance, one little drawer
+in that wardrobe</font>
+
+650
+00:49:49,300 --> 00:49:54,600
+<font color="#7DD3FC">that would be a glyph object is name,
+and in that it’s labeled name,</font>
+
+651
+00:49:54,667 --> 00:50:00,000
+<font color="#7DD3FC">and inside is stored the name of the
+glyph. Then there are others such as mark.</font>
+
+652
+00:50:00,733 --> 00:50:07,300
+<font color="#7DD3FC">The color mark. Then there
+are many others, such as lists</font>
+
+653
+00:50:07,367 --> 00:50:13,533
+<font color="#7DD3FC">of other lists of objects. For instance,
+inside as just as a font is a list</font>
+
+654
+00:50:13,600 --> 00:50:19,867
+<font color="#7DD3FC">of glyphs. A glyph is a list of nodes
+or outline points, but also has a list of</font>
+
+655
+00:50:20,800 --> 00:50:25,133
+<font color="#7DD3FC">hints of anchors of vertical guides,
+horizontal guides,</font>
+
+656
+00:50:25,933 --> 00:50:29,067
+<font color="#7DD3FC">and they’re all kind of they work
+in a very similar way.</font>
+
+657
+00:50:29,133 --> 00:50:35,067
+<font color="#7DD3FC">So one. Once you’ve got your once
+you understood how lists work, and how</font>
+
+658
+00:50:37,533 --> 00:50:40,167
+<font color="#7DD3FC">how accessing these single elements works,</font>
+
+659
+00:50:41,533 --> 00:50:44,400
+<font color="#7DD3FC">that’s fairly easy. So</font>
+
+660
+00:50:45,767 --> 00:50:49,000
+<font color="#7DD3FC">let’s oh one important</font>
+
+661
+00:50:49,067 --> 00:50:54,333
+<font color="#7DD3FC">for instance could be components.
+Components is a list of</font>
+
+662
+00:50:55,467 --> 00:50:59,933
+<font color="#7DD3FC">components in a glyph. So you as
+you know we may have components.</font>
+
+663
+00:51:00,000 --> 00:51:02,667
+<font color="#7DD3FC">Glyphs, but it
+also has normal outline glyphs,</font>
+
+664
+00:51:02,733 --> 00:51:08,400
+<font color="#7DD3FC">right? So let’s imagine I want
+to actually mark all my component glyphs.</font>
+
+665
+00:51:09,700 --> 00:51:10,533
+<font color="#7DD3FC">And now</font>
+
+666
+00:51:11,533 --> 00:51:12,367
+<font color="#7DD3FC">I’ll</font>
+
+667
+00:51:13,067 --> 00:51:14,500
+<font color="#7DD3FC">go through my glyphs,</font>
+
+668
+00:51:14,567 --> 00:51:20,000
+<font color="#7DD3FC">but instead of checking the name,
+I will do a different test. I will say if</font>
+
+669
+00:51:21,700 --> 00:51:23,933
+<font color="#7DD3FC">okay. So I said g dot</font>
+
+670
+00:51:24,000 --> 00:51:28,733
+<font color="#7DD3FC">or glyph. This is currently
+the glyph object stored under g.</font>
+
+671
+00:51:29,300 --> 00:51:33,633
+<font color="#7DD3FC">Every time Over the iteration,
+the next one has,</font>
+
+672
+00:51:33,700 --> 00:51:37,533
+<font color="#7DD3FC">and I can look it up here.
+It has an attribute called components,</font>
+
+673
+00:51:37,600 --> 00:51:41,300
+<font color="#7DD3FC">and it’s a list of components.
+So I can take this name here and say,</font>
+
+674
+00:51:41,367 --> 00:51:44,733
+<font color="#7DD3FC">G dot components.
+But what do I want to actually check?</font>
+
+675
+00:51:48,333 --> 00:51:49,233
+<font color="#7DD3FC">I actually want</font>
+
+676
+00:51:49,300 --> 00:51:54,567
+<font color="#7DD3FC">to check that. That’s the good question.
+What’s the difference between? That’s</font>
+
+677
+00:51:55,767 --> 00:51:58,900
+<font color="#7DD3FC">going from the human understanding</font>
+
+678
+00:51:58,967 --> 00:52:04,600
+<font color="#7DD3FC">to a computer understanding. For us, you
+can say, this one is a composite glyph,</font>
+
+679
+00:52:04,667 --> 00:52:07,533
+<font color="#7DD3FC">this one isn’t. But how do
+I express this to the computer?</font>
+
+680
+00:52:08,167 --> 00:52:11,400
+<font color="#7DD3FC">There are a couple of ways.
+First of all, we need</font>
+
+681
+00:52:11,467 --> 00:52:15,200
+<font color="#7DD3FC">to understand how this data is stored
+in FontLab Studio. In FontLab Studio,</font>
+
+682
+00:52:15,767 --> 00:52:22,567
+<font color="#7DD3FC">if a component, if a glyph has outlines,
+it has a list of nodes.</font>
+
+683
+00:52:23,700 --> 00:52:26,567
+<font color="#7DD3FC">That is not empty. That</font>
+
+684
+00:52:27,767 --> 00:52:29,200
+<font color="#7DD3FC">has some elements in it.</font>
+
+685
+00:52:30,100 --> 00:52:33,933
+<font color="#7DD3FC">If it’s a composite glyph,
+it doesn’t have any nodes,</font>
+
+686
+00:52:34,000 --> 00:52:39,200
+<font color="#7DD3FC">but it has a list of composite components
+that is not empty. Meaning,</font>
+
+687
+00:52:40,267 --> 00:52:43,400
+<font color="#7DD3FC">this particular glyph,
+which doesn’t have any components,</font>
+
+688
+00:52:43,467 --> 00:52:48,267
+<font color="#7DD3FC">will have an attribute called components,
+but it will be an empty list.</font>
+
+689
+00:52:49,367 --> 00:52:52,733
+<font color="#7DD3FC">In other words, the length
+of that list will be zero.</font>
+
+690
+00:52:53,700 --> 00:52:57,933
+<font color="#7DD3FC">While this particular glyph
+has two components,</font>
+
+691
+00:52:58,733 --> 00:53:05,200
+<font color="#7DD3FC">so the length of the list of
+the components attribute will be two, and</font>
+
+692
+00:53:06,400 --> 00:53:11,533
+<font color="#7DD3FC">that’s what I’m gonna check. So
+I will check. I will use the len function.</font>
+
+693
+00:53:13,767 --> 00:53:15,067
+<font color="#7DD3FC">So if I have a list,</font>
+
+694
+00:53:16,333 --> 00:53:19,533
+<font color="#7DD3FC">the len function will tell me how
+many elements does it have.</font>
+
+695
+00:53:20,333 --> 00:53:23,600
+<font color="#7DD3FC">And well, actually, let’s do it quickly.</font>
+
+696
+00:53:24,667 --> 00:53:28,733
+<font color="#7DD3FC">Even simpler. Print g dot name.</font>
+
+697
+00:53:30,000 --> 00:53:34,667
+<font color="#7DD3FC">Comma len g dot components right.</font>
+
+698
+00:53:36,400 --> 00:53:41,300
+<font color="#7DD3FC">I’m gonna run this,
+clear this, run this. Ah,</font>
+
+699
+00:53:42,000 --> 00:53:46,833
+<font color="#7DD3FC">very nice. I’m actually getting output.
+All the glyph names, and then the number</font>
+
+700
+00:53:46,900 --> 00:53:52,267
+<font color="#7DD3FC">of components. That’s also remotely
+useful sometimes. But if it tells</font>
+
+701
+00:53:52,333 --> 00:53:56,267
+<font color="#7DD3FC">me that you know now I actually want
+the glyphs that have components</font>
+
+702
+00:53:56,333 --> 00:54:02,900
+<font color="#7DD3FC">and not outlines, so I’m gonna do
+if n g components, large and zero.</font>
+
+703
+00:54:06,167 --> 00:54:11,600
+<font color="#7DD3FC">Mark the font, mark the glyph.
+So g dot mark equals.</font>
+
+704
+00:54:12,167 --> 00:54:16,333
+<font color="#7DD3FC">This time I’m going to do thirty
+or something. Save,</font>
+
+705
+00:54:18,967 --> 00:54:19,800
+<font color="#7DD3FC">clear.</font>
+
+706
+00:54:20,967 --> 00:54:22,600
+<font color="#7DD3FC">I’ll close that one. Run.</font>
+
+707
+00:54:22,667 --> 00:54:28,967
+<font color="#7DD3FC">Aha! All my component glyphs got marked,
+and all the ones with outlines didn’t.</font>
+
+708
+00:54:30,800 --> 00:54:37,700
+<font color="#7DD3FC">Now you may remember that actually
+FontLab allows you to mix outline glyphs</font>
+
+709
+00:54:38,567 --> 00:54:40,033
+<font color="#7DD3FC">and components,</font>
+
+710
+00:54:40,100 --> 00:54:46,600
+<font color="#7DD3FC">which is not really permitted in TrueType,
+or and that can lead you sometimes</font>
+
+711
+00:54:46,667 --> 00:54:52,000
+<font color="#7DD3FC">to certain problems. So I’m going
+to simulate this by saying</font>
+
+712
+00:54:54,333 --> 00:54:58,967
+<font color="#7DD3FC">decompose. So I have one component
+and one outline portion.</font>
+
+713
+00:55:00,000 --> 00:55:02,333
+<font color="#7DD3FC">So now set the mark to none,</font>
+
+714
+00:55:03,200 --> 00:55:06,567
+<font color="#7DD3FC">and I’m going to make
+even a sort of a bigger</font>
+
+715
+00:55:07,700 --> 00:55:09,400
+<font color="#7DD3FC">test.</font>
+
+716
+00:55:09,467 --> 00:55:14,967
+<font color="#7DD3FC">I’m going to check if len
+of nodes is larger than zero</font>
+
+717
+00:55:15,933 --> 00:55:19,233
+<font color="#7DD3FC">and len of components is larger than zero.</font>
+
+718
+00:55:19,300 --> 00:55:23,467
+<font color="#7DD3FC">So what I’m checking here now?
+A glyph that has a positive number</font>
+
+719
+00:55:23,533 --> 00:55:27,367
+<font color="#7DD3FC">of nodes and a positive number
+of components, meaning it has both.</font>
+
+720
+00:55:28,733 --> 00:55:29,600
+<font color="#7DD3FC">So I’m saving it.</font>
+
+721
+00:55:31,300 --> 00:55:36,267
+<font color="#7DD3FC">Running, aha, ah. Actually,
+there were already such glyphs</font>
+
+722
+00:55:36,333 --> 00:55:39,633
+<font color="#7DD3FC">in the font, so I will most likely need
+to do something</font>
+
+723
+00:55:39,700 --> 00:55:44,667
+<font color="#7DD3FC">with them. That’s the source VFB, so
+there was, and that’s actually that that’s</font>
+
+724
+00:55:45,700 --> 00:55:48,333
+<font color="#7DD3FC">that’s a fairly simple test,</font>
+
+725
+00:55:49,367 --> 00:55:50,333
+<font color="#7DD3FC">but a</font>
+
+726
+00:55:51,300 --> 00:55:53,200
+<font color="#7DD3FC">very useful functionality.</font>
+
+727
+00:55:53,767 --> 00:55:59,600
+<font color="#7DD3FC">There’s a number of free scripts, and I’ve
+I’ve included a selection included.</font>
+
+728
+00:56:00,400 --> 00:56:03,133
+<font color="#7DD3FC">The the most recent ones.</font>
+
+729
+00:56:03,933 --> 00:56:08,200
+<font color="#7DD3FC">Freemix tools by Tim Arons,
+and also remix font remix tools.</font>
+
+730
+00:56:08,267 --> 00:56:12,267
+<font color="#7DD3FC">You probably many of you probably know
+this. This is very complex Python,</font>
+
+731
+00:56:12,333 --> 00:56:16,233
+<font color="#7DD3FC">so it’s not really about programming.
+It’s just about using it. It’s very cool.</font>
+
+732
+00:56:16,500 --> 00:56:21,600
+<font color="#7DD3FC">It comes with the simplest
+possible installer. You just unzip,</font>
+
+733
+00:56:23,133 --> 00:56:29,533
+<font color="#7DD3FC">double click on this special file
+uninstaller installer. Flw</font>
+
+734
+00:56:30,333 --> 00:56:33,933
+<font color="#7DD3FC">it will launch FontLab Studio,
+guide you through the process,</font>
+
+735
+00:56:34,000 --> 00:56:38,200
+<font color="#7DD3FC">and you’ll be done. Very easy, so I’m
+not going to bother talking about this.</font>
+
+736
+00:56:38,267 --> 00:56:43,933
+<font color="#7DD3FC">But I want to have a look at font QA.
+Font QA is actually pretty useful.</font>
+
+737
+00:56:44,900 --> 00:56:46,667
+<font color="#7DD3FC">Very easy download. After</font>
+
+738
+00:56:48,967 --> 00:56:50,500
+<font color="#7DD3FC">I’ve downloaded it,</font>
+
+739
+00:56:52,100 --> 00:56:56,100
+<font color="#7DD3FC">here’s the installation.
+Is a tiny bit tricky,</font>
+
+740
+00:56:56,167 --> 00:57:01,767
+<font color="#7DD3FC">or at least this is where you know we need
+to have a look. After you’ve unzipped,</font>
+
+741
+00:57:02,967 --> 00:57:06,400
+<font color="#7DD3FC">you get the fontlab folder macros,
+and here you get</font>
+
+742
+00:57:07,600 --> 00:57:09,367
+<font color="#7DD3FC">two portions. So</font>
+
+743
+00:57:10,267 --> 00:57:11,833
+<font color="#7DD3FC">it’s not that complicated. It’s</font>
+
+744
+00:57:13,300 --> 00:57:16,667
+<font color="#7DD3FC">we need to navigate to our macros</font>
+
+745
+00:57:17,700 --> 00:57:20,400
+<font color="#7DD3FC">system modules folder</font>
+
+746
+00:57:21,533 --> 00:57:22,233
+<font color="#7DD3FC">and</font>
+
+747
+00:57:22,733 --> 00:57:24,167
+<font color="#7DD3FC">copy the contents</font>
+
+748
+00:57:24,667 --> 00:57:29,133
+<font color="#7DD3FC">of these. I already done that into that
+folder. That’s the one step, and then.</font>
+
+749
+00:57:30,000 --> 00:57:32,733
+<font color="#7DD3FC">What I’ve ended up here,
+oh yeah, and font QA,</font>
+
+750
+00:57:32,800 --> 00:57:37,533
+<font color="#7DD3FC">I can take the font QA folder
+and copy it directly</font>
+
+751
+00:57:39,367 --> 00:57:43,133
+<font color="#7DD3FC">into my macros folder.
+But how do I get these macros first?</font>
+
+752
+00:57:43,933 --> 00:57:44,900
+<font color="#7DD3FC">If you go</font>
+
+753
+00:57:44,967 --> 00:57:51,933
+<font color="#7DD3FC">to the blog post, or what I did
+is just go through GitHub.</font>
+
+754
+00:57:52,967 --> 00:57:56,100
+<font color="#7DD3FC">Here, for instance, if I go
+to the font lab scripts by Pablo</font>
+
+755
+00:57:56,167 --> 00:57:58,567
+<font color="#7DD3FC">and also the batch font info by Retype.</font>
+
+756
+00:58:00,333 --> 00:58:05,067
+<font color="#7DD3FC">GitHub will open here. I can browse
+the source code, but there is also always</font>
+
+757
+00:58:05,133 --> 00:58:08,833
+<font color="#7DD3FC">on GitHub. There is a link called
+Download ZIP, and that’s what you need</font>
+
+758
+00:58:08,900 --> 00:58:14,667
+<font color="#7DD3FC">to click. I click this one.
+I get the Impallari font lab macros.</font>
+
+759
+00:58:15,533 --> 00:58:18,267
+<font color="#7DD3FC">I get this. I get
+the ReType Batch font info.</font>
+
+760
+00:58:18,967 --> 00:58:25,400
+<font color="#7DD3FC">It uses Robofab, which is an important
+extension, which gives you a different,</font>
+
+761
+00:58:25,467 --> 00:58:31,600
+<font color="#7DD3FC">a sort of more modern way
+to access font objects. Inside of FontLab,</font>
+
+762
+00:58:32,800 --> 00:58:33,867
+<font color="#7DD3FC">there is a</font>
+
+763
+00:58:35,067 --> 00:58:37,300
+<font color="#7DD3FC">robofab.org website,</font>
+
+764
+00:58:37,367 --> 00:58:42,100
+<font color="#7DD3FC">which has some very nice getting examples,</font>
+
+765
+00:58:42,167 --> 00:58:46,267
+<font color="#7DD3FC">step-by-step intro, and it guides you</font>
+
+766
+00:58:49,600 --> 00:58:50,433
+<font color="#7DD3FC">through</font>
+
+767
+00:58:51,067 --> 00:58:51,533
+<font color="#7DD3FC">through</font>
+
+768
+00:58:53,067 --> 00:58:58,900
+<font color="#7DD3FC">doing things. So this is a great read.
+It has nice examples and the robofab</font>
+
+769
+00:58:59,867 --> 00:59:02,900
+<font color="#7DD3FC">website. Website is great
+and Robofab works</font>
+
+770
+00:59:03,767 --> 00:59:08,267
+<font color="#7DD3FC">the same or almost the same way
+in FontLab Studio,</font>
+
+771
+00:59:08,333 --> 00:59:15,300
+<font color="#7DD3FC">Robofont glyphs, and even to some extent
+I believe FontForge. So if you</font>
+
+772
+00:59:17,367 --> 00:59:18,400
+<font color="#7DD3FC">if you learn to write the macros using</font>
+
+773
+00:59:21,533 --> 00:59:22,967
+<font color="#7DD3FC">Robofon Robofab,</font>
+
+774
+00:59:24,000 --> 00:59:25,600
+<font color="#7DD3FC">it really doesn’t matter so much</font>
+
+775
+00:59:26,900 --> 00:59:31,300
+<font color="#7DD3FC">which editor you’re using. This is so
+this is. For entire families, you</font>
+
+776
+00:59:32,400 --> 00:59:35,867
+<font color="#7DD3FC">you would need
+to fill out all the information.</font>
+
+777
+00:59:35,933 --> 00:59:40,733
+<font color="#7DD3FC">For instance, you know family
+and then descender, ascender,</font>
+
+778
+00:59:42,000 --> 00:59:42,900
+<font color="#7DD3FC">descender,</font>
+
+779
+00:59:44,100 --> 00:59:49,067
+<font color="#7DD3FC">win ascender, etc. It would do. It
+would set these values for all the fonts</font>
+
+780
+00:59:49,133 --> 00:59:55,300
+<font color="#7DD3FC">in the family. But it’s nice
+to just have a look at how it’s done.</font>
+
+781
+00:59:56,900 --> 00:59:57,733
+<font color="#7DD3FC">It’s</font>
+
+782
+00:59:59,300 --> 01:00:00,900
+<font color="#7DD3FC">this is the most important bit</font>
+
+783
+01:00:02,567 --> 01:00:05,533
+<font color="#7DD3FC">we have some object called font info.</font>
+
+784
+01:00:05,600 --> 01:00:08,900
+<font color="#7DD3FC">It has certain attributes:
+family name, ascender, descender,</font>
+
+785
+01:00:08,967 --> 01:00:15,867
+<font color="#7DD3FC">etc. We have assigned some values
+into the dialog box here, and we</font>
+
+786
+01:00:17,867 --> 01:00:19,933
+<font color="#7DD3FC">already know this construct for font</font>
+
+787
+01:00:20,000 --> 01:00:25,633
+<font color="#7DD3FC">in all fonts. That is a loop
+that goes through all fonts</font>
+
+788
+01:00:25,700 --> 01:00:29,600
+<font color="#7DD3FC">in open currently and does something.</font>
+
+789
+01:00:30,333 --> 01:00:35,133
+<font color="#7DD3FC">To it, I really recommend the macros
+written by Pablo Impallari.</font>
+
+790
+01:00:35,933 --> 01:00:39,067
+<font color="#7DD3FC">Add adding a guideline
+to the center of the current glyph.</font>
+
+791
+01:00:40,267 --> 01:00:43,533
+<font color="#7DD3FC">This is not complicated at all.
+We have the same code here.</font>
+
+792
+01:00:45,533 --> 01:00:51,600
+<font color="#7DD3FC">F is the current font. Assign the current
+font to F. Assign the current glyph to G.</font>
+
+793
+01:00:52,667 --> 01:00:59,133
+<font color="#7DD3FC">Clear old local vertical guidelines.
+So the G object has V guides.</font>
+
+794
+01:00:59,200 --> 01:01:04,267
+<font color="#7DD3FC">Is the list of guides.
+I’m assigning it to an object,</font>
+
+795
+01:01:04,333 --> 01:01:09,700
+<font color="#7DD3FC">running or calling the method. That’s a
+new thing. Calling a method called clean.</font>
+
+796
+01:01:09,767 --> 01:01:15,067
+<font color="#7DD3FC">So an object, just as a function
+such as len or str, would</font>
+
+797
+01:01:17,300 --> 01:01:20,000
+<font color="#7DD3FC">return would</font>
+
+798
+01:01:20,800 --> 01:01:21,933
+<font color="#7DD3FC">transform your</font>
+
+799
+01:01:27,933 --> 01:01:29,933
+<font color="#7DD3FC">one bit of data into another form.</font>
+
+800
+01:01:30,000 --> 01:01:34,900
+<font color="#7DD3FC">Or maybe measure something
+and return some value. Methods are are</font>
+
+801
+01:01:36,900 --> 01:01:38,400
+<font color="#7DD3FC">like functions or</font>
+
+802
+01:01:39,367 --> 01:01:40,333
+<font color="#7DD3FC">within an object.</font>
+
+803
+01:01:41,533 --> 01:01:43,400
+<font color="#7DD3FC">If an object such as guides</font>
+
+804
+01:01:43,467 --> 01:01:47,800
+<font color="#7DD3FC">or glyph, etc., it may have attributes
+that you can write to and read</font>
+
+805
+01:01:47,867 --> 01:01:54,867
+<font color="#7DD3FC">from, such as name. But it can also have
+methods which are such as generate names,</font>
+
+806
+01:01:55,067 --> 01:01:58,967
+<font color="#7DD3FC">which is you call them,
+so they’re addressed by.</font>
+
+807
+01:02:00,000 --> 01:02:03,400
+<font color="#7DD3FC">Using the name of the object dot
+and then the name</font>
+
+808
+01:02:03,467 --> 01:02:09,067
+<font color="#7DD3FC">of the method, and parentheses, either
+empty parentheses or some additional</font>
+
+809
+01:02:10,167 --> 01:02:15,533
+<font color="#7DD3FC">parameters. Such as here, we have the next
+one. Central is the variable name.</font>
+
+810
+01:02:16,100 --> 01:02:19,933
+<font color="#7DD3FC">We take the width attribute
+of the glyph object divided by two.</font>
+
+811
+01:02:21,133 --> 01:02:27,933
+<font color="#7DD3FC">And now we take the glyph object,
+we take the vertical guides list,</font>
+
+812
+01:02:28,567 --> 01:02:32,967
+<font color="#7DD3FC">and we append to it.
+Using the append method,</font>
+
+813
+01:02:33,533 --> 01:02:37,533
+<font color="#7DD3FC">and the append method takes an attribute.</font>
+
+814
+01:02:37,600 --> 01:02:40,667
+<font color="#7DD3FC">The attribute creates a guide,</font>
+
+815
+01:02:41,767 --> 01:02:43,867
+<font color="#7DD3FC">a special fontlab guide,</font>
+
+816
+01:02:44,567 --> 01:02:50,600
+<font color="#7DD3FC">and that creation of the guide
+takes central, meaning the width</font>
+
+817
+01:02:50,667 --> 01:02:57,367
+<font color="#7DD3FC">of the half of the width of the character
+as its parameter. The guide object,</font>
+
+818
+01:02:58,500 --> 01:03:03,367
+<font color="#7DD3FC">right here in the constructor. Section.
+You can say we can create a new guide,</font>
+
+819
+01:03:04,167 --> 01:03:06,733
+<font color="#7DD3FC">or we can create a guide that is a copy</font>
+
+820
+01:03:06,800 --> 01:03:11,867
+<font color="#7DD3FC">of another guide, or we can create a guide
+and give its position. Guidelines,</font>
+
+821
+01:03:14,333 --> 01:03:15,867
+<font color="#7DD3FC">center of current glyph.</font>
+
+822
+01:03:16,900 --> 01:03:20,967
+<font color="#7DD3FC">I get a new glyph. Of course,
+now since we know a bit of Python,</font>
+
+823
+01:03:22,167 --> 01:03:27,200
+<font color="#7DD3FC">instead of going you know this way
+and doing it for every single glyph</font>
+
+824
+01:03:28,167 --> 01:03:29,133
+<font color="#7DD3FC">manually.</font>
+
+825
+01:03:30,567 --> 01:03:33,767
+<font color="#7DD3FC">We can modify this script easily.</font>
+
+826
+01:03:34,667 --> 01:03:36,733
+<font color="#7DD3FC">What I’m going to do is update font here,</font>
+
+827
+01:03:38,500 --> 01:03:42,100
+<font color="#7DD3FC">and I’ll do current glyph.</font>
+
+828
+01:03:42,900 --> 01:03:46,267
+<font color="#7DD3FC">But this particular operation,
+what I’m going to do is I’m going</font>
+
+829
+01:03:46,333 --> 01:03:51,700
+<font color="#7DD3FC">to indent it, and instead of saying
+current glyph, I’m going to say 4G</font>
+
+830
+01:03:53,200 --> 01:03:57,933
+<font color="#7DD3FC">in f glyphs, right? So now</font>
+
+831
+01:03:58,800 --> 01:03:59,700
+<font color="#7DD3FC">I have</font>
+
+832
+01:04:00,733 --> 01:04:02,400
+<font color="#7DD3FC">Modified my macro,</font>
+
+833
+01:04:04,167 --> 01:04:06,400
+<font color="#7DD3FC">and when I‘ gonna</font>
+
+834
+01:04:09,367 --> 01:04:10,200
+<font color="#7DD3FC">open,</font>
+
+835
+01:04:10,900 --> 01:04:11,733
+<font color="#7DD3FC">let’s take.</font>
+
+836
+01:04:14,500 --> 01:04:20,333
+<font color="#7DD3FC">I’m gonna reload, and here
+I have top level. This is my test macro.</font>
+
+837
+01:04:21,200 --> 01:04:22,100
+<font color="#7DD3FC">I’m run it,</font>
+
+838
+01:04:23,067 --> 01:04:23,900
+<font color="#7DD3FC">and</font>
+
+839
+01:04:25,767 --> 01:04:29,933
+<font color="#7DD3FC">the glyphs, the guidelines, are generated
+in all the glyphs, and this is.</font>
+
+840
+01:04:30,000 --> 01:04:35,300
+<font color="#7DD3FC">This is the last bit that I wanted
+to talk about is functions. Sometimes</font>
+
+841
+01:04:35,367 --> 01:04:42,267
+<font color="#7DD3FC">if your code is longer and starts
+to look messy, it’s better to</font>
+
+842
+01:04:43,200 --> 01:04:47,933
+<font color="#7DD3FC">encapsulate again, put bits
+of code into a box that has a name,</font>
+
+843
+01:04:48,567 --> 01:04:54,100
+<font color="#7DD3FC">and that’s what we’re gonna do now.
+So instead of calling this code right here</font>
+
+844
+01:04:54,167 --> 01:04:59,200
+<font color="#7DD3FC">in a loop directly,
+what I’m gonna do is I’m gonna say</font>
+
+845
+01:05:00,167 --> 01:05:03,200
+<font color="#7DD3FC">function no, sorry, def.</font>
+
+846
+01:05:04,967 --> 01:05:07,200
+<font color="#7DD3FC">Add v guide at middle. And this</font>
+
+847
+01:05:09,300 --> 01:05:11,200
+<font color="#7DD3FC">function will take g</font>
+
+848
+01:05:12,000 --> 01:05:13,133
+<font color="#7DD3FC">a glyph as</font>
+
+849
+01:05:13,200 --> 01:05:13,400
+<font color="#FFFFFF">A</font>
+
+850
+01:05:13,467 --> 01:05:14,300
+<font color="#7DD3FC">Parameter.</font>
+
+851
+01:05:22,400 --> 01:05:23,133
+<font color="#7DD3FC">And now</font>
+
+852
+01:05:23,767 --> 01:05:27,133
+<font color="#7DD3FC">the nice thing about
+this is that I could easily</font>
+
+853
+01:05:29,300 --> 01:05:30,133
+<font color="#7DD3FC">do it like.</font>
+
+854
+01:05:35,767 --> 01:05:37,367
+<font color="#7DD3FC">So I could. This is.</font>
+
+855
+01:05:38,267 --> 01:05:39,233
+<font color="#7DD3FC">This defines this.</font>
+
+856
+01:05:39,300 --> 01:05:45,200
+<font color="#7DD3FC">Oh, sorry, I forgot about the colon
+at the end. That’s important. So I need.</font>
+
+857
+01:05:46,000 --> 01:05:47,367
+<font color="#7DD3FC">I do define.</font>
+
+858
+01:05:48,967 --> 01:05:50,400
+<font color="#7DD3FC">Let’s try it.</font>
+
+859
+01:05:53,200 --> 01:05:54,167
+<font color="#7DD3FC">It worked.</font>
+
+860
+01:05:56,967 --> 01:05:57,833
+<font color="#7DD3FC">It didn’t really.</font>
+
+861
+01:05:58,900 --> 01:06:02,733
+<font color="#7DD3FC">I can check. Yes. It works. So it</font>
+
+862
+01:06:03,533 --> 01:06:07,233
+<font color="#7DD3FC">it performs. You know several steps.
+I have put this little bit</font>
+
+863
+01:06:07,300 --> 01:06:11,533
+<font color="#7DD3FC">of the code into a box,
+and I have defined the name of that box.</font>
+
+864
+01:06:11,600 --> 01:06:16,900
+<font color="#7DD3FC">That’s a function, and a way to
+communicate from the outside with the box.</font>
+
+865
+01:06:16,967 --> 01:06:23,067
+<font color="#7DD3FC">So this is a box which has a little hole,
+and that hole accepts the glyph,</font>
+
+866
+01:06:23,867 --> 01:06:26,500
+<font color="#7DD3FC">and does something.
+And I don’t really care anymore.</font>
+
+867
+01:06:26,567 --> 01:06:31,000
+<font color="#7DD3FC">That’s the what it does
+because that sort of that. Done,</font>
+
+868
+01:06:31,067 --> 01:06:36,500
+<font color="#7DD3FC">and I can then later refer it very simply.
+And whether I do it for all the glyphs,</font>
+
+869
+01:06:36,567 --> 01:06:42,900
+<font color="#7DD3FC">or maybe I can just do it very quickly,
+such as this, fl dot glyph,</font>
+
+870
+01:06:43,933 --> 01:06:47,800
+<font color="#7DD3FC">and I don’t have to rewrite
+my code every time</font>
+
+871
+01:06:47,867 --> 01:06:50,967
+<font color="#7DD3FC">if I use functions.
+So functions is a bit more</font>
+
+872
+01:06:52,900 --> 01:06:58,333
+<font color="#7DD3FC">is a way to organize your code better.
+Then later there are things like objects,</font>
+
+873
+01:06:58,400 --> 01:07:01,533
+<font color="#7DD3FC">classes, and also modules.
+Modules are more advanced. It’s</font>
+
+874
+01:07:02,667 --> 01:07:06,567
+<font color="#7DD3FC">when you want to have your code
+is so large that it actually needs,</font>
+
+875
+01:07:07,200 --> 01:07:09,700
+<font color="#7DD3FC">or would use several files</font>
+
+876
+01:07:09,767 --> 01:07:14,333
+<font color="#7DD3FC">to store it, or you would have one
+particular code that would be written in,</font>
+
+877
+01:07:15,200 --> 01:07:16,833
+<font color="#7DD3FC">would have the smartness,</font>
+
+878
+01:07:16,900 --> 01:07:21,300
+<font color="#7DD3FC">the algorithm, and then you would have
+several macros. One would be for to do it,</font>
+
+879
+01:07:21,367 --> 01:07:24,367
+<font color="#7DD3FC">to run it for all the glyphs,
+another for all the fonts, etc.</font>
+
+880
+01:07:25,933 --> 01:07:27,867
+<font color="#7DD3FC">So that’s my conclusions here.</font>
+
+881
+01:07:29,067 --> 01:07:30,433
+<font color="#7DD3FC">Go through the macros.</font>
+
+882
+01:07:30,500 --> 01:07:35,067
+<font color="#7DD3FC">That come with FontLab. Download the free
+ones. I’m going to publish the blog post</font>
+
+883
+01:07:35,133 --> 01:07:39,767
+<font color="#7DD3FC">with the links. The Python
+website has some good tutorials.</font>
+
+884
+01:07:40,267 --> 01:07:43,000
+<font color="#7DD3FC">Please watch these videos
+that will be linked.</font>
+
+885
+01:07:43,067 --> 01:07:46,600
+<font color="#7DD3FC">They’re really good.
+Check the documentation and well,</font>
+
+886
+01:07:46,667 --> 01:07:51,067
+<font color="#7DD3FC">write macros ideally in an external font
+editor, not necessarily in the macros</font>
+
+887
+01:07:54,100 --> 01:07:57,867
+<font color="#7DD3FC">macros edit macros panel
+because it’s really very simple and not so</font>
+
+888
+01:07:58,900 --> 01:08:04,500
+<font color="#7DD3FC">comfortable. Something like TextWrangler
+is much more comfortable. And also,</font>
+
+889
+01:08:05,133 --> 01:08:11,300
+<font color="#7DD3FC">the best place to ask questions
+would be about this would be the FontLab</font>
+
+890
+01:08:12,167 --> 01:08:15,467
+<font color="#7DD3FC">board, the Python scripting board
+on the FontLab forum.</font>
+
+891
+01:08:15,533 --> 01:08:21,133
+<font color="#7DD3FC">I’m going to be looking into it. In also,
+my colleagues, if you have any questions,</font>
+
+892
+01:08:21,200 --> 01:08:26,267
+<font color="#7DD3FC">please post there, and I’ll try
+to answer them. And well, hopefully</font>
+
+893
+01:08:27,133 --> 01:08:27,833
+<font color="#7DD3FC">that</font>
+
+894
+01:08:28,667 --> 01:08:31,067
+<font color="#7DD3FC">was useful to you. Oh, and</font>
+
+895
+01:08:32,167 --> 01:08:33,700
+<font color="#7DD3FC">by the way,</font>
+
+896
+01:08:33,767 --> 01:08:40,100
+<font color="#7DD3FC">of course, I will mention that FontLab Six
+will also support the Robofab</font>
+
+897
+01:08:41,367 --> 01:08:44,267
+<font color="#7DD3FC">scripting interface. And hopefully, also</font>
+
+898
+01:08:45,533 --> 01:08:50,833
+<font color="#7DD3FC">will be very much compatible to also
+the older macros that were written</font>
+
+899
+01:08:50,900 --> 01:08:52,900
+<font color="#7DD3FC">for FontLab Studio Five. Yeah.</font>
+
+900
+01:08:54,167 --> 01:08:59,000
+<font color="#7DD3FC">Anything that you’ve learned here
+or will learn with FontLab Studio Five,</font>
+
+901
+01:08:59,067 --> 01:09:06,000
+<font color="#7DD3FC">I would say. Eighty or ninety percent
+of it will be applicable or usable,</font>
+
+902
+01:09:06,733 --> 01:09:10,500
+<font color="#7DD3FC">also with a different font editor,
+including FontLab Studio, FontLab Six.</font>
+
+903
+01:09:12,567 --> 01:09:17,067
+<font color="#7DD3FC">So thanks a lot for listening to me, and</font>
+
+904
+01:09:17,867 --> 01:09:18,633
+<font color="#7DD3FC">well,</font>
+
+905
+01:09:19,200 --> 01:09:22,667
+<font color="#7DD3FC">looking forward
+to your experiments with scripting.</font>
+
+906
+01:09:23,533 --> 01:09:26,667
+<font color="#7DD3FC">Thanks a lot, and bye, guys.</font>
+

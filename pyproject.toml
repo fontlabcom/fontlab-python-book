@@ -1,0 +1,24 @@
+# this_file: pyproject.toml
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fontlab-python-book"
+version = "0.1.0"
+description = "Build the FontLab Python book documentation"
+requires-python = ">=3.13"
+dependencies = [
+    "fire==0.7.1",
+    "properdocs==1.6.7",
+    "mkdocs==1.6.1",
+    "mkdocs-materialx==10.1.8",
+    "pymdown-extensions==11.0.1",
+]
+
+[project.scripts]
+fontlab-python-book = "fontlab_python_book:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+

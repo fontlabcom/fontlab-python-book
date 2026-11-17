@@ -1,0 +1,219 @@
+# this_file: src_docs/mkdocs.yml
+site_name: Scripting FontLab
+site_description: Learn to script FontLab 9 with Python, one studio chore at a time.
+docs_dir: md
+site_dir: ../docs
+use_directory_urls: true
+validation:
+  nav:
+    not_found: warn
+  links:
+    not_found: warn
+    anchors: warn
+theme:
+  name: materialx
+  custom_dir: overrides
+  language: en
+  font: false
+  palette:
+    - scheme: default
+      primary: black
+      accent: red
+  features:
+    - navigation.indexes
+    - navigation.sections
+    - navigation.footer
+    - navigation.top
+    - search.highlight
+    - toc.follow
+    - content.code.copy
+plugins:
+  - search
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+      toc_depth: 3
+  - pymdownx.details
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.keys
+  - pymdownx.tabbed:
+      alternate_style: true
+extra_css:
+  - https://i.fontlab.com/fltheme26/1.0.0/components.css
+  - https://i.fontlab.com/fltheme26/1.0.0/theme.css
+  - assets/book.css
+extra_javascript:
+  - https://i.fontlab.com/fltheme26/1.0.0/basecoat.js
+  - https://i.fontlab.com/fltheme26/1.0.0/theme.js
+  - assets/book.js
+exclude_docs: |
+  assets/PROVENANCE.md
+
+nav:
+  - Start here: index.md
+  - "Part 1: First words":
+      - part1-first-words/index.md
+      - "1. The list Oskar left": part1-first-words/001-the-list-oskar-left.md
+      - "2. Say hello to FontLab": part1-first-words/002-say-hello.md
+      - "3. Break it on purpose": part1-first-words/003-break-it-on-purpose.md
+      - "4. Pack the toolbag": part1-first-words/004-pack-the-toolbag.md
+      - "5. A font is a list of glyphs": part1-first-words/005-a-font-is-a-list-of-glyphs.md
+      - "6. Ask a glyph its name": part1-first-words/006-ask-a-glyph-its-name.md
+      - "7. Do it to all of them": part1-first-words/007-do-it-to-all-of-them.md
+      - "8. Only the ones I want": part1-first-words/008-only-the-ones-i-want.md
+      - "9. Strings are made of letters": part1-first-words/009-strings-are-made-of-letters.md
+      - "10. Keep a list": part1-first-words/010-keep-a-list.md
+      - "11. Numbers with units": part1-first-words/011-numbers-with-units.md
+      - "12. The width report": part1-first-words/012-the-width-report.md
+      - "13. And, or, not": part1-first-words/013-and-or-not.md
+      - "14. Mark them red": part1-first-words/014-mark-them-red.md
+      - "15. The selection": part1-first-words/015-the-selection.md
+      - "16. Name your steps": part1-first-words/016-name-your-steps.md
+      - "17. Notes to yourself": part1-first-words/017-comments-and-names.md
+      - "18. Save it, run it again": part1-first-words/018-save-it-run-it-again.md
+      - "19. When it goes wrong": part1-first-words/019-when-it-goes-wrong.md
+      - "20. The first chore, done": part1-first-words/020-first-chore-done.md
+  - "Part 2: A toolbox":
+      - part2-a-toolbox/index.md
+      - "21. Look it up": part2-a-toolbox/021-a-dictionary-of-glyphs.md
+      - "22. Counting things": part2-a-toolbox/022-counting-things.md
+      - "23. Unicode is a number": part2-a-toolbox/023-unicode-is-a-number.md
+      - "24. Find the glyph for a letter": part2-a-toolbox/024-find-by-unicode.md
+      - "25. The missing list": part2-a-toolbox/025-the-missing-list.md
+      - "26. Write it to a file": part2-a-toolbox/026-write-it-to-a-file.md
+      - "27. Read a list from a file": part2-a-toolbox/027-read-a-list-from-a-file.md
+      - "28. Tables for spreadsheets": part2-a-toolbox/028-tables-for-spreadsheets.md
+      - "29. Change one thing, and take it back": part2-a-toolbox/029-change-one-thing.md
+      - "30. Rename with care": part2-a-toolbox/030-rename-with-care.md
+      - "31. Look before you leap": part2-a-toolbox/031-dry-run.md
+      - "32. Tags and marks": part2-a-toolbox/032-tags-and-marks.md
+      - "33. Your own module": part2-a-toolbox/033-your-own-module.md
+      - "34. Arguments you can leave out": part2-a-toolbox/034-arguments-with-defaults.md
+      - "35. Rows": part2-a-toolbox/035-lists-of-lists.md
+      - "36. Sort by anything": part2-a-toolbox/036-sort-by-anything.md
+      - "37. One line that builds a list": part2-a-toolbox/037-comprehensions.md
+      - "38. Read the traceback": part2-a-toolbox/038-read-the-traceback.md
+      - "39. Ask before you act": part2-a-toolbox/039-ask-the-user.md
+      - "40. The toolbox so far": part2-a-toolbox/040-the-toolbox-so-far.md
+  - "Part 3: Shapes":
+      - part3-shapes/index.md
+      - "41. Inside a glyph": part3-shapes/041-inside-a-glyph.md
+      - "42. Count the nodes": part3-shapes/042-count-the-nodes.md
+      - "43. Where is this point?": part3-shapes/043-coordinates.md
+      - "44. The open contour": part3-shapes/044-open-contours.md
+      - "45. Direction matters": part3-shapes/045-direction-matters.md
+      - "46. Draw a rectangle": part3-shapes/046-draw-a-rectangle.md
+      - "47. Draw with numbers": part3-shapes/047-draw-with-numbers.md
+      - "48. Curves": part3-shapes/048-curves.md
+      - "49. Shapes from a loop": part3-shapes/049-shapes-from-a-loop.md
+      - "50. Move, scale, slant": part3-shapes/050-move-scale-slant.md
+      - "51. Copy a glyph": part3-shapes/051-copy-a-glyph.md
+      - "52. Borrowed shapes": part3-shapes/052-components.md
+      - "53. Build an accented letter": part3-shapes/053-build-an-accented-letter.md
+      - "54. Anchors": part3-shapes/054-anchors.md
+      - "55. Place the anchors": part3-shapes/055-place-anchors.md
+      - "56. Build them all": part3-shapes/056-build-them-all.md
+      - "57. The what-went-wrong list": part3-shapes/057-what-went-wrong-list.md
+      - "58. Are these two the same?": part3-shapes/058-compare-two-glyphs.md
+      - "59. Clean up": part3-shapes/059-clean-up.md
+      - "60. The Latin extension, delivered": part3-shapes/060-the-latin-extension.md
+  - "Part 4: Space":
+      - part4-space/index.md
+      - "61. The space around a letter": part4-space/061-the-space-around.md
+      - "62. Set a sidebearing": part4-space/062-set-a-sidebearing.md
+      - "63. Copy the spacing": part4-space/063-copy-the-spacing.md
+      - "64. Letters that space alike": part4-space/064-spacing-groups.md
+      - "65. Let FontLab do the sum": part4-space/065-metrics-expressions.md
+      - "66. Figures that line up": part4-space/066-tabular-figures.md
+      - "67. Find the odd one out": part4-space/067-find-the-odd-one.md
+      - "68. Open it up a little": part4-space/068-widen-the-lot.md
+      - "69. What kerning is": part4-space/069-what-kerning-is.md
+      - "70. Look up a pair": part4-space/070-look-up-a-pair.md
+      - "71. Kerning classes": part4-space/071-kerning-classes.md
+      - "72. Make a class": part4-space/072-make-a-class.md
+      - "73. Set a pair": part4-space/073-set-a-pair.md
+      - "74. The biggest pairs": part4-space/074-the-biggest-pairs.md
+      - "75. Pairs too small to matter": part4-space/075-tiny-pairs.md
+      - "76. Pairs for glyphs that are gone": part4-space/076-pairs-with-no-glyph.md
+      - "77. A kerning proof": part4-space/077-a-kerning-proof.md
+      - "78. Kerning in a spreadsheet": part4-space/078-kerning-to-a-spreadsheet.md
+      - "79. Scale the kerning": part4-space/079-scale-the-kerning.md
+      - "80. The proof comes back clean": part4-space/080-the-proof-comes-back-clean.md
+  - "Part 5: Words":
+      - part5-words/index.md
+      - "81. Good names": part5-words/081-good-names.md
+      - "82. Names from Unicode": part5-words/082-names-from-unicode.md
+      - "83. Unicode from names": part5-words/083-unicode-from-names.md
+      - "84. One glyph, two characters": part5-words/084-one-glyph-two-characters.md
+      - "85. Which languages can it write?": part5-words/085-which-languages.md
+      - "86. Put the font in order": part5-words/086-sort-the-font.md
+      - "87. What features do": part5-words/087-what-features-do.md
+      - "88. Write a feature": part5-words/088-write-a-feature.md
+      - "89. Features from suffixes": part5-words/089-features-from-suffixes.md
+      - "90. Ligatures": part5-words/090-ligatures.md
+      - "91. Classes for features": part5-words/091-classes-in-features.md
+      - "92. Fractions and figures": part5-words/092-fractions-and-figures.md
+      - "93. Does it compile?": part5-words/093-does-it-compile.md
+      - "94. Test words": part5-words/094-test-words.md
+      - "95. The font has a name": part5-words/095-the-font-has-a-name.md
+      - "96. The numbers in Font Info": part5-words/096-numbers-in-font-info.md
+      - "97. Version and date": part5-words/097-version-and-date.md
+      - "98. Copyright and license": part5-words/098-copyright-and-license.md
+      - "99. The same info in every font": part5-words/099-same-info-everywhere.md
+      - "100. It sets real text": part5-words/100-it-sets-real-text.md
+  - "Part 6: Families":
+      - part6-families/index.md
+      - "101. More than one drawing": part6-families/101-more-than-one-drawing.md
+      - "102. The same skeleton": part6-families/102-the-same-skeleton.md
+      - "103. Where the contour starts": part6-families/103-fix-the-start-point.md
+      - "104. Widths across masters": part6-families/104-widths-across-masters.md
+      - "105. Copy between masters": part6-families/105-copy-between-masters.md
+      - "106. Halfway between": part6-families/106-halfway-between.md
+      - "107. Axes and instances": part6-families/107-axes-and-instances.md
+      - "108. Make the instances": part6-families/108-make-the-instances.md
+      - "109. Kerning in every master": part6-families/109-kerning-in-every-master.md
+      - "110. A new master from two": part6-families/110-a-new-master-from-two.md
+      - "111. Export one font": part6-families/111-export-one.md
+      - "112. Export them all": part6-families/112-export-all.md
+      - "113. Open a folder of fonts": part6-families/113-open-a-folder-of-fonts.md
+      - "114. Check before you ship": part6-families/114-check-before-you-ship.md
+      - "115. A proof sheet": part6-families/115-a-proof-sheet.md
+      - "116. Waterfalls and words": part6-families/116-waterfalls-and-words.md
+      - "117. What changed since last week?": part6-families/117-what-changed.md
+      - "118. A second opinion from fontTools": part6-families/118-fonttools-says-hello.md
+      - "119. The Friday build": part6-families/119-the-nightly-build.md
+      - "120. The family ships": part6-families/120-the-family-ships.md
+  - "Part 7: Tools":
+      - part7-tools/index.md
+      - "121. A window of your own": part7-tools/121-a-window-of-your-own.md
+      - "122. Buttons do things": part7-tools/122-buttons-do-things.md
+      - "123. Ask for a number": part7-tools/123-ask-for-a-number.md
+      - "124. Lay it out": part7-tools/124-lay-it-out.md
+      - "125. Lists and choices": part7-tools/125-lists-and-choices.md
+      - "126. Classes, at last": part7-tools/126-classes-at-last.md
+      - "127. A panel that stays open": part7-tools/127-a-panel-that-stays.md
+      - "128. Keep up with the font": part7-tools/128-keep-up-with-the-font.md
+      - "129. Remember my settings": part7-tools/129-remember-my-settings.md
+      - "130. Progress and patience": part7-tools/130-progress-and-patience.md
+      - "131. A tool people can trust": part7-tools/131-a-tool-with-undo.md
+      - "132. Into the menu": part7-tools/132-into-the-menu.md
+      - "133. Pack it up": part7-tools/133-pack-it-up.md
+      - "134. Drawing on the canvas": part7-tools/134-drawing-on-the-canvas.md
+      - "135. Scripts from other apps": part7-tools/135-scripts-from-other-apps.md
+      - "136. One script, several editors": part7-tools/136-fontparts-in-fontlab.md
+      - "137. Drive FontLab from outside": part7-tools/137-drive-it-from-outside.md
+      - "138. Pictures of your work": part7-tools/138-pictures-of-your-work.md
+      - "139. Test your tools": part7-tools/139-test-your-tools.md
+      - "140. Oskar comes back": part7-tools/140-oskar-comes-back.md

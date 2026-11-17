@@ -1,0 +1,4 @@
+# this_file: MANIFEST.in
+exclude README.md
+prune tests
+include tests_build/test_cli.py

@@ -1,0 +1,15 @@
+/* this_file: src_docs/md/assets/book.css */
+/* Keep prose links identifiable without relying on the shared theme colour. */
+.md-typeset a:not(.headerlink):not(.md-button) {
+  color: #a32218;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+.md-typeset a:not(.headerlink):not(.md-button):hover {
+  color: #75180f;
+}
+/* The shared theme's grey active item fails white-text contrast on desktop. */
+body[data-md-color-primary="black"] .md-nav--primary .md-nav__item .md-nav__link--active {
+  background-color: #75180f !important;
+  color: #fff !important;
+}
