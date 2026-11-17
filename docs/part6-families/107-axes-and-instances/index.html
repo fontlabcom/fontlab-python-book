@@ -5338,7 +5338,6 @@
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>Plum-practice</code> open in FontLab 9, with Fly installed.</li>
-<li><code>halfmoon.py</code> with <code>tell</code>.</li>
 <li>Yesterday's <code>share</code>, which turned a weight into a part of the way between two masters.</li>
 </ul>
 <p>I couldn't run the code in FontLab 9. I ran it against a stand-in built from Plum's source file, and the output below comes from there.</p>
@@ -5455,8 +5454,17 @@ Black         900  above Bold, no drawing to lean on
 <span class="c1"># Reads the weight axis, the masters on it and the font's instances,</span>
 <span class="c1"># and says where each wanted weight falls. Changes nothing.</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span>
+
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Halfmoon"</span>
+
+
+<span class="c1"># Chapter 39's tell, written out again so this script runs by itself.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+
 
 <span class="n">WANTED</span> <span class="o">=</span> <span class="p">[</span>
     <span class="p">(</span><span class="s2">"Thin"</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span>
@@ -5512,7 +5520,7 @@ Black         900  above Bold, no drawing to lean on
 
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="k">if</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">package</span> <span class="o">=</span> <span class="n">scripting</span><span class="o">.</span><span class="n">current_package</span><span class="p">()</span>
     <span class="n">axes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">package</span><span class="o">.</span><span class="n">axes</span><span class="p">)</span>

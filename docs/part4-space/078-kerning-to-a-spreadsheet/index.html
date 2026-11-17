@@ -5290,7 +5290,7 @@
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>Plum-practice</code> open in FontLab 9, with Fly installed.</li>
-<li><code>halfmoon.py</code> with <code>ask</code> and <code>tell</code>.</li>
+<li>The helpers <code>ask</code> and <code>tell</code> from chapter 39. The scripts below write them out again, so each one runs by itself.</li>
 <li>The <code>reports</code> folder next to your font, from chapter 26.</li>
 <li>A spreadsheet program, or a text editor and some patience.</li>
 <li>The kerning as chapter 75 left it: 101, 104 and 102 pairs.</li>
@@ -5449,16 +5449,31 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.kerning.batch</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">kerning_batch</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.kerning.edit.model</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">kerning_edit</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span>
+
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Halfmoon"</span>
 
 <span class="n">MASTERS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Light"</span><span class="p">,</span> <span class="s2">"Regular"</span><span class="p">,</span> <span class="s2">"Bold"</span><span class="p">]</span>
 <span class="n">MODE</span> <span class="o">=</span> <span class="s2">"out"</span>
 <span class="n">OUT_NAME</span> <span class="o">=</span> <span class="s2">"plum-kerning.csv"</span>
 <span class="n">IN_NAME</span> <span class="o">=</span> <span class="s2">"plum-kerning-tobias.csv"</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">ask</span><span class="p">(</span><span class="n">question</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">answer</span> <span class="o">=</span> <span class="n">run_standard_message_box</span><span class="p">(</span>
+        <span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">question</span><span class="p">,</span> <span class="s2">"Question"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Yes</span> <span class="o">|</span> <span class="n">box</span><span class="o">.</span><span class="n">No</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">answer</span> <span class="o">==</span> <span class="n">box</span><span class="o">.</span><span class="n">Yes</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">cell</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
@@ -5504,7 +5519,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">font</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">package</span> <span class="o">=</span> <span class="n">scripting</span><span class="o">.</span><span class="n">current_package</span><span class="p">()</span>
     <span class="n">tables</span> <span class="o">=</span> <span class="p">{</span><span class="n">master</span><span class="p">:</span> <span class="n">scripting</span><span class="o">.</span><span class="n">kerning_pairs</span><span class="p">(</span><span class="n">package</span><span class="p">,</span> <span class="n">master</span><span class="p">)</span> <span class="k">for</span> <span class="n">master</span> <span class="ow">in</span> <span class="n">MASTERS</span><span class="p">}</span>
@@ -5523,7 +5538,7 @@
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"row </span><span class="si">{</span><span class="n">number</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">master</span><span class="si">}</span><span class="s2">: can't read </span><span class="si">{</span><span class="n">text</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">problems</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">changes</span><span class="p">:</span>
         <span class="k">return</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">ask</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Write </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">changes</span><span class="p">)</span><span class="si">}</span><span class="s2"> kerning values?"</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ask</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Write </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">changes</span><span class="p">)</span><span class="si">}</span><span class="s2"> kerning values?"</span><span class="p">):</span>
         <span class="k">return</span>
 
     <span class="n">edits</span> <span class="o">=</span> <span class="p">{}</span>

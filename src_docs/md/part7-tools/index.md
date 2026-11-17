@@ -27,4 +27,4 @@ Oskar's sheet has no lines left. The work in this part comes from the people who
 
 Two chapters break the rule that every sample imports through `fly`, and each says why: chapter 137's script runs outside FontLab, and chapter 138 calls a tool Fly has no name for.
 
-You need the toolbox from Part 2 (`halfmoon.py`), the practice copy of Plum as Part 6 left it, and Fly installed in FontLab 9. I ran nothing in this part in FontLab 9. Windows, panels, menus and the canvas are the things I could check least, and each chapter says what was computed outside FontLab and what you'll be the first to see. Chapter 139 is the exception: all of its output is real.
+You need the practice copy of Plum as Part 6 left it, and Fly installed in FontLab 9. I ran nothing in this part in FontLab 9. Windows, panels, menus and the canvas are the things I could check least, and each chapter says what was computed outside FontLab and what you'll be the first to see. Chapter 139 is the exception: all of its output is real.

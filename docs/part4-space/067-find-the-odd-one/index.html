@@ -5312,17 +5312,17 @@
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>Plum-practice</code> open in FontLab 9, with Fly installed.</li>
-<li><code>halfmoon.py</code> with <code>rich</code> and <code>tell</code>.</li>
+<li>The helper <code>tell</code> from chapter 39. The scripts below write it out again, so each one runs by itself.</li>
 </ul>
 <p>Today's script reads and prints. It changes nothing. I couldn't run it in FontLab 9; the numbers come from Plum's source file, with the changes of chapters 62 and 63 worked in. If you did the exercises of those chapters, a few of your lines will differ, and I'll say where.</p>
 <h2 id="step-1-a-group-and-its-numbers">Step 1: A group and its numbers<a class="headerlink" href="#step-1-a-group-and-its-numbers" title="Permanent link">&para;</a></h2>
 <p>Start with six capitals whose right side is a straight stem. Read their right sidebearings in the Bold:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
 
 <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
 <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"H"</span><span class="p">,</span> <span class="s2">"I"</span><span class="p">,</span> <span class="s2">"J"</span><span class="p">,</span> <span class="s2">"M"</span><span class="p">,</span> <span class="s2">"N"</span><span class="p">,</span> <span class="s2">"U"</span><span class="p">]</span>
-<span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">])</span><span class="o">.</span><span class="n">getRSB</span><span class="p">(</span><span class="s2">"Bold"</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">]</span>
+<span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">])</span><span class="o">.</span><span class="n">getRSB</span><span class="p">(</span><span class="s2">"Bold"</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">]</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>[40, 40, -24, 52, 42, 36]
@@ -5422,8 +5422,11 @@ cap stems right ['H', 'I', 'J', 'M', 'N', 'U']
 <h2 id="the-whole-script">The whole script<a class="headerlink" href="#the-whole-script" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><span class="c1">#FLM: Sidebearing Outliers</span>
 <span class="c1"># Reports letters whose sidebearing is far from the middle value of their group.</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
+
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Halfmoon"</span>
 
 <span class="n">MASTERS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Light"</span><span class="p">,</span> <span class="s2">"Regular"</span><span class="p">,</span> <span class="s2">"Bold"</span><span class="p">]</span>
 <span class="n">TOLERANCE</span> <span class="o">=</span> <span class="mi">8</span>
@@ -5440,13 +5443,18 @@ cap stems right ['H', 'I', 'J', 'M', 'N', 'U']
 <span class="p">]</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+
+
 <span class="k">def</span><span class="w"> </span><span class="nf">middle</span><span class="p">(</span><span class="n">values</span><span class="p">):</span>
     <span class="n">ordered</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">ordered</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">ordered</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">]</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">side_value</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">side</span><span class="p">,</span> <span class="n">master</span><span class="p">):</span>
-    <span class="n">rich</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+    <span class="n">rich</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
     <span class="k">return</span> <span class="n">rich</span><span class="o">.</span><span class="n">getLSB</span><span class="p">(</span><span class="n">master</span><span class="p">)</span> <span class="k">if</span> <span class="n">side</span> <span class="o">==</span> <span class="s2">"left"</span> <span class="k">else</span> <span class="n">rich</span><span class="o">.</span><span class="n">getRSB</span><span class="p">(</span><span class="n">master</span><span class="p">)</span>
 
 
@@ -5463,7 +5471,7 @@ cap stems right ['H', 'I', 'J', 'M', 'N', 'U']
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">font</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">for</span> <span class="n">master</span> <span class="ow">in</span> <span class="n">MASTERS</span><span class="p">:</span>

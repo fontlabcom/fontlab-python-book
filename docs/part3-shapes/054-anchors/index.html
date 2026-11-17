@@ -5292,7 +5292,6 @@
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>Plum-practice</code> open in FontLab 9, with Fly installed.</li>
-<li><code>halfmoon.py</code> with <code>rich</code>.</li>
 <li>The <code>nacute</code> from chapter 53. If you skipped it, the last script still runs. It finds one glyph less to complain about.</li>
 <li>Nothing in the font changes today.</li>
 </ul>
@@ -5300,12 +5299,11 @@
 <h2 id="step-1-ask-a-layer-for-its-anchors">Step 1: Ask a layer for its anchors<a class="headerlink" href="#step-1-ask-a-layer-for-its-anchors" title="Permanent link">&para;</a></h2>
 <p>An anchor is a named point in a layer. It has no outline and doesn't print. Fly reads all the anchors of a layer in one call:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.anchors.writer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">anchors</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly.pens</span><span class="w"> </span><span class="kn">import</span> <span class="n">layer_of</span>
 
 <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
-<span class="n">layer</span> <span class="o">=</span> <span class="n">layer_of</span><span class="p">(</span><span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"n"</span><span class="p">])</span><span class="o">.</span><span class="n">fl</span><span class="p">,</span> <span class="s2">"Regular"</span><span class="p">)</span>
+<span class="n">layer</span> <span class="o">=</span> <span class="n">layer_of</span><span class="p">(</span><span class="n">fl</span><span class="o">.</span><span class="n">flGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">[</span><span class="s2">"n"</span><span class="p">],</span> <span class="n">font</span><span class="p">),</span> <span class="s2">"Regular"</span><span class="p">)</span>
 <span class="n">points</span> <span class="o">=</span> <span class="n">anchors</span><span class="o">.</span><span class="n">anchor_points</span><span class="p">(</span><span class="n">layer</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">points</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">points</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
@@ -5326,7 +5324,7 @@ topLeft (100.0, 200.0)
 <p>Read the four anchors as notes the designer left on the letter. <code>top</code> says: an accent that sits centered above goes here, at 262 across, on the x-height. <code>bottom</code> says the same for an accent below, on the baseline. <code>acute</code> is 20 units to the left of <code>top</code>, and it's there for the accent that leans. <code>topLeft</code> you can ignore. It sits at a spot inside the letter where nobody would put anything, and I'd guess it was left over from an experiment.</p>
 <h2 id="step-2-the-other-half-is-on-the-accent">Step 2: The other half is on the accent<a class="headerlink" href="#step-2-the-other-half-is-on-the-accent" title="Permanent link">&para;</a></h2>
 <p>An anchor on a letter says where an accent should go. It doesn't say which part of the accent should land there. The accent has to answer that itself:</p>
-<div class="highlight"><pre><span></span><code><span class="n">layer</span> <span class="o">=</span> <span class="n">layer_of</span><span class="p">(</span><span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"acute"</span><span class="p">])</span><span class="o">.</span><span class="n">fl</span><span class="p">,</span> <span class="s2">"Regular"</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="n">layer</span> <span class="o">=</span> <span class="n">layer_of</span><span class="p">(</span><span class="n">fl</span><span class="o">.</span><span class="n">flGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">[</span><span class="s2">"acute"</span><span class="p">],</span> <span class="n">font</span><span class="p">),</span> <span class="s2">"Regular"</span><span class="p">)</span>
 <span class="n">marks</span> <span class="o">=</span> <span class="n">anchors</span><span class="o">.</span><span class="n">anchor_points</span><span class="p">(</span><span class="n">layer</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">marks</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">marks</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
@@ -5368,7 +5366,7 @@ KeyError: '_top'
 <h2 id="step-3-test-it-on-a-case-you-know">Step 3: Test it on a case you know<a class="headerlink" href="#step-3-test-it-on-a-case-you-know" title="Permanent link">&para;</a></h2>
 <p>Yesterday's lesson was to try a sum on a solved case before trusting it. The <code>oacute</code> is solved: its acute is shifted by 50 in the Regular. So ask the anchors of <code>o</code>:</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">points_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">master</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">anchors</span><span class="o">.</span><span class="n">anchor_points</span><span class="p">(</span><span class="n">layer_of</span><span class="p">(</span><span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">])</span><span class="o">.</span><span class="n">fl</span><span class="p">,</span> <span class="n">master</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">anchors</span><span class="o">.</span><span class="n">anchor_points</span><span class="p">(</span><span class="n">layer_of</span><span class="p">(</span><span class="n">fl</span><span class="o">.</span><span class="n">flGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="n">font</span><span class="p">),</span> <span class="n">master</span><span class="p">))</span>
 
 
 <span class="nb">print</span><span class="p">(</span><span class="n">shift_from_anchors</span><span class="p">(</span><span class="n">points_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="s2">"o"</span><span class="p">,</span> <span class="s2">"Regular"</span><span class="p">),</span> <span class="n">marks</span><span class="p">,</span> <span class="s2">"acute"</span><span class="p">))</span>
@@ -5419,7 +5417,6 @@ Bold (62.0, 0.0)
 <span class="c1"># Reads only.</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.anchors.writer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">anchors</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.components.writer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">parts</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly.pens</span><span class="w"> </span><span class="kn">import</span> <span class="n">layer_of</span>
 
@@ -5441,7 +5438,7 @@ Bold (62.0, 0.0)
     <span class="n">layers</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">points</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">glyph</span> <span class="ow">in</span> <span class="n">font</span><span class="o">.</span><span class="n">glyphs</span><span class="p">:</span>
-        <span class="n">layers</span><span class="p">[</span><span class="n">glyph</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">layer_of</span><span class="p">(</span><span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span><span class="o">.</span><span class="n">fl</span><span class="p">,</span> <span class="n">MASTER</span><span class="p">)</span>
+        <span class="n">layers</span><span class="p">[</span><span class="n">glyph</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">layer_of</span><span class="p">(</span><span class="n">fl</span><span class="o">.</span><span class="n">flGlyph</span><span class="p">(</span><span class="n">glyph</span><span class="p">,</span> <span class="n">font</span><span class="p">),</span> <span class="n">MASTER</span><span class="p">)</span>
         <span class="n">points</span><span class="p">[</span><span class="n">glyph</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">anchors</span><span class="o">.</span><span class="n">anchor_points</span><span class="p">(</span><span class="n">layers</span><span class="p">[</span><span class="n">glyph</span><span class="o">.</span><span class="n">name</span><span class="p">])</span>
 
     <span class="n">tally</span> <span class="o">=</span> <span class="p">{}</span>

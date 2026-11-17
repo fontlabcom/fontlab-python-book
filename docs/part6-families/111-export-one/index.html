@@ -5313,7 +5313,6 @@
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>Plum-practice</code> open in FontLab 9 and saved, with Fly installed.</li>
-<li><code>halfmoon.py</code> with <code>tell</code>.</li>
 <li>Chapter 26's <code>Path</code>, and chapter 97's version number.</li>
 </ul>
 <p>I couldn't run the code in FontLab 9. The script's file handling is plain Python, and I ran it on a folder of stand-in files. The steps in FontLab's export window come from the FontLab User Guide, and I haven't clicked them in version 9.</p>
@@ -5372,8 +5371,17 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span>
+
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Halfmoon"</span>
+
+
+<span class="c1"># Chapter 39's tell, written out again so this script runs by itself.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+
 
 <span class="n">WANTED</span> <span class="o">=</span> <span class="p">[</span><span class="s2">".otf"</span><span class="p">]</span>
 
@@ -5405,10 +5413,10 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">font</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">font</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"Save the font first, so the export has a home."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"Save the font first, so the export has a home."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">package</span> <span class="o">=</span> <span class="n">scripting</span><span class="o">.</span><span class="n">current_package</span><span class="p">()</span>
     <span class="n">folder</span> <span class="o">=</span> <span class="n">export_folder</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">package</span><span class="p">)</span>

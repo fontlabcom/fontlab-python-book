@@ -10,7 +10,7 @@ She's right. A tool you have to hunt for is a tool you'll stop using. Today the 
 
 ## What you need
 
-FontLab 9 with Fly installed, `halfmoon.py` with `keep` from chapter 127, and `shift_tool.py` from chapter 131. No font has to be open to follow the steps.
+FontLab 9 with Fly installed, and `shift_tool.py` from chapter 131. No font has to be open to follow the steps.
 
 I haven't run this chapter in FontLab 9. I ran the three files in plain Python against stand-ins for the windows and for FontLab's menu bar. What the real menu shows, and whether the key works on your keyboard, are things I haven't seen.
 
@@ -20,7 +20,7 @@ You've used two folders since chapter 33, and it's time to say plainly what each
 
 The **Scripts folder** is FontLab's. Chapter 18 put your first file there. Every `.py` file in it becomes a line in the **Scripts** menu, a folder inside it becomes a submenu, and the `#FLM:` line at the top of a file is the name the menu shows. FontLab reads the folder when it starts and when you choose **Scripts > Refresh Scripts**.
 
-The **module folder** is Python's. It's the `site-packages` folder you found in chapter 33, where `halfmoon.py` lives. Python looks there when a script says `import`. FontLab's menu never looks there.
+The **module folder** is Python's. It's the `site-packages` folder you found in chapter 33. Python looks there when a script says `import`. FontLab's menu never looks there.
 
 So a file in the Scripts folder can be started and can't be borrowed from. A file in the module folder can be borrowed from and can't be started from the menu. Chapter 114 moved `preflight.py` from one to the other for that reason, and it left the menu when it went.
 
@@ -28,7 +28,7 @@ The Shift tool has to be both. Ines wants to start it from the menu, and in step
 
 ## Step 2: The tool becomes a module
 
-Move `shift_tool.py` out of the Scripts folder and into the module folder, beside `halfmoon.py`. Then change its last line. It was this:
+Move `shift_tool.py` out of the Scripts folder and into the module folder. Then change its last line. It was this:
 
 ```python
 scripting.show_script_dialog(build, KEY)
@@ -114,7 +114,7 @@ menus.action(token).setShortcut(qt.QtGui.QKeySequence("Ctrl+Alt+Shift+S"))
 
 The key is written as text, with the modifier keys spelled out and joined by `+`. On a Mac, Qt reads `Ctrl` as the Command key. Three modifiers is a mouthful, and that's deliberate: FontLab already uses most of the short combinations, and a script that takes one of them over has made an enemy.
 
-One thing remains. `menus` is an object, and chapter 126 showed what happens to an object nobody holds: Python throws it away, and its menu lines go dead. `halfmoon.keep` from chapter 127 holds it. And `keep` closes whatever it held before under the same key, which here means that running the script twice gives you one Halfmoon menu, with the old one taken out first.
+One thing remains. `menus` is an object, and chapter 126 showed what happens to an object nobody holds: Python throws it away, and its menu lines go dead. `keep` from chapter 127 holds it, and it is in the script again, word for word, so that the script runs by itself. And `keep` closes whatever it held before under the same key, which here means that running the script twice gives you one Halfmoon menu, with the old one taken out first.
 
 ## The whole script
 
@@ -122,14 +122,22 @@ One thing remains. `menus` is an object, and chapter 126 showed what happens to 
 #FLM: Halfmoon Menu
 # Adds a Halfmoon menu to FontLab's menu bar, with a shortcut
 # for the Shift tool. The menu lasts until FontLab closes.
-import halfmoon
+import sys
+
 import shift_tool
 from fly import fl, qt
 from fly.ap.qt.menus import OwnedMenus
 
-KEY = "halfmoon.menu"
+KEY = "tools.menu"
 MENU = "Halfmoon"
 SHORTCUT = "Ctrl+Alt+Shift+S"
+
+
+def keep(key, things):
+    kept = vars(sys).setdefault("kept_windows", {})
+    if key in kept:
+        kept[key][0].close()
+    kept[key] = things
 
 
 def report(error, owner):
@@ -138,7 +146,7 @@ def report(error, owner):
 
 def main():
     menus = OwnedMenus(qt, fl, error_sink=report, owned_title=MENU)
-    halfmoon.keep(KEY, [menus])
+    keep(KEY, [menus])
     token = menus.add_action(MENU, "Shift Sidebearings", shift_tool.open_tool)
     menus.action(token).setShortcut(qt.QtGui.QKeySequence(SHORTCUT))
     print(f"{MENU} menu added. {SHORTCUT} opens the Shift tool.")

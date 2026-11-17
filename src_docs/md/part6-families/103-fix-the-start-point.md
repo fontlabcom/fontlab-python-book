@@ -15,7 +15,6 @@ A contour is a ring, and a ring has no beginning. A list has one. So FontLab pic
 ## What you need
 
 - `Plum-practice` open in FontLab 9 with the Regular showing, and Fly installed.
-- `halfmoon.py`.
 
 I couldn't run the code in FontLab 9. I computed the outputs in plain Python from the outlines in Plum's source file, for the 205 glyphs Plum came with, and I moved the start points in a stand-in, not in FontLab.
 
@@ -124,13 +123,22 @@ If the Bold's lowest node is also number 12, the two rings start at the same cor
 #FLM: Start Points
 # Finds contours that start at a different node than in the master
 # you're looking at, and moves the start to match.
-import halfmoon
-from fly import fl
+from fly import fl, qt
 import fly.ap.contours.writer as outline
 import fly.ap.core.history.glyphs as history
 import fly.ap.core.scripting as scripting
 import fly.ap.fontui.outline_order as order
 import fly.ap.masters.inspect.model as masters_model
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
+
+
+# Chapter 39's tell, written out again so this script runs by itself.
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
 
 DRY_RUN = True
 SKIP = ["Oslash"]
@@ -161,7 +169,7 @@ def plan(glyph, trusted, master):
 def main():
     package = scripting.current_package()
     if package is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     trusted = package.master
     others = [m for m in masters_model.master_order(package) if m != trusted]

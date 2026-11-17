@@ -5313,7 +5313,6 @@
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>Plum-practice</code> open in FontLab 9, with Fly installed.</li>
-<li><code>halfmoon.py</code> with <code>tell</code>.</li>
 <li>Chapter 73's way of writing pairs, and chapter 76's sets.</li>
 </ul>
 <p>I couldn't run the code in FontLab 9. I ran the script on the kerning this book has built up since chapter 69, with Fly's own planning function doing the planning, and the output below comes from there.</p>
@@ -5392,8 +5391,17 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.kerning.edit.model</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">kerning_edit</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.masters.inspect.model</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">masters_model</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span>
+
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Halfmoon"</span>
+
+
+<span class="c1"># Chapter 39's tell, written out again so this script runs by itself.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+
 
 <span class="n">TRUSTED</span> <span class="o">=</span> <span class="s2">"Regular"</span>
 <span class="n">PERCENT</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"Light"</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s2">"Bold"</span><span class="p">:</span> <span class="mi">85</span><span class="p">}</span>
@@ -5423,7 +5431,7 @@
 
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="k">if</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">package</span> <span class="o">=</span> <span class="n">scripting</span><span class="o">.</span><span class="n">current_package</span><span class="p">()</span>
     <span class="n">masters</span> <span class="o">=</span> <span class="n">masters_model</span><span class="o">.</span><span class="n">master_order</span><span class="p">(</span><span class="n">package</span><span class="p">)</span>

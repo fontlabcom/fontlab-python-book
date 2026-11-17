@@ -13,7 +13,7 @@ A glyph name is a string. This chapter is about asking a string what it is made 
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py` with `tell`.
+- The `tell` function from [chapter 39](../part2-a-toolbox/039-ask-the-user.md). The script below defines it again, so it runs by itself.
 
 I couldn't run the code in FontLab 9. The outputs below were computed in plain Python. I haven't seen which names FontLab itself refuses when you type them into the Font window, or what an export says about a bad one, so this chapter claims nothing about either.
 
@@ -171,8 +171,16 @@ uni00c1 False
 #FLM: Name Check
 # Checks every glyph name in the font, and any names pasted into EXTRA,
 # against the naming rules. Changes nothing.
-import halfmoon
-from fly import fl
+from fly import fl, qt
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
+
+
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
 
 EXTRA = [
     "uni0041.alt2 copy", "3quarters", "e..sc", "ñ",
@@ -231,7 +239,7 @@ def report(label, names):
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     report("font", [glyph.name for glyph in font.glyphs])
     if EXTRA:

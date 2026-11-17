@@ -5314,17 +5314,22 @@
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>Plum-practice</code> open in FontLab 9, with Fly installed.</li>
-<li><code>halfmoon.py</code> with <code>contours_of</code> from chapter 44.</li>
+<li><code>contours_of</code> from chapter 44. The scripts below write it out again.</li>
 </ul>
 <p>The script reads the font. One step at the end marks glyphs, and it asks first. The outputs below were computed from Plum's source file, not copied from FontLab's Output panel.</p>
 <h2 id="step-1-every-node-and-the-one-before-it">Step 1: Every node and the one before it<a class="headerlink" href="#step-1-every-node-and-the-one-before-it" title="Permanent link">&para;</a></h2>
 <p>Chapter 42 walked along a contour node by node. A fault of the kind we're after isn't in a node. It's between two nodes, so the loop needs two at a time: each node and the one before it.</p>
 <p>A <code>for node in nodes</code> loop gives you one. To reach the neighbor, loop over positions instead. <code>range(len(nodes))</code> counts 0, 1, 2 and so on up to the last position:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">contours_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">master</span><span class="o">=</span><span class="s2">"Regular"</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span><span class="o">.</span><span class="n">contours</span><span class="p">(</span><span class="n">master</span><span class="p">)</span>
+
 
 <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
-<span class="n">contour</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">contours_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"Q"</span><span class="p">],</span> <span class="s2">"Regular"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">contour</span> <span class="o">=</span> <span class="n">contours_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"Q"</span><span class="p">],</span> <span class="s2">"Regular"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">nodes</span> <span class="o">=</span> <span class="n">contour</span><span class="o">.</span><span class="n">nodes</span><span class="p">()</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nodes</span><span class="p">)):</span>
     <span class="n">before</span> <span class="o">=</span> <span class="n">nodes</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
@@ -5379,11 +5384,11 @@ short segment 440.0 6.0
 <p>Plum has no open contours, unless the one you planted in chapter 44 is still there, so this line does nothing today. It's there for the font that has some. A check that's right only for the font on your desk will be wrong for the next one.</p>
 <h2 id="step-4-a-check-that-cries-wolf">Step 4: A check that cries wolf<a class="headerlink" href="#step-4-a-check-that-cries-wolf" title="Permanent link">&para;</a></h2>
 <p>I had a fourth check in mind. In chapter 49, the third dot of the Bold ellipsis sat outside the glyph's width. So why not list every glyph whose outline reaches left of 0 or right of its advance width?</p>
-<div class="highlight"><pre><span></span><code><span class="n">box</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">master</span><span class="p">)</span>
-<span class="k">if</span> <span class="n">box</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="n">box</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">box</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">width</span><span class="p">):</span>
+<div class="highlight"><pre><span></span><code><span class="n">edges</span> <span class="o">=</span> <span class="n">box</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">master</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">edges</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="n">edges</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">edges</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">width</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">glyph</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 </code></pre></div>
-<p>The parentheses matter. Without them, Python would read <code>box is not None and box[0] &lt; 0</code> as one group and <code>box[2] &gt; width</code> as another, because <code>and</code> binds tighter than <code>or</code>, and a glyph with no box would crash on <code>box[2]</code>.</p>
+<p>The parentheses matter. Without them, Python would read <code>edges is not None and edges[0] &lt; 0</code> as one group and <code>edges[2] &gt; width</code> as another, because <code>and</code> binds tighter than <code>or</code>, and a glyph with no box would crash on <code>edges[2]</code>.</p>
 <p>In the Regular the check names 10 glyphs: <code>J</code>, <code>K</code>, <code>T</code>, <code>Y</code>, <code>f</code>, <code>j</code>, <code>backslash</code>, <code>comma</code>, <code>slash</code> and <code>dieresis</code>. In the Bold it names 44.</p>
 <p>Mira looks at the list for a few seconds. "The <code>f</code> hangs over on purpose. So does the <code>j</code>, and the <code>J</code>. The <code>T</code> and the <code>Y</code> have their arms out by design. That's how letters fit together."</p>
 <p>The numbers also tell a story of their own: 6 in the Light, 10 in the Regular, 44 in the Bold. The heavier the letter, the less room it has inside its width, and the more of it leans out. That's a property of bold type.</p>
@@ -5400,13 +5405,32 @@ short segment 440.0 6.0
 <span class="c1"># Looks for stacked nodes, short segments and glyphs that mix their</span>
 <span class="c1"># own outlines with components. Prints a list. Marks the glyphs if asked.</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.components.writer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">parts</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly.pens</span><span class="w"> </span><span class="kn">import</span> <span class="n">layer_of</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
 
 <span class="n">MASTERS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Light"</span><span class="p">,</span> <span class="s2">"Regular"</span><span class="p">,</span> <span class="s2">"Bold"</span><span class="p">]</span>
 <span class="n">SHORT</span> <span class="o">=</span> <span class="mi">3</span>
 <span class="n">VIOLET</span> <span class="o">=</span> <span class="mi">270</span>
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Halfmoon"</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">ask</span><span class="p">(</span><span class="n">question</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">answer</span> <span class="o">=</span> <span class="n">run_standard_message_box</span><span class="p">(</span>
+        <span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">question</span><span class="p">,</span> <span class="s2">"Question"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Yes</span> <span class="o">|</span> <span class="n">box</span><span class="o">.</span><span class="n">No</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">answer</span> <span class="o">==</span> <span class="n">box</span><span class="o">.</span><span class="n">Yes</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">contours_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">master</span><span class="o">=</span><span class="s2">"Regular"</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span><span class="o">.</span><span class="n">contours</span><span class="p">(</span><span class="n">master</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">reach</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
@@ -5431,8 +5455,8 @@ short segment 440.0 6.0
 
 <span class="k">def</span><span class="w"> </span><span class="nf">glyph_faults</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">master</span><span class="p">):</span>
     <span class="n">found</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">contours</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">contours_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">master</span><span class="p">)</span>
-    <span class="n">layer</span> <span class="o">=</span> <span class="n">layer_of</span><span class="p">(</span><span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span><span class="o">.</span><span class="n">fl</span><span class="p">,</span> <span class="n">master</span><span class="p">)</span>
+    <span class="n">contours</span> <span class="o">=</span> <span class="n">contours_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">master</span><span class="p">)</span>
+    <span class="n">layer</span> <span class="o">=</span> <span class="n">layer_of</span><span class="p">(</span><span class="n">fl</span><span class="o">.</span><span class="n">flGlyph</span><span class="p">(</span><span class="n">glyph</span><span class="p">,</span> <span class="n">font</span><span class="p">),</span> <span class="n">master</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">contours</span> <span class="ow">and</span> <span class="n">parts</span><span class="o">.</span><span class="n">components</span><span class="p">(</span><span class="n">layer</span><span class="p">):</span>
         <span class="n">found</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"own outline and a component"</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">number</span><span class="p">,</span> <span class="n">contour</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">contours</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
@@ -5444,7 +5468,7 @@ short segment 440.0 6.0
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">font</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">findings</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">glyph</span> <span class="ow">in</span> <span class="n">font</span><span class="o">.</span><span class="n">glyphs</span><span class="p">:</span>
@@ -5462,10 +5486,10 @@ short segment 440.0 6.0
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">names</span><span class="p">:</span>
         <span class="k">return</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">ask</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Mark these </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)</span><span class="si">}</span><span class="s2"> glyphs violet?"</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ask</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Mark these </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)</span><span class="si">}</span><span class="s2"> glyphs violet?"</span><span class="p">):</span>
         <span class="k">return</span>
     <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">])</span><span class="o">.</span><span class="n">mark</span> <span class="o">=</span> <span class="n">VIOLET</span>
+        <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">])</span><span class="o">.</span><span class="n">mark</span> <span class="o">=</span> <span class="n">VIOLET</span>
 
 
 <span class="n">main</span><span class="p">()</span>

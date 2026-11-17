@@ -5291,7 +5291,7 @@
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>Plum-practice</code> open in FontLab 9, with Fly installed.</li>
-<li><code>halfmoon.py</code> with <code>rich</code> and <code>box</code>.</li>
+<li><code>box</code> from chapter 43. You'll write it out again here.</li>
 <li>The Font window in front when you run the last two steps. The tool that adds glyphs refuses to work while a Glyph window is the active one.</li>
 </ul>
 <p>The outputs below were computed from Plum's source file, not copied from FontLab's Output panel. The two refusals you'll read are quoted from the tool's own code.</p>
@@ -5323,12 +5323,21 @@ ecaron  False
 </code></pre></div>
 <p>If you can't type an <code>ń</code> on your keyboard, write <code>chr(324)</code> in its place. Chapter 23 showed that the two are the same thing.</p>
 <h2 id="step-2-a-first-guess">Step 2: A first guess<a class="headerlink" href="#step-2-a-first-guess" title="Permanent link">&para;</a></h2>
-<p>Where does the acute go? The plain answer is "in the middle, over the letter". You can work that out. <code>halfmoon.box</code> gives the left and right edge of anything with an outline, and the middle is halfway between them:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
+<p>Where does the acute go? The plain answer is "in the middle, over the letter". You can work that out. <code>box</code> from chapter 43 gives the left and right edge of anything with an outline, and the middle is halfway between them:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">box</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">master</span><span class="o">=</span><span class="s2">"Regular"</span><span class="p">):</span>
+    <span class="n">nodes</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="n">master</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">nodes</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">xs</span> <span class="o">=</span> <span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">x</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">]</span>
+    <span class="n">ys</span> <span class="o">=</span> <span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">y</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">]</span>
+    <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">xs</span><span class="p">),</span> <span class="nb">min</span><span class="p">(</span><span class="n">ys</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">xs</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">ys</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">center</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">master</span><span class="p">):</span>
-    <span class="n">left</span><span class="p">,</span> <span class="n">bottom</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">top</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="n">master</span><span class="p">)</span>
+    <span class="n">left</span><span class="p">,</span> <span class="n">bottom</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">top</span> <span class="o">=</span> <span class="n">box</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="n">master</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">left</span> <span class="o">+</span> <span class="n">right</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
 
 
@@ -5344,7 +5353,7 @@ ecaron  False
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly.pens</span><span class="w"> </span><span class="kn">import</span> <span class="n">layer_of</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">center</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="s2">"o"</span><span class="p">,</span> <span class="s2">"Regular"</span><span class="p">)</span> <span class="o">-</span> <span class="n">center</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="s2">"acute"</span><span class="p">,</span> <span class="s2">"Regular"</span><span class="p">))</span>
-<span class="n">layer</span> <span class="o">=</span> <span class="n">layer_of</span><span class="p">(</span><span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"oacute"</span><span class="p">])</span><span class="o">.</span><span class="n">fl</span><span class="p">,</span> <span class="s2">"Regular"</span><span class="p">)</span>
+<span class="n">layer</span> <span class="o">=</span> <span class="n">layer_of</span><span class="p">(</span><span class="n">fl</span><span class="o">.</span><span class="n">flGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">[</span><span class="s2">"oacute"</span><span class="p">],</span> <span class="n">font</span><span class="p">),</span> <span class="s2">"Regular"</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">parts</span><span class="o">.</span><span class="n">components</span><span class="p">(</span><span class="n">layer</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">parts</span><span class="o">.</span><span class="n">base_of</span><span class="p">(</span><span class="n">part</span><span class="p">),</span> <span class="n">parts</span><span class="o">.</span><span class="n">offset</span><span class="p">(</span><span class="n">part</span><span class="p">))</span>
 </code></pre></div>
@@ -5360,7 +5369,7 @@ acute (50.0, 0.0)
 <p>The <code>n</code> has its middle 3.5 units to the right of the middle of the <code>o</code>: 263.5 against 260. Move the acute by the same 3.5, and it sits over the <code>n</code> as it sits over the <code>o</code>.</p>
 <p>Here's that as two functions. The second has five inputs. That's a lot, and each one is a plain name that says what goes in:</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">mark_shift</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">composite</span><span class="p">,</span> <span class="n">mark</span><span class="p">,</span> <span class="n">master</span><span class="p">):</span>
-    <span class="n">layer</span> <span class="o">=</span> <span class="n">layer_of</span><span class="p">(</span><span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">composite</span><span class="p">])</span><span class="o">.</span><span class="n">fl</span><span class="p">,</span> <span class="n">master</span><span class="p">)</span>
+    <span class="n">layer</span> <span class="o">=</span> <span class="n">layer_of</span><span class="p">(</span><span class="n">fl</span><span class="o">.</span><span class="n">flGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">[</span><span class="n">composite</span><span class="p">],</span> <span class="n">font</span><span class="p">),</span> <span class="n">master</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">parts</span><span class="o">.</span><span class="n">components</span><span class="p">(</span><span class="n">layer</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">parts</span><span class="o">.</span><span class="n">base_of</span><span class="p">(</span><span class="n">part</span><span class="p">)</span> <span class="o">==</span> <span class="n">mark</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">parts</span><span class="o">.</span><span class="n">offset</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
@@ -5437,9 +5446,9 @@ ValueError: Refused: nacute exists now. Check the list again.
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.history.glyphs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">history</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.glyphs.creation</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">creation</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly.pens</span><span class="w"> </span><span class="kn">import</span> <span class="n">layer_of</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
 
 <span class="n">MASTERS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Light"</span><span class="p">,</span> <span class="s2">"Regular"</span><span class="p">,</span> <span class="s2">"Bold"</span><span class="p">]</span>
 <span class="n">BASE</span> <span class="o">=</span> <span class="s2">"n"</span>
@@ -5448,13 +5457,22 @@ ValueError: Refused: nacute exists now. Check the list again.
 <span class="n">CHARACTER</span> <span class="o">=</span> <span class="s2">"ń"</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">box</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">master</span><span class="o">=</span><span class="s2">"Regular"</span><span class="p">):</span>
+    <span class="n">nodes</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="n">master</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">nodes</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">xs</span> <span class="o">=</span> <span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">x</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">]</span>
+    <span class="n">ys</span> <span class="o">=</span> <span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">y</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">]</span>
+    <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">xs</span><span class="p">),</span> <span class="nb">min</span><span class="p">(</span><span class="n">ys</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">xs</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">ys</span><span class="p">)</span>
+
+
 <span class="k">def</span><span class="w"> </span><span class="nf">center</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">master</span><span class="p">):</span>
-    <span class="n">left</span><span class="p">,</span> <span class="n">bottom</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">top</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="n">master</span><span class="p">)</span>
+    <span class="n">left</span><span class="p">,</span> <span class="n">bottom</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">top</span> <span class="o">=</span> <span class="n">box</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="n">master</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">left</span> <span class="o">+</span> <span class="n">right</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">mark_shift</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">composite</span><span class="p">,</span> <span class="n">mark</span><span class="p">,</span> <span class="n">master</span><span class="p">):</span>
-    <span class="n">layer</span> <span class="o">=</span> <span class="n">layer_of</span><span class="p">(</span><span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">composite</span><span class="p">])</span><span class="o">.</span><span class="n">fl</span><span class="p">,</span> <span class="n">master</span><span class="p">)</span>
+    <span class="n">layer</span> <span class="o">=</span> <span class="n">layer_of</span><span class="p">(</span><span class="n">fl</span><span class="o">.</span><span class="n">flGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">[</span><span class="n">composite</span><span class="p">],</span> <span class="n">font</span><span class="p">),</span> <span class="n">master</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">parts</span><span class="o">.</span><span class="n">components</span><span class="p">(</span><span class="n">layer</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">parts</span><span class="o">.</span><span class="n">base_of</span><span class="p">(</span><span class="n">part</span><span class="p">)</span> <span class="o">==</span> <span class="n">mark</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">parts</span><span class="o">.</span><span class="n">offset</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
@@ -5468,7 +5486,7 @@ ValueError: Refused: nacute exists now. Check the list again.
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">width_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">master</span><span class="p">):</span>
-    <span class="n">layer</span> <span class="o">=</span> <span class="n">layer_of</span><span class="p">(</span><span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">])</span><span class="o">.</span><span class="n">fl</span><span class="p">,</span> <span class="n">master</span><span class="p">)</span>
+    <span class="n">layer</span> <span class="o">=</span> <span class="n">layer_of</span><span class="p">(</span><span class="n">fl</span><span class="o">.</span><span class="n">flGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="n">font</span><span class="p">),</span> <span class="n">master</span><span class="p">)</span>
     <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">layer</span><span class="o">.</span><span class="n">advanceWidth</span><span class="p">)</span>
 
 

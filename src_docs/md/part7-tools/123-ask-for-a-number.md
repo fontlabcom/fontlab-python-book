@@ -16,7 +16,7 @@ In Part 4 Mira would have opened `set_sidebearings.py`, changed two numbers at t
 
 ## What you need
 
-`Plum-practice` open with the Font window in front and the Regular master showing, Fly installed, `halfmoon.py`, and `button_report.py` from chapter 122 to copy from. This chapter changes sidebearings, so save the font first.
+`Plum-practice` open with the Font window in front and the Regular master showing, Fly installed, and `button_report.py` from chapter 122 to copy from. This chapter changes sidebearings, so save the font first.
 
 I haven't run this chapter in FontLab 9. I ran the script in plain Python with stand-in widgets whose fields I could fill from code, and a stand-in font that holds Plum's sidebearings. The numbers below are Plum's Regular as it shipped. If Part 4 left yours different, your first three numbers on each line will differ and the sums will still hold.
 
@@ -125,15 +125,15 @@ Save this in your Scripts folder as `shift_dialog.py`:
 #FLM: Shift Dialog
 # Adds to the sidebearings of the glyphs you name, or of the ones
 # selected in the Font window, in the master that's showing.
-import halfmoon
 import fly.ap.core.history.glyphs as history
 import fly.ap.core.scripting as scripting
 import fly.ap.metrics.panel.model as metrics
 from fly import fl, qt
 from fly.pens import layer_of
+from fly.tr.proxy.fl.objects.glyph import pGlyph
 
 core, gui = qt.QtCore, qt.QtGui
-KEY = "halfmoon.shift"
+KEY = "tools.shift"
 LIMIT = 200
 SHOWN = 8
 
@@ -148,7 +148,7 @@ def plan_rows(font, master, names, left, right):
     for name in names:
         if font[name] is None:
             raise ValueError(f"No glyph called {name}.")
-        rich = halfmoon.rich(font, font[name])
+        rich = pGlyph(font, font[name])
         old = (rich.getLSB(master), rich.getAdvance(master), rich.getRSB(master))
         new = (old[0] + left, old[1] + left + right, old[2] + right)
         rows.append((rich, layer_of(rich.fl, master), old, new))

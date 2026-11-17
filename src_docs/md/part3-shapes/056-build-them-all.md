@@ -13,7 +13,7 @@ So the page shouldn't live inside a script. It should be a text file that Mira c
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py`, with `rich`, `choose_text_file`, `ask` and `tell`.
+- `tell`, `ask` and `choose_text_file` from chapter 39. The whole script writes them out again.
 - The anchors on `dotlessi` from chapter 55, and the `nacute` from chapter 53. The script copes if either is missing, and your numbers will differ from mine.
 - Bring the Font window to the front before you run the whole script. The tool that makes glyphs refuses while a Glyph window is the active one.
 
@@ -80,7 +80,7 @@ Save the file as UTF-8. Most text editors do that without being asked. If the sc
 
 ## Step 2: Read a line into four names
 
-`halfmoon.read_names` from chapter 40 reads a file with one name on a line. Here a line has four parts, so the script needs to cut it. You met `split` in chapter 9, where `name.split(".")` cut a glyph name at its dots. Call it with nothing in the parentheses and it cuts at spaces:
+`read_names` from chapter 40 reads a file with one name on a line. Here a line has four parts, so the script needs to cut it. You met `split` in chapter 9, where `name.split(".")` cut a glyph name at its dots. Call it with nothing in the parentheses and it cuts at spaces:
 
 ```python
 line = "ń nacute n acute"
@@ -191,7 +191,7 @@ It's there, and its accent sits somewhere else. Last Wednesday you saw that the 
 
 ```python
 def moves_for(font, name, shifts):
-    rich = halfmoon.rich(font, font[name])
+    rich = pGlyph(font, font[name])
     rows = []
     for master in MASTERS:
         layer = layer_of(rich.fl, master)
@@ -211,7 +211,7 @@ The fourth state comes from Friday. It's there, and FontLab builds it. Chapter 5
 
 ```python
 def is_auto(font, name):
-    rich = halfmoon.rich(font, font[name])
+    rich = pGlyph(font, font[name])
     return any([layer_of(rich.fl, master).autoLayer for master in MASTERS])
 ```
 
@@ -233,11 +233,37 @@ import fly.ap.components.writer as parts
 import fly.ap.core.history.glyphs as history
 import fly.ap.core.scripting as scripting
 import fly.ap.glyphs.creation as creation
-import halfmoon
-from fly import fl
+from fly import fl, qt
+from fly.ap.ui.dialogs import run_file_dialog, run_standard_message_box
 from fly.pens import layer_of
+from fly.tr.proxy.fl.objects.glyph import pGlyph
 
 MASTERS = ["Light", "Regular", "Bold"]
+TITLE = "Halfmoon"
+
+
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
+
+def ask(question):
+    box = qt.QtGui.QMessageBox
+    answer = run_standard_message_box(
+        qt, fl.MainWindow(), TITLE, question, "Question", box.Yes | box.No
+    )
+    return answer == box.Yes
+
+
+def text_files_only(kind, dialog):
+    dialog.setNameFilters(["Text files (*.txt)"])
+
+
+def choose_text_file(caption, folder=""):
+    paths = run_file_dialog(qt.QtGui, text_files_only, caption, folder)
+    if paths is None:
+        return None
+    return paths[0]
 
 
 def read_recipes(path):
@@ -253,7 +279,7 @@ def read_recipes(path):
 
 
 def layer_for(font, name, master):
-    return layer_of(halfmoon.rich(font, font[name]).fl, master)
+    return layer_of(fl.flGlyph(font[name], font), master)
 
 
 def shift_for(font, base, mark, master):
@@ -296,7 +322,7 @@ def new_glyph(font, character, name, base, mark, shifts):
 
 
 def moves_for(font, name, shifts):
-    rich = halfmoon.rich(font, font[name])
+    rich = pGlyph(font, font[name])
     rows = []
     for master in MASTERS:
         layer = layer_of(rich.fl, master)
@@ -307,17 +333,17 @@ def moves_for(font, name, shifts):
 
 
 def is_auto(font, name):
-    rich = halfmoon.rich(font, font[name])
+    rich = pGlyph(font, font[name])
     return any([layer_of(rich.fl, master).autoLayer for master in MASTERS])
 
 
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     folder = Path(font.path).parent if font.path else ""
-    path = halfmoon.choose_text_file("Choose a recipe file", folder)
+    path = choose_text_file("Choose a recipe file", folder)
     if path is None:
         return
 
@@ -356,7 +382,7 @@ def main():
 
     if not specs and not work:
         return
-    if not halfmoon.ask(f"Build {len(specs)} glyphs and move the accents in {moved}?"):
+    if not ask(f"Build {len(specs)} glyphs and move the accents in {moved}?"):
         return
 
     package = scripting.current_package()
@@ -367,7 +393,7 @@ def main():
     if specs:
         facts = history.scan_auto_facts(package)
         creation.create_glyphs(package, specs, "Build accented letters", facts)
-    halfmoon.tell(f"Built {len(specs)} glyphs. Moved the accents in {moved}.")
+    tell(f"Built {len(specs)} glyphs. Moved the accents in {moved}.")
 
 
 main()

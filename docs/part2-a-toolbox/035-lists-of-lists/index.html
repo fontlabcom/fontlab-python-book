@@ -5312,18 +5312,18 @@
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li>FontLab 9 with Fly installed, and <code>Plum-practice</code> open.</li>
-<li><code>halfmoon.py</code> as <a href="../034-arguments-with-defaults/">chapter 34</a> left it.</li>
+<li><code>glyphs_of</code> from <a href="../034-arguments-with-defaults/">chapter 34</a>. It's repeated below, so you don't need the old script open.</li>
 <li>Six glyphs selected in the Font window: <code>H</code>, <code>O</code>, <code>A</code>, <code>n</code>, <code>o</code> and <code>v</code>.</li>
 </ul>
 <h2 id="step-1-the-white-on-each-side">Step 1: The white on each side<a class="headerlink" href="#step-1-the-white-on-each-side" title="Permanent link">&para;</a></h2>
 <p>A glyph sits in a box as wide as its advance width. The black shape doesn't touch the edges of the box. The gap between the left edge and the leftmost point of the shape is the left sidebearing. The gap on the other side is the right sidebearing. When two glyphs stand next to each other, the right sidebearing of the first and the left sidebearing of the second add up to the white between them. Spacing a font is, for the most part, choosing those two numbers for every glyph.</p>
 <p>The rich glyph from chapter 14 knows both. Ask it about the <code>n</code>:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
 
 <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
 <span class="n">glyph</span> <span class="o">=</span> <span class="n">font</span><span class="p">[</span><span class="s2">"n"</span><span class="p">]</span>
-<span class="n">rich</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span>
+<span class="n">rich</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">rich</span><span class="o">.</span><span class="n">getLSB</span><span class="p">(),</span> <span class="n">glyph</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="n">rich</span><span class="o">.</span><span class="n">getRSB</span><span class="p">())</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>70 523.0 66
@@ -5340,9 +5340,12 @@
 </code></pre></div>
 <p>A list doesn't have to hold things of one kind. This one holds a string and three numbers, and it's one line of Mira's table. In chapter 30 you made small lists of two, <code>[old, new]</code>, and kept a list of them. It's the same idea here with four.</p>
 <p>Now do it for every selected glyph, and keep the rows in a list of their own:</p>
-<div class="highlight"><pre><span></span><code><span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">glyph</span> <span class="ow">in</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">glyphs_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-    <span class="n">rich</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
+
+<span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">scripting</span><span class="o">.</span><span class="n">names_selected_names</span><span class="p">():</span>
+    <span class="n">glyph</span> <span class="o">=</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+    <span class="n">rich</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span>
     <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">glyph</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">rich</span><span class="o">.</span><span class="n">getLSB</span><span class="p">(),</span> <span class="nb">int</span><span class="p">(</span><span class="n">glyph</span><span class="o">.</span><span class="n">width</span><span class="p">),</span> <span class="n">rich</span><span class="o">.</span><span class="n">getRSB</span><span class="p">()])</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
@@ -5433,24 +5436,34 @@ A     600  596   -4
 </code></pre></div>
 <p>One thing to know about <code>zip</code>: if the lists are of different lengths, it stops at the end of the shorter one and says nothing. Three names and two widths give two pairs, and the third name is dropped. When the two lists come from somebody else, compare their <code>len</code> first.</p>
 <h2 id="the-whole-script">The whole script<a class="headerlink" href="#the-whole-script" title="Permanent link">&para;</a></h2>
-<p>The row-making belongs in the module, because the next three chapters will use it. Add this to <code>halfmoon.py</code>:</p>
-<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">metrics_rows</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">glyph</span> <span class="ow">in</span> <span class="n">glyphs_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_empty</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">):</span>
-            <span class="n">measured</span> <span class="o">=</span> <span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span>
-            <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">glyph</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">measured</span><span class="o">.</span><span class="n">getLSB</span><span class="p">(),</span> <span class="nb">int</span><span class="p">(</span><span class="n">glyph</span><span class="o">.</span><span class="n">width</span><span class="p">),</span> <span class="n">measured</span><span class="o">.</span><span class="n">getRSB</span><span class="p">()))</span>
-    <span class="k">return</span> <span class="n">rows</span>
-</code></pre></div>
-<p>There are two things to notice in it. Each row is a tuple, so there are double parentheses in the <code>append</code> line: the outer pair belongs to <code>append</code> and the inner pair makes the tuple. And empty glyphs are left out by the <code>if not is_empty</code> test. A space has a width, but with no shape in it there's no leftmost point to measure a sidebearing from, and I'd sooner leave the row out than print a number that means nothing.</p>
-<p>Then <code>metrics_rows.py</code> is short:</p>
+<p>The row-making goes in a function of its own, because the next three chapters will use it. Here is <code>metrics_rows.py</code> in full, with <code>glyphs_of</code> from chapter 34 repeated at the top so that the script runs by itself:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Prints left sidebearing, width and right sidebearing</span>
 <span class="c1"># for the glyphs selected in the Font window.</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">glyphs_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">only_selected</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">font</span><span class="o">.</span><span class="n">glyphs</span>
+    <span class="n">glyphs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">scripting</span><span class="o">.</span><span class="n">names_selected_names</span><span class="p">():</span>
+        <span class="n">glyphs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">glyphs</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">metrics_rows</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">glyph</span> <span class="ow">in</span> <span class="n">glyphs_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="p">):</span>
+        <span class="n">measured</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">measured</span><span class="o">.</span><span class="n">isEmpty</span><span class="p">():</span>
+            <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">glyph</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">measured</span><span class="o">.</span><span class="n">getLSB</span><span class="p">(),</span> <span class="nb">int</span><span class="p">(</span><span class="n">glyph</span><span class="o">.</span><span class="n">width</span><span class="p">),</span> <span class="n">measured</span><span class="o">.</span><span class="n">getRSB</span><span class="p">()))</span>
+    <span class="k">return</span> <span class="n">rows</span>
+
 
 <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
-<span class="n">rows</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">metrics_rows</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">rows</span> <span class="o">=</span> <span class="n">metrics_rows</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="k">if</span> <span class="ow">not</span> <span class="n">rows</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">"Select some glyphs with shapes in them first."</span><span class="p">)</span>
@@ -5467,13 +5480,14 @@ n          70    523   66
 o          38    520   38
 v           8    455    3
 </code></pre></div>
+<p>There are two things to notice in <code>metrics_rows</code>. Each row is a tuple, so there are double parentheses in the <code>append</code> line: the outer pair belongs to <code>append</code> and the inner pair makes the tuple. And empty glyphs are left out by the <code>if not measured.isEmpty()</code> test, which is the question chapter 8 asked. A space has a width, but with no shape in it there's no leftmost point to measure a sidebearing from, and I'd sooner leave the row out than print a number that means nothing.</p>
 <p><code>if not rows:</code> is the truthiness rule from chapter 31 at work. An empty list counts as no, so the line reads "if there are no rows".</p>
 <p>Mira prints the table for all the capitals, finds two more with lopsided sidebearings and fixes them by hand before lunch. Then she asks for the obvious next thing, which is the table with the widest glyph at the top.</p>
 <h2 id="what-you-learned">What you learned<a class="headerlink" href="#what-you-learned" title="Permanent link">&para;</a></h2>
 <p>A table is a list of rows, and a row is a small list or tuple with the same fields in the same order every time. Unpack a row into named boxes in place of using index numbers, and Python will check the count for you. A tuple is a row that can't be changed after it's made, which suits a record. <code>zip</code> pairs off two lists into rows and stops without warning at the end of the shorter one.</p>
 <h2 id="try-it-yourself">Try it yourself<a class="headerlink" href="#try-it-yourself" title="Permanent link">&para;</a></h2>
 <ol>
-<li>Add a fifth field to each row in <code>metrics_rows</code>: the width of the black part, which is the width minus both sidebearings. Which other lines, in which files, have to change? Run <code>metrics_rows.py</code> before you fix them and read the error.</li>
+<li>Add a fifth field to each row in <code>metrics_rows</code>: the width of the black part, which is the width minus both sidebearings. Which other lines of the script have to change? Run <code>metrics_rows.py</code> before you fix them and read the error.</li>
 <li>Print only the rows whose two sidebearings differ by more than 4 units. For the six glyphs in this chapter that should leave one or two rows. <code>abs()</code> turns a negative number into a positive one, so <code>abs(lsb - rsb)</code> is the size of the difference whichever side is bigger.</li>
 <li>Send the rows to a CSV file with the writer from chapter 28, with a header row. Then open the file in a spreadsheet. A writer takes a tuple as happily as a list.</li>
 </ol>

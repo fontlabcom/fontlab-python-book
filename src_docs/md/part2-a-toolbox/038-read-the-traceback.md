@@ -8,65 +8,82 @@ Tuesday. On Monday evening Mira did exercise 1 of chapter 35. She added a fifth 
 
 ```text
 Traceback (most recent call last):
-  File "<string>", line 23, in <module>
-  File "<string>", line 12, in report
-  File "<string>", line 17, in print_lopsided
-  File "/Users/mira/Library/Application Support/FontLab/FontLab 9/python/3.11/site-packages/halfmoon.py", line 58, in lopsided
-    name, lsb, width, rsb = row
-    ^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 51, in <module>
+  File "<string>", line 40, in report
+  File "<string>", line 45, in print_lopsided
+  File "<string>", line 33, in lopsided
 ValueError: too many values to unpack (expected 4)
 ```
 
-In chapter 3 an error message was three lines long, and you learned to read the last one. This one has eight lines, counting the row of little arrows, and mentions two files and four line numbers. Mira's first instinct is to open line 58 of `halfmoon.py` and stare at it, and line 58 is fine. It hasn't changed since Friday.
+In chapter 3 an error message was three lines long, and you learned to read the last one. This one has six lines and four line numbers. Mira's first instinct is to scroll to line 33 and stare at it, and line 33 is fine. It hasn't changed since Friday.
 
-Error messages got longer when you started writing functions and modules, and they got longer for a good reason. Today you learn to read all of one. It tells you a story if you read it in the right order.
+Error messages got longer when you started writing functions, and they got longer for a good reason. Today you learn to read all of one. It tells you a story if you read it in the right order.
 
 ## What you need
 
 - FontLab 9 with Fly installed, and `Plum-practice` open.
-- `halfmoon.py` and `widest_first.py` from [chapter 36](036-sort-by-anything.md).
-- Step 1 below changes both files. Do it whether or not you did the exercise in chapter 35, so that your files match mine.
+- `widest_first.py` from [chapter 36](036-sort-by-anything.md).
+- Step 1 below replaces it. Do it whether or not you did the exercise in chapter 35, so that your script matches mine line for line.
 
 ## Step 1: Break it the way Mira did
 
-In `halfmoon.py`, change `metrics_rows` so that each row has a fifth field, the width of the black shape. Two lines change: the width gets a box of its own, and the `append` line uses it.
-
-```python
-            lsb = measured.getLSB()
-            rsb = measured.getRSB()
-            width = int(glyph.width)
-            rows.append((glyph.name, lsb, width, rsb, width - lsb - rsb))
-```
-
-Then replace `widest_first.py` with the listing below. It's the script as Mira has it this week. She split it into two functions so that each job has a name. I've left out the heading row and the check for an empty list, to keep today's trail short.
+Replace `widest_first.py` with the listing below. It's the script as Mira has it this week. `metrics_rows` now gives each row a fifth field, the width of the black shape: the width gets a box of its own, and the `append` line uses it. She also split the printing into two functions so that each job has a name. I've left out the heading row and the check for an empty list, to keep today's trail short. Paste it exactly, blank lines included, so that the line numbers match mine.
 
 ```python
 #FLM: Widest First
 # Prints the metrics of the selected glyphs, widest first.
 from fly import fl
-import halfmoon
+from fly.tr.proxy.fl.objects.glyph import pGlyph
+import fly.ap.core.scripting as scripting
 
 HOW_MANY = 3
 
 
+def glyphs_of(font, only_selected=False):
+    if not only_selected:
+        return font.glyphs
+    return [font[name] for name in scripting.names_selected_names()]
+
+
+def metrics_rows(font, only_selected=False):
+    rows = []
+    for glyph in glyphs_of(font, only_selected):
+        measured = pGlyph(font, glyph)
+        if not measured.isEmpty():
+            lsb = measured.getLSB()
+            rsb = measured.getRSB()
+            width = int(glyph.width)
+            rows.append((glyph.name, lsb, width, rsb, width - lsb - rsb))
+    return rows
+
+
+def by_width(row):
+    return row[2]
+
+
+def lopsided(row):
+    name, lsb, width, rsb = row
+    return abs(lsb - rsb)
+
+
 def report(rows):
-    for name, lsb, width, rsb, black in sorted(rows, key=halfmoon.by_width, reverse=True):
+    for name, lsb, width, rsb, black in sorted(rows, key=by_width, reverse=True):
         print(f"{name:<8}{lsb:>5}{width:>7}{rsb:>5}{black:>7}")
     print_lopsided(rows)
 
 
 def print_lopsided(rows):
     print("Most lopsided:")
-    for row in sorted(rows, key=halfmoon.lopsided, reverse=True)[:HOW_MANY]:
-        print(f"  {row[0]:<6}{halfmoon.lopsided(row):>3}")
+    for row in sorted(rows, key=lopsided, reverse=True)[:HOW_MANY]:
+        print(f"  {row[0]:<6}{lopsided(row):>3}")
 
 
 font = fl.CurrentFont()
-rows = halfmoon.metrics_rows(font, only_selected=True)
+rows = metrics_rows(font, only_selected=True)
 report(rows)
 ```
 
-She remembered to unpack five names in `report`. Select a few glyphs, reload the module and run it. You get the table, the words `Most lopsided:`, and then the traceback from the top of this chapter. Your line number in `halfmoon.py` won't be 58, and the path will have your name in it. FontLab's Output panel may also lay the lines out a little differently. The parts are the same.
+She remembered to unpack five names in `report`. Select a few glyphs and run it. You get the table, the words `Most lopsided:`, and then the traceback from the top of this chapter. FontLab's Output panel may lay the lines out a little differently. The parts are the same.
 
 ## Step 2: The last line first
 
@@ -85,29 +102,28 @@ Always read this line first, and read all of it. It's tempting to see the word `
 Now the middle. Each line that begins with `File` is one step on the way to the accident, and they're in the order things happened. Read them from the top down:
 
 ```text
-  File "<string>", line 23, in <module>
+  File "<string>", line 51, in <module>
 ```
 
-"In the script you ran, at line 23, at the top level." `<string>` is the name you saw in chapter 3: it stands for the script in the Scripting panel's window. `<module>` means the line isn't inside any function. Line 23 is `report(rows)`. So the script called `report`.
+"In the script you ran, at line 51, at the top level." `<string>` is the name you saw in chapter 3: it stands for the script in the Scripting panel's window. `<module>` means the line isn't inside any function. Line 51 is `report(rows)`. So the script called `report`.
 
 ```text
-  File "<string>", line 12, in report
+  File "<string>", line 40, in report
 ```
 
-"In the same script, line 12, inside the function `report`." Line 12 is `print_lopsided(rows)`. So `report` called `print_lopsided`.
+"In the same script, line 40, inside the function `report`." Line 40 is `print_lopsided(rows)`. So `report` called `print_lopsided`.
 
 ```text
-  File "<string>", line 17, in print_lopsided
+  File "<string>", line 45, in print_lopsided
 ```
 
-Line 17, inside `print_lopsided`. That's the `sorted` line with `key=halfmoon.lopsided`. So `print_lopsided` asked `sorted` to do its work, and `sorted` called the key function.
+Line 45, inside `print_lopsided`. That's the `sorted` line with `key=lopsided`. So `print_lopsided` asked `sorted` to do its work, and `sorted` called the key function.
 
 ```text
-  File "/Users/mira/.../site-packages/halfmoon.py", line 58, in lopsided
-    name, lsb, width, rsb = row
+  File "<string>", line 33, in lopsided
 ```
 
-"In the file `halfmoon.py`, line 58, inside the function `lopsided`." Here Python can show you the line itself, because the file is on disk where it can read it. That's where it fell over.
+"Line 33, inside the function `lopsided`." That's `name, lsb, width, rsb = row`, and that's where it fell over. Python doesn't print the line for you here, because `<string>` isn't a file on disk that it can read back. Count down in the Scripting panel's window, or turn on its line numbers if your version has them. Later in this chapter you'll see a trail through a file that is on disk, and there Python shows the line.
 
 So the story reads: the script called `report`, which called `print_lopsided`, which had `sorted` call `lopsided`, and inside `lopsided` a row wouldn't fit into four boxes. Each function was waiting for the next one to finish when the last one failed. That chain of waiting functions is what the first line, `Traceback (most recent call last)`, announces. It says the calls are listed in order, with the newest at the bottom.
 
@@ -115,13 +131,13 @@ In chapter 3 I called an error message a letter of complaint. A traceback is the
 
 ## Step 4: Where it fell isn't where the mistake is
 
-In this case the baton was slippery. Line 58 is the place where Python noticed the problem. It isn't the place where the problem was made.
+In this case the baton was slippery. Line 33 is the place where Python noticed the problem. It isn't the place where the problem was made.
 
-Line 58 says "unpack a row into four boxes". That was correct on Friday and it's correct in itself today. What changed is the rows. `metrics_rows` now makes them with five fields. Mira changed the maker and forgot one of the users.
+Line 33 says "unpack a row into four boxes". That was correct on Friday and it's correct in itself today. What changed is the rows. `metrics_rows` now makes them with five fields. Mira changed the maker and forgot one of the users.
 
 The traceback can't tell you that directly, because `metrics_rows` isn't in it. It ran and finished long before the error. It handed back a perfectly good list of rows with five fields, and by the time `lopsided` choked on one, `metrics_rows` was no longer waiting for anything. A traceback only lists the functions that were still in the middle of their work.
 
-What the traceback does give you is the right question: where did this row come from? Walk the trail backward. `lopsided` got the row from `sorted`. `sorted` got its rows from `print_lopsided`, which got them from `report`, which got them from line 21 of the script: `rows = halfmoon.metrics_rows(font, only_selected=True)`. That's the maker. Open it, and the fifth field is there to see.
+What the traceback does give you is the right question: where did this row come from? Walk the trail backward. `lopsided` got the row from `sorted`. `sorted` got its rows from `print_lopsided`, which got them from `report`, which got them from line 50 of the script: `rows = metrics_rows(font, only_selected=True)`. That's the maker. Scroll up to it, and the fifth field is there to see on line 24.
 
 You met this pattern in chapter 19, in a smaller form. A box was filled with `None` on one line, and the complaint came from a later line that tried to use it. "Don't stare at the line it points to. Look upward for the box that was filled with nothing." This is the same rule on a larger scale: when the line it points to looks innocent, follow the data back to where it was made.
 
@@ -133,11 +149,11 @@ def lopsided(row):
     return abs(lsb - rsb)
 ```
 
-There's a habit that would have saved the morning, too. When you change what a function hands back, look for everybody who uses it before you run anything. In chapter 35, exercise 1 asked "which other lines, in which files, have to change?" Now you know why I asked.
+There's a habit that would have saved the morning, too. When you change what a function hands back, look for everybody who uses it before you run anything. In chapter 35, exercise 1 asked "which other lines of the script have to change?" Now you know why I asked.
 
 ## Step 5: Whose file is it?
 
-Your scripts now stand on a stack of other people's work. A script calls `halfmoon`, which calls Fly's helpers, which call FontLab. When something fails low in the stack, the trail runs through files you didn't write. Close every font, and run these three lines:
+Your scripts now stand on a stack of other people's work. Your functions call Fly's helpers, which call FontLab. When something fails low in the stack, the trail runs through files you didn't write. Close every font, and run these three lines:
 
 ```python
 import fly.ap.glyphs.names.model as names
@@ -202,8 +218,8 @@ A traceback is a trail of calls in the order they happened, and each `File` line
 ## Try it yourself
 
 1. In `widest_first.py`, change `HOW_MANY = 3` to `HOW_MANY = "3"`, with quotes. Before you run it, predict the kind of error, and how many `File` lines the trail will have. Then run it and compare. Put the number back.
-2. In `widest_first.py`, change `only_selected=True` to `only_selected=False`. Close every font and run it. I expect a trail that ends inside `halfmoon.py` with an `AttributeError` about `NoneType`, though I haven't seen FontLab print it. Read whatever you get aloud as a story, in the manner of Step 3: who called whom, and where did it fall? Then say where the fix belongs. It isn't in the line the trail ends on. Put `True` back.
-3. Open `halfmoon.py`, take the colon off the end of any `def` line and save it. Put a `print("start")` above the `import halfmoon` line of a script that reloads the module, and run it. Does `start` print? Put the colon back. Now take a colon off a `def` in the script itself and run again. Does `start` print this time? Why the difference? Put that colon back too.
+2. In `widest_first.py`, change `only_selected=True` to `only_selected=False`. Close every font and run it. I expect a trail that ends inside `glyphs_of` with an `AttributeError` about `NoneType`, though I haven't seen FontLab print it. Read whatever you get aloud as a story, in the manner of Step 3: who called whom, and where did it fall? Then say where the fix belongs. It isn't in the line the trail ends on. Put `True` back.
+3. Put a `print("start")` as the first line of `widest_first.py`, below the `#FLM:` line. Take the colon off the end of any `def` line and run it. Does `start` print? Put the colon back. Now misspell `lopsided` as `lopsidded` in the `sorted` line of `print_lopsided` and run again. Does `start` print this time? Why the difference? Put the spelling back.
 
 ## Next
 

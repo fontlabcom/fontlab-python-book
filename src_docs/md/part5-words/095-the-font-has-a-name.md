@@ -13,7 +13,7 @@ The names live in Font Info. Some belong to the whole font and some to each mast
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py`.
+- The `tell` function from [chapter 39](../part2-a-toolbox/039-ask-the-user.md). The script below defines it again, so it runs by itself.
 
 I couldn't run the code in FontLab 9. The field names come from the stub that describes FontLab's objects, and the values I print are the ones in Plum's source file. I ran the script in plain Python against a stand-in that holds those values. Reading a master's own names by switching to that master is how Fly's tools do it for the style name. For the full name and the PostScript name I'm assuming the same holds, and I haven't seen it.
 
@@ -179,9 +179,17 @@ print(ps_problems("GG Plum-Café"))
 #FLM: Font Names
 # Prints the names in Font Info, font-wide and for each master,
 # and checks them against the house rules. Changes nothing.
-import halfmoon
-from fly import fl
+from fly import fl, qt
 import fly.ap.core.scripting as scripting
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
+
+
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
 
 FONT_WIDE = {
     "familyName": "Family",
@@ -239,7 +247,7 @@ def show(label, value, problems):
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     package = scripting.current_package()
     count = 0

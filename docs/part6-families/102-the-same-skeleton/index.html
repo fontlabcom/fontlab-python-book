@@ -5291,7 +5291,6 @@
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>Plum-practice</code> open in FontLab 9, with Fly installed.</li>
-<li><code>halfmoon.py</code>.</li>
 </ul>
 <p>I couldn't run the code in FontLab 9. I worked out the outputs in plain Python from Plum's source file, for the 205 glyphs Plum came with. I can't know what you drew in the glyphs you added in Part 3, so for those your run is the first one anybody has made.</p>
 <h2 id="step-1-one-glyphs-skeleton">Step 1: One glyph's skeleton<a class="headerlink" href="#step-1-one-glyphs-skeleton" title="Permanent link">&para;</a></h2>
@@ -5351,10 +5350,19 @@ False
 <div class="highlight"><pre><span></span><code><span class="c1">#FLM: Compatibility Check</span>
 <span class="c1"># Compares the structure of every glyph across the masters.</span>
 <span class="c1"># Changes nothing.</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.masters.inspect.model</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">masters_model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span>
+
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Halfmoon"</span>
+
+
+<span class="c1"># Chapter 39's tell, written out again so this script runs by itself.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">first_difference</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
@@ -5388,7 +5396,7 @@ False
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">package</span> <span class="o">=</span> <span class="n">scripting</span><span class="o">.</span><span class="n">current_package</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">package</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">masters</span> <span class="o">=</span> <span class="n">masters_model</span><span class="o">.</span><span class="n">master_order</span><span class="p">(</span><span class="n">package</span><span class="p">)</span>
     <span class="n">checked</span> <span class="o">=</span> <span class="mi">0</span>

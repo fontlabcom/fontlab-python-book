@@ -14,7 +14,7 @@ A pair of constants you edit six times is a table that hasn't been written down 
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
 - Your suffixed glyphs from Part 2: ten ending in `.sc`, four in `.ss01` (`a`, `g`, `y`, `ampersand`), and `zero.alt`.
-- `halfmoon.py` with `tell` and `ask`, and `rename_suffix.py` from chapter 31.
+- `rename_suffix.py` from chapter 31. The script below defines `tell` and `ask` from [chapter 39](../part2-a-toolbox/039-ask-the-user.md) again, so it runs by itself.
 - The `smcp` feature from chapter 88. If you skipped the write there, today's script adds it.
 
 I couldn't run the code in FontLab 9. I ran the counting and the text building in plain Python on Plum's glyph names plus those fifteen. The write is the one from chapter 88, and I haven't seen it work.
@@ -163,10 +163,26 @@ Chapter 88 filtered on one tag with `!=`. With a list of tags the test becomes `
 #FLM: Features From Suffixes
 # Writes or replaces one feature for each suffix in TAGS.
 # Does not compile: do that in the Features panel afterward.
-import halfmoon
-from fly import fl
+from fly import fl, qt
 import fly.ap.core.scripting as scripting
 import fly.ap.features.code as fea_code
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
+
+
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
+
+def ask(question):
+    box = qt.QtGui.QMessageBox
+    answer = run_standard_message_box(
+        qt, fl.MainWindow(), TITLE, question, "Question", box.Yes | box.No
+    )
+    return answer == box.Yes
+
 
 TAGS = {"sc": "smcp", "ss01": "ss01", "zero": "zero"}
 DRY_RUN = True
@@ -203,7 +219,7 @@ def plan(names, tags):
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     names = [glyph.name for glyph in font.glyphs]
     made, used = plan(names, TAGS)
@@ -221,7 +237,7 @@ def main():
     if DRY_RUN:
         print("Dry run. Nothing written.")
         return
-    if not halfmoon.ask(f"Write {len(made)} features?"):
+    if not ask(f"Write {len(made)} features?"):
         return
     updated = {"prefix": blocks["prefix"], "features": kept + made}
     result = scripting.write_feature_blocks(

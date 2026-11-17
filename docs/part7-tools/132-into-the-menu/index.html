@@ -5310,16 +5310,16 @@
 <p>Wednesday, 30 December. Ines has written out how she starts the Shift tool, step by step, and pinned it to the studio board: open the Scripting panel, open a file, look for <code>shift_tool.py</code> among forty others, press Run. Underneath, in red: "Four steps to start one tool."</p>
 <p>She's right. A tool you have to hunt for is a tool you'll stop using. Today the Shift tool moves into the <strong>Scripts</strong> menu under a name she'd say aloud, the Halfmoon tools get one tidy place there, and the tool gets a key. The key takes more work than you'd hope, and I'll show you where the limit is.</p>
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
-<p>FontLab 9 with Fly installed, <code>halfmoon.py</code> with <code>keep</code> from chapter 127, and <code>shift_tool.py</code> from chapter 131. No font has to be open to follow the steps.</p>
+<p>FontLab 9 with Fly installed, and <code>shift_tool.py</code> from chapter 131. No font has to be open to follow the steps.</p>
 <p>I haven't run this chapter in FontLab 9. I ran the three files in plain Python against stand-ins for the windows and for FontLab's menu bar. What the real menu shows, and whether the key works on your keyboard, are things I haven't seen.</p>
 <h2 id="step-1-two-folders-two-jobs">Step 1: Two folders, two jobs<a class="headerlink" href="#step-1-two-folders-two-jobs" title="Permanent link">&para;</a></h2>
 <p>You've used two folders since chapter 33, and it's time to say plainly what each is for.</p>
 <p>The <strong>Scripts folder</strong> is FontLab's. Chapter 18 put your first file there. Every <code>.py</code> file in it becomes a line in the <strong>Scripts</strong> menu, a folder inside it becomes a submenu, and the <code>#FLM:</code> line at the top of a file is the name the menu shows. FontLab reads the folder when it starts and when you choose <strong>Scripts &gt; Refresh Scripts</strong>.</p>
-<p>The <strong>module folder</strong> is Python's. It's the <code>site-packages</code> folder you found in chapter 33, where <code>halfmoon.py</code> lives. Python looks there when a script says <code>import</code>. FontLab's menu never looks there.</p>
+<p>The <strong>module folder</strong> is Python's. It's the <code>site-packages</code> folder you found in chapter 33. Python looks there when a script says <code>import</code>. FontLab's menu never looks there.</p>
 <p>So a file in the Scripts folder can be started and can't be borrowed from. A file in the module folder can be borrowed from and can't be started from the menu. Chapter 114 moved <code>preflight.py</code> from one to the other for that reason, and it left the menu when it went.</p>
 <p>The Shift tool has to be both. Ines wants to start it from the menu, and in step 4 a second script will need to borrow it. One file can't live in two folders. Two files can.</p>
 <h2 id="step-2-the-tool-becomes-a-module">Step 2: The tool becomes a module<a class="headerlink" href="#step-2-the-tool-becomes-a-module" title="Permanent link">&para;</a></h2>
-<p>Move <code>shift_tool.py</code> out of the Scripts folder and into the module folder, beside <code>halfmoon.py</code>. Then change its last line. It was this:</p>
+<p>Move <code>shift_tool.py</code> out of the Scripts folder and into the module folder. Then change its last line. It was this:</p>
 <div class="highlight"><pre><span></span><code><span class="n">scripting</span><span class="o">.</span><span class="n">show_script_dialog</span><span class="p">(</span><span class="n">build</span><span class="p">,</span> <span class="n">KEY</span><span class="p">)</span>
 </code></pre></div>
 <p>Make it this:</p>
@@ -5373,19 +5373,27 @@
 <div class="highlight"><pre><span></span><code><span class="n">menus</span><span class="o">.</span><span class="n">action</span><span class="p">(</span><span class="n">token</span><span class="p">)</span><span class="o">.</span><span class="n">setShortcut</span><span class="p">(</span><span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QKeySequence</span><span class="p">(</span><span class="s2">"Ctrl+Alt+Shift+S"</span><span class="p">))</span>
 </code></pre></div>
 <p>The key is written as text, with the modifier keys spelled out and joined by <code>+</code>. On a Mac, Qt reads <code>Ctrl</code> as the Command key. Three modifiers is a mouthful, and that's deliberate: FontLab already uses most of the short combinations, and a script that takes one of them over has made an enemy.</p>
-<p>One thing remains. <code>menus</code> is an object, and chapter 126 showed what happens to an object nobody holds: Python throws it away, and its menu lines go dead. <code>halfmoon.keep</code> from chapter 127 holds it. And <code>keep</code> closes whatever it held before under the same key, which here means that running the script twice gives you one Halfmoon menu, with the old one taken out first.</p>
+<p>One thing remains. <code>menus</code> is an object, and chapter 126 showed what happens to an object nobody holds: Python throws it away, and its menu lines go dead. <code>keep</code> from chapter 127 holds it, and it is in the script again, word for word, so that the script runs by itself. And <code>keep</code> closes whatever it held before under the same key, which here means that running the script twice gives you one Halfmoon menu, with the old one taken out first.</p>
 <h2 id="the-whole-script">The whole script<a class="headerlink" href="#the-whole-script" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><span class="c1">#FLM: Halfmoon Menu</span>
 <span class="c1"># Adds a Halfmoon menu to FontLab's menu bar, with a shortcut</span>
 <span class="c1"># for the Shift tool. The menu lasts until FontLab closes.</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
 <span class="kn">import</span><span class="w"> </span><span class="nn">shift_tool</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.qt.menus</span><span class="w"> </span><span class="kn">import</span> <span class="n">OwnedMenus</span>
 
-<span class="n">KEY</span> <span class="o">=</span> <span class="s2">"halfmoon.menu"</span>
+<span class="n">KEY</span> <span class="o">=</span> <span class="s2">"tools.menu"</span>
 <span class="n">MENU</span> <span class="o">=</span> <span class="s2">"Halfmoon"</span>
 <span class="n">SHORTCUT</span> <span class="o">=</span> <span class="s2">"Ctrl+Alt+Shift+S"</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">keep</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">things</span><span class="p">):</span>
+    <span class="n">kept</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">sys</span><span class="p">)</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"kept_windows"</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">kept</span><span class="p">:</span>
+        <span class="n">kept</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">kept</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">things</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">report</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="n">owner</span><span class="p">):</span>
@@ -5394,7 +5402,7 @@
 
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">menus</span> <span class="o">=</span> <span class="n">OwnedMenus</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="p">,</span> <span class="n">error_sink</span><span class="o">=</span><span class="n">report</span><span class="p">,</span> <span class="n">owned_title</span><span class="o">=</span><span class="n">MENU</span><span class="p">)</span>
-    <span class="n">halfmoon</span><span class="o">.</span><span class="n">keep</span><span class="p">(</span><span class="n">KEY</span><span class="p">,</span> <span class="p">[</span><span class="n">menus</span><span class="p">])</span>
+    <span class="n">keep</span><span class="p">(</span><span class="n">KEY</span><span class="p">,</span> <span class="p">[</span><span class="n">menus</span><span class="p">])</span>
     <span class="n">token</span> <span class="o">=</span> <span class="n">menus</span><span class="o">.</span><span class="n">add_action</span><span class="p">(</span><span class="n">MENU</span><span class="p">,</span> <span class="s2">"Shift Sidebearings"</span><span class="p">,</span> <span class="n">shift_tool</span><span class="o">.</span><span class="n">open_tool</span><span class="p">)</span>
     <span class="n">menus</span><span class="o">.</span><span class="n">action</span><span class="p">(</span><span class="n">token</span><span class="p">)</span><span class="o">.</span><span class="n">setShortcut</span><span class="p">(</span><span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QKeySequence</span><span class="p">(</span><span class="n">SHORTCUT</span><span class="p">))</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">MENU</span><span class="si">}</span><span class="s2"> menu added. </span><span class="si">{</span><span class="n">SHORTCUT</span><span class="si">}</span><span class="s2"> opens the Shift tool."</span><span class="p">)</span>

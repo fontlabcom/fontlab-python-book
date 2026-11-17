@@ -5314,7 +5314,6 @@
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>Plum-practice</code> open in FontLab 9 with the Regular showing, and Fly installed.</li>
-<li><code>halfmoon.py</code>.</li>
 </ul>
 <p>I couldn't run the code in FontLab 9. I computed the outputs in plain Python from the outlines in Plum's source file, for the 205 glyphs Plum came with, and I moved the start points in a stand-in, not in FontLab.</p>
 <h2 id="step-1-turn-a-ring">Step 1: Turn a ring<a class="headerlink" href="#step-1-turn-a-ring" title="Permanent link">&para;</a></h2>
@@ -5379,13 +5378,22 @@
 <div class="highlight"><pre><span></span><code><span class="c1">#FLM: Start Points</span>
 <span class="c1"># Finds contours that start at a different node than in the master</span>
 <span class="c1"># you're looking at, and moves the start to match.</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.contours.writer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">outline</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.history.glyphs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">history</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.fontui.outline_order</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">order</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.masters.inspect.model</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">masters_model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span>
+
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Halfmoon"</span>
+
+
+<span class="c1"># Chapter 39's tell, written out again so this script runs by itself.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+
 
 <span class="n">DRY_RUN</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="n">SKIP</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Oslash"</span><span class="p">]</span>
@@ -5416,7 +5424,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">package</span> <span class="o">=</span> <span class="n">scripting</span><span class="o">.</span><span class="n">current_package</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">package</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">trusted</span> <span class="o">=</span> <span class="n">package</span><span class="o">.</span><span class="n">master</span>
     <span class="n">others</span> <span class="o">=</span> <span class="p">[</span><span class="n">m</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">masters_model</span><span class="o">.</span><span class="n">master_order</span><span class="p">(</span><span class="n">package</span><span class="p">)</span> <span class="k">if</span> <span class="n">m</span> <span class="o">!=</span> <span class="n">trusted</span><span class="p">]</span>

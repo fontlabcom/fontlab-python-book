@@ -5311,7 +5311,7 @@
 <p>The release notes want two pictures: the specimen word, and the <code>n</code> with Mira's sidebearing numbers under it. Last time she took them by hand. Press the keys, drag a rectangle, miss by a few pixels, drag again, find the file on the desktop, rename it, move it. Two pictures took ten minutes, and the two rectangles weren't the same size.</p>
 <p>Somebody has already written a tool that photographs FontLab's windows. Today your script calls it, keeps the two files it needs out of the eight it's given, and puts them where the release lives.</p>
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
-<p><code>Plum-practice</code> open, and an export folder with fonts in it, from chapter 119. <code>release.py</code> from chapter 120. And GrabLab, which comes as a folder called <code>fontlab-grablab</code> from the same place as Fly. It has an <code>install.vfpy</code> of the kind you met in chapter 133: drag it onto FontLab, then restart.</p>
+<p><code>Plum-practice</code> open, and an export folder with fonts in it, from chapter 119. And GrabLab, which comes as a folder called <code>fontlab-grablab</code> from the same place as Fly. It has an <code>install.vfpy</code> of the kind you met in chapter 133: drag it onto FontLab, then restart.</p>
 <p>GrabLab isn't in Fly's toolbag, so today's script imports it by its own name, <code>grablab</code>. That makes it the second and last exception to the rule from chapter 4, after yesterday's. Yesterday's script ran outside FontLab. This one runs inside, and the reason is plainer: Fly has no alias for it.</p>
 <p>I haven't run this chapter in FontLab 9, and a chapter about pictures is the one where that matters most, because I have no picture to show you. I read GrabLab's code to learn what it's called with and what it hands back, and ran <code>release_shots.py</code> against a stand-in that makes empty files with the names GrabLab's code builds. The printed lines below are from those runs. What the pictures look like, you'll see and I haven't.</p>
 <h2 id="step-1-ask-for-pictures">Step 1: Ask for pictures<a class="headerlink" href="#step-1-ask-for-pictures" title="Permanent link">&para;</a></h2>
@@ -5361,11 +5361,26 @@
 <p>You can also ask for less in the first place. <code>Grab</code> takes settings by name, and <code>Grab(grab_svg=False)</code> makes a grabber that doesn't write the SVG drawings. That halves the eight. I haven't seen whether the choice outlasts the script and changes what GrabLab's own menu commands write. The filter stays, because the whole-window pictures still come.</p>
 <h2 id="step-4-borrow-the-folder">Step 4: Borrow the folder<a class="headerlink" href="#step-4-borrow-the-folder" title="Permanent link">&para;</a></h2>
 <p>The pictures belong in the release folder. Chapter 120's <code>release.py</code> has a function that finds it, <code>shipped_folder</code>, and the natural line is <code>import release</code>.</p>
-<p>Try it and the release summary prints, all 21 lines, and <code>RELEASE.txt</code> is written again. <code>release.py</code> ends with a bare <code>main()</code>, so importing it runs it. You've met this three times, in chapters 114, 119 and 132, and the cure is the same. Open <code>release.py</code> and change its last line to:</p>
+<p>Try it and the release summary prints, all 21 lines, and <code>RELEASE.txt</code> is written again. <code>release.py</code> ends with a bare <code>main()</code>, so importing it runs it. You've met this three times, in chapters 114, 119 and 132. And there's a second cost that you'll meet in chapter 139: a script that borrows from another script breaks when somebody changes that one.</p>
+<p><code>shipped_folder</code> is eight lines. Copy it, with the <code>FORMATS</code> list it reads, into today's script:</p>
+<div class="highlight"><pre><span></span><code><span class="n">FORMATS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">".otf"</span><span class="p">,</span> <span class="s2">".ttf"</span><span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">shipped_folder</span><span class="p">(</span><span class="n">font</span><span class="p">):</span>
+    <span class="n">exports</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">font</span><span class="o">.</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">"exports"</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">exports</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">found</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">folder</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">exports</span><span class="o">.</span><span class="n">iterdir</span><span class="p">()):</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">p</span><span class="o">.</span><span class="n">suffix</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">FORMATS</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">folder</span><span class="o">.</span><span class="n">rglob</span><span class="p">(</span><span class="s2">"*"</span><span class="p">)]):</span>
+            <span class="n">found</span> <span class="o">=</span> <span class="n">folder</span>
+    <span class="k">return</span> <span class="n">found</span>
+</code></pre></div>
+<p>It's chapter 120's function, word for word. Now <code>release_shots.py</code> runs by itself, and nothing in <code>release.py</code> has to change. Today's script ends with the guard all the same:</p>
 <div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
 </code></pre></div>
-<p>Now it runs when it's run and keeps quiet when it's borrowed. A script you may one day borrow from should end this way from the start.</p>
+<p>It runs when it's run and keeps quiet when it's borrowed. A script somebody may one day borrow from should end this way from the start.</p>
 <h2 id="the-whole-script">The whole script<a class="headerlink" href="#the-whole-script" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><span class="c1">#FLM: Release Shots</span>
 <span class="c1"># Photographs every open Glyph window and copies the pictures into the</span>
@@ -5373,12 +5388,29 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">release</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">grablab</span><span class="w"> </span><span class="kn">import</span> <span class="n">Grab</span>
 
 <span class="n">KEEP</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"fl_gv_"</span><span class="p">,</span> <span class="s2">"fl_gvd_"</span><span class="p">]</span>
+<span class="n">FORMATS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">".otf"</span><span class="p">,</span> <span class="s2">".ttf"</span><span class="p">]</span>
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Release Shots"</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">shipped_folder</span><span class="p">(</span><span class="n">font</span><span class="p">):</span>
+    <span class="n">exports</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">font</span><span class="o">.</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">"exports"</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">exports</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">found</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">folder</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">exports</span><span class="o">.</span><span class="n">iterdir</span><span class="p">()):</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">p</span><span class="o">.</span><span class="n">suffix</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">FORMATS</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">folder</span><span class="o">.</span><span class="n">rglob</span><span class="p">(</span><span class="s2">"*"</span><span class="p">)]):</span>
+            <span class="n">found</span> <span class="o">=</span> <span class="n">folder</span>
+    <span class="k">return</span> <span class="n">found</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">wanted</span><span class="p">(</span><span class="n">paths</span><span class="p">):</span>
@@ -5406,11 +5438,11 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">font</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">font</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"Open a saved font first."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"Open a saved font first."</span><span class="p">)</span>
         <span class="k">return</span> <span class="mi">1</span>
-    <span class="n">folder</span> <span class="o">=</span> <span class="n">release</span><span class="o">.</span><span class="n">shipped_folder</span><span class="p">(</span><span class="n">font</span><span class="p">)</span>
+    <span class="n">folder</span> <span class="o">=</span> <span class="n">shipped_folder</span><span class="p">(</span><span class="n">font</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">folder</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"No export folder holds fonts yet. Run the Friday build."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"No export folder holds fonts yet. Run the Friday build."</span><span class="p">)</span>
         <span class="k">return</span> <span class="mi">1</span>
     <span class="n">grab</span> <span class="o">=</span> <span class="n">Grab</span><span class="p">(</span><span class="n">grab_svg</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">grab</span><span class="o">.</span><span class="n">newGrab</span><span class="p">()</span>
@@ -5427,7 +5459,7 @@
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
 </code></pre></div>
-<p>Save it as <code>release_shots.py</code>, beside <code>release.py</code>.</p>
+<p>Save it as <code>release_shots.py</code> in your Scripts folder. <code>tell</code> is chapter 39's message box and <code>shipped_folder</code> is chapter 120's, both here again so that the script runs by itself.</p>
 <p><code>copy_shots</code> copies; it doesn't move. GrabLab's originals stay in Pictures, with their sidecar files beside them. Each picture GrabLab takes has two small text files with the same name that record sizes and what was photographed. Leave them where they are.</p>
 <p>The copies get names of your choosing: the folder's name, then <code>shot1</code>, <code>shot2</code>. The count starts from the number of PNG files already in <code>shots</code>, so a second run adds <code>shot3</code> and <code>shot4</code> and replaces nothing. GrabLab itself never writes over a file, and it's a good habit to copy from it along with the pictures.</p>
 <p><code>main</code> returns 1 for "didn't happen" and 0 for "done", as the Friday scripts have since chapter 119, so this one can join a list of steps later.</p>
@@ -5460,7 +5492,7 @@
 <li>Add "Pictures" to chapter 137's <code>HALVES</code>, after "Text proof". Then think about whether it belongs there: what did step 3 of that chapter say about jobs with a time limit, and how long does a photograph take? Time it before you decide.</li>
 </ol>
 <h2 id="next">Next<a class="headerlink" href="#next" title="Permanent link">&para;</a></h2>
-<p>This morning's build stopped the first time through, at the glyph proof. Days earlier somebody had changed one function in <code>halfmoon.py</code>, three scripts that use it stopped working, and nobody knew until today. Chapter 139 writes down what your functions are supposed to do, in a form Python can check in two seconds, without opening FontLab.</p>
+<p>This morning's build stopped the first time through, at the glyph proof. Days earlier somebody had changed one small function in the glyph proof's script, the proof stopped finding a font, and nobody knew until today. Chapter 139 writes down what your functions are supposed to do, in a form Python can check in two seconds, without opening FontLab.</p>
 
 
 

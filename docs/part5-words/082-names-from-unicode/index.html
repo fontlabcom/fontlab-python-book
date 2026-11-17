@@ -5335,7 +5335,7 @@
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>Plum-practice</code> open in FontLab 9, with Fly installed.</li>
-<li><code>halfmoon.py</code> with <code>tell</code>.</li>
+<li>The <code>tell</code> function from <a href="../../part2-a-toolbox/039-ask-the-user/">chapter 39</a>. The script below defines it again, so it runs by itself.</li>
 <li><code>rename_suffix.py</code> from <a href="../../part2-a-toolbox/031-dry-run/">chapter 31</a>, to remind you of its shape. You'll build this chapter's script on it.</li>
 </ul>
 <p>I couldn't run the code in FontLab 9. The outputs below were computed in plain Python from Plum's source file and from the name table in Fly's source. The renaming itself goes the way chapter 31's did, and I haven't seen either of them rename a glyph.</p>
@@ -5483,7 +5483,6 @@ Glyph1 False
 <span class="c1"># Gives every glyph called glyph1, glyph2 and so on a name from its code point.</span>
 <span class="c1"># Prints a plan first. With DRY_RUN = True it stops there.</span>
 <span class="c1"># Afterward, by hand: fix the old names in Features and in kerning classes.</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.glyphs.names.model</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">names</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.glyphs.identity_tools.glyph_identity.batch_rename</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
@@ -5491,6 +5490,15 @@ Glyph1 False
     <span class="n">plan_renames</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.glyphs.identity_tools.glyph_identity.unicode_from_names</span><span class="w"> </span><span class="kn">import</span> <span class="n">AGL</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span>
+
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Halfmoon"</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+
 
 <span class="n">DRY_RUN</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="n">PREFIX</span> <span class="o">=</span> <span class="s2">"glyph"</span>
@@ -5525,7 +5533,7 @@ Glyph1 False
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">font</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">pairs</span><span class="p">,</span> <span class="n">skipped</span> <span class="o">=</span> <span class="n">collect</span><span class="p">(</span><span class="n">font</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">skipped</span><span class="p">:</span>

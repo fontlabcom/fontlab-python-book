@@ -12,7 +12,7 @@ Since chapter 6 you've opened drawers in wardrobes other people built: a glyph h
 
 ## What you need
 
-`Plum-practice` open with the Regular showing, Fly installed, `halfmoon.py`, and `shift_dialog.py` from chapter 124. The tool does the same work as before and gains one small thing: it counts its own runs.
+`Plum-practice` open with the Regular showing, Fly installed, and `shift_dialog.py` from chapter 124. The tool does the same work as before and gains one small thing: it counts its own runs.
 
 I haven't run this chapter in FontLab 9. The small examples in the first three steps are plain Python, and I ran them as printed. The whole script ran against the stand-in widgets and the stand-in font from chapter 123.
 
@@ -115,15 +115,15 @@ And the button is connected to `self.on_go`. That's a method without its bracket
 #FLM: Shift Tool
 # Adds to the sidebearings of the glyphs you name, or of the ones
 # selected in the Font window, in the master that's showing.
-import halfmoon
 import fly.ap.core.history.glyphs as history
 import fly.ap.core.scripting as scripting
 import fly.ap.metrics.panel.model as metrics
 from fly import fl, qt
 from fly.pens import layer_of
+from fly.tr.proxy.fl.objects.glyph import pGlyph
 
 core, gui = qt.QtCore, qt.QtGui
-KEY = "halfmoon.shift"
+KEY = "tools.shift"
 LIMIT = 200
 SHOWN = 8
 
@@ -138,7 +138,7 @@ def plan_rows(font, master, names, left, right):
     for name in names:
         if font[name] is None:
             raise ValueError(f"No glyph called {name}.")
-        rich = halfmoon.rich(font, font[name])
+        rich = pGlyph(font, font[name])
         old = (rich.getLSB(master), rich.getAdvance(master), rich.getRSB(master))
         new = (old[0] + left, old[1] + left + right, old[2] + right)
         rows.append((rich, layer_of(rich.fl, master), old, new))

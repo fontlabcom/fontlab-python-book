@@ -13,7 +13,6 @@ A weight between two masters is made node by node: the first node of the Light w
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py`.
 
 I couldn't run the code in FontLab 9. I worked out the outputs in plain Python from Plum's source file, for the 205 glyphs Plum came with. I can't know what you drew in the glyphs you added in Part 3, so for those your run is the first one anybody has made.
 
@@ -103,10 +102,19 @@ contour 1: 4 nodes and 6
 #FLM: Compatibility Check
 # Compares the structure of every glyph across the masters.
 # Changes nothing.
-import halfmoon
-from fly import fl
+from fly import fl, qt
 import fly.ap.core.scripting as scripting
 import fly.ap.masters.inspect.model as masters_model
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
+
+
+# Chapter 39's tell, written out again so this script runs by itself.
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
 
 
 def first_difference(a, b):
@@ -140,7 +148,7 @@ def explain(signatures, masters):
 def main():
     package = scripting.current_package()
     if package is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     masters = masters_model.master_order(package)
     checked = 0

@@ -17,7 +17,7 @@ You've already written a script for most of those lines. Chapter 100 put five ch
 
 ## What you need
 
-- `Plum-practice` open in FontLab 9, with Fly installed, and `halfmoon.py`.
+- `Plum-practice` open in FontLab 9, with Fly installed.
 - `preflight.py` from chapter 100.
 - The `exports` folder from chapters 111 and 112.
 
@@ -25,9 +25,9 @@ I couldn't run the code in FontLab 9. I ran the script in plain Python against a
 
 ## Step 1: Borrow the old checks
 
-Chapter 100's five checks are good and you don't want a second copy of them. A copy is two things to mend when one changes. Since chapter 33 you've borrowed from `halfmoon.py` with `import`. `preflight.py` is a Python file too, and it has a list named `CHECKS`.
+Chapter 100's five checks are good and you don't want a second copy of them. A copy is two things to mend when one changes. You've used `import` since chapter 4 to borrow from Fly. `preflight.py` is a Python file too, and it has a list named `CHECKS`.
 
-Python has to be able to find it. Move `preflight.py` out of the Scripts folder and into the folder where `halfmoon.py` lives. It'll leave FontLab's menu, and that's all right, because today's script does its job and more.
+Python has to be able to find it. Move `preflight.py` out of the Scripts folder and into the `site-packages` folder inside your user folder, the one where Fly lives. `sys.path` lists it. It'll leave FontLab's menu, and that's all right, because today's script does its job and more.
 
 Then, in a new script:
 
@@ -54,7 +54,7 @@ Version 1.001: ready for the hand tests.
 
 You asked for a list and got a whole report, and then the list.
 
-`import` doesn't fetch names from a file. It runs the file, top to bottom, and keeps whatever names exist at the end. For `halfmoon.py` you never saw the difference, since that file holds only `def` lines and constants, and running a `def` makes a function without calling it. But the last line of `preflight.py` is `main()`. Running the file runs the report.
+`import` doesn't fetch names from a file. It runs the file, top to bottom, and keeps whatever names exist at the end. For a file that holds only `def` lines and constants you'd never see the difference, since running a `def` makes a function without calling it. But the last line of `preflight.py` is `main()`. Running the file runs the report.
 
 Here it's a nuisance. In a script whose last line changes the font, it would be worse: importing the file would change the font.
 
@@ -158,9 +158,18 @@ from pathlib import Path
 
 import fly.ap.core.scripting as scripting
 import fly.ap.masters.inspect.model as masters_model
-import halfmoon
 import preflight
-from fly import fl
+from fly import fl, qt
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
+
+
+# Chapter 39's tell, written out again so this script runs by itself.
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
 
 TABULAR = ["zero", "one", "two", "three", "four",
            "five", "six", "seven", "eight", "nine"]
@@ -232,7 +241,7 @@ CHECKS = preflight.CHECKS + [
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     package = scripting.current_package()
     total = 0

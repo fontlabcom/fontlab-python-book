@@ -13,7 +13,6 @@ Five instances could be typed by hand in two minutes. Oskar's old families had n
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed, and saved.
-- `halfmoon.py` with `tell`.
 - `list_instances.py` from chapter 107.
 
 I couldn't run the code in FontLab 9. The planning is plain Python and I ran it. What FontLab does with the result I describe from the User Guide, and I say where I'm guessing.
@@ -136,8 +135,17 @@ The line holds every weight that's inside the masters, the ones already there to
 from pathlib import Path
 
 import fly.ap.core.scripting as scripting
-import halfmoon
-from fly import fl
+from fly import fl, qt
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
+
+
+# Chapter 39's tell, written out again so this script runs by itself.
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
 
 WANTED = [
     ("Thin", 100),
@@ -187,7 +195,7 @@ def axis_line(rows):
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     package = scripting.current_package()
     axis = list(package.axes)[0]
@@ -230,7 +238,7 @@ If yesterday's report listed three instances in your font, the rows for Light, R
 
 Notes on the listing.
 
-`on_axis` is yesterday's function, copied. Two scripts now carry it, and by chapter 33's rule that's one too many: it belongs in `halfmoon.py`. Move it there if you like, and import it in both. I've left the listing whole so that it runs as printed.
+`on_axis` is yesterday's function, copied. You wrote it in chapter 107; here it is again so this script runs by itself. Two copies of one small function is a fair price for a script you can open, read and run without hunting for anything else.
 
 `min(spots)` and `max(spots)` find the outer masters without sorting anything. Yesterday needed the order, to find neighbors. Today only the two ends matter.
 

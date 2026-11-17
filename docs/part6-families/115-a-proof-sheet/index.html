@@ -5291,7 +5291,7 @@
 <p>A point to settle first. The page doesn't show the font you have open in FontLab. It shows the exported file, the one the client will install. If the export went wrong, the page shows it going wrong, and that's what a proof is for.</p>
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>Plum-practice</code> open in FontLab 9, with Fly installed, and <code>halfmoon.py</code>.</li>
+<li><code>Plum-practice</code> open in FontLab 9, with Fly installed.</li>
 <li>An export folder for the current version with the OTF files in it, from chapters 111 and 112.</li>
 <li>A web browser.</li>
 </ul>
@@ -5363,8 +5363,17 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span>
+
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Halfmoon"</span>
+
+
+<span class="c1"># Chapter 39's tell, written out again so this script runs by itself.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+
 
 <span class="n">STYLE</span> <span class="o">=</span> <span class="s2">"Regular"</span>
 <span class="n">PAGE_NAME</span> <span class="o">=</span> <span class="s2">"proof-glyphs.html"</span>
@@ -5421,16 +5430,16 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">font</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">package</span> <span class="o">=</span> <span class="n">scripting</span><span class="o">.</span><span class="n">current_package</span><span class="p">()</span>
     <span class="n">folder</span> <span class="o">=</span> <span class="n">latest_export</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">package</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">folder</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"No export folder for this version. Export first."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"No export folder for this version. Export first."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">source</span> <span class="o">=</span> <span class="n">font_file</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">package</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">familyName</span><span class="p">,</span> <span class="n">STYLE</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">source</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="sa">f</span><span class="s2">"No </span><span class="si">{</span><span class="n">STYLE</span><span class="si">}</span><span class="s2"> .otf in </span><span class="si">{</span><span class="n">folder</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="sa">f</span><span class="s2">"No </span><span class="si">{</span><span class="n">STYLE</span><span class="si">}</span><span class="s2"> .otf in </span><span class="si">{</span><span class="n">folder</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">cells</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">leftovers</span> <span class="o">=</span> <span class="p">[]</span>
@@ -5459,7 +5468,7 @@ Wrote /Users/mira/Halfmoon/exports/2026-12-10-v1.002/proof-glyphs.html
 <p>Your counts, file names and path will be your own. Drag the page into a browser. What you should see, and what I haven't seen: a heading, then rows of boxes, each with a large character in Plum and two small grey lines beneath it, then a second heading and a paragraph of names. To make the PDF, use the browser's <strong>Print</strong> command and choose to save as PDF.</p>
 <p>Notes on the listing.</p>
 <p><code>latest_export</code> doesn't use today's date. The export was made yesterday, so chapter 111's folder for today doesn't exist. It gathers the folders whose names end in this version and takes the last. The names begin with the date written year first, so sorted order is date order. <code>folders[-1]</code> is the last item, by chapter 10's counting from the end.</p>
-<p><code>font_file</code> reuses chapter 112's <code>key</code>, which squeezes a name down to its letters and digits, so <code>GGPlum-Regular</code> and <code>GG Plum</code> plus <code>Regular</code> meet. I've copied <code>key</code> into this script, and chapter 114 said a copy is two things to mend. That's fair. If a third script wants it, it belongs in <code>halfmoon.py</code>.</p>
+<p><code>font_file</code> reuses chapter 112's <code>key</code>, which squeezes a name down to its letters and digits, so <code>GGPlum-Regular</code> and <code>GG Plum</code> plus <code>Regular</code> meet. I've copied <code>key</code> into this script so that it runs by itself. Chapter 114 said a copy is two things to mend, and that's fair, but a one-line copy is a small price.</p>
 <p><code>as_posix()</code> writes a path with forward slashes whatever the computer. Web addresses always use forward slashes, and on Windows a plain <code>str</code> of the path wouldn't.</p>
 <p><code>&lt;meta charset="utf-8"&gt;</code> tells the browser how the file's bytes spell characters. It matches the <code>encoding="utf-8"</code> in <code>open</code>. Leave either out and <code>é</code> may arrive as two characters of nonsense.</p>
 <p><code>lines += cells</code> adds every item of one list to another. It's chapter 114's <code>+</code> for lists, written short.</p>

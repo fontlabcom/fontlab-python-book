@@ -5314,18 +5314,31 @@
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>Plum-practice</code> open in FontLab 9, with Fly installed, and the Font window in front.</li>
-<li><code>halfmoon.py</code> with <code>rich</code>, <code>ask</code>, <code>ask_text</code> and <code>tell</code>.</li>
+<li>The helpers <code>ask</code>, <code>ask_text</code> and <code>tell</code> from chapter 39. The scripts below write them out again, so each one runs by itself.</li>
 <li><code>copy_sb.py</code> from chapter 63, for the accented letters at the end.</li>
 </ul>
 <p>The script changes the font, in one Undo step. I couldn't run it in FontLab 9. Its numbers come from Plum's source file with the changes of chapters 62, 63 and 67 worked in.</p>
 <h2 id="step-1-the-obvious-cure-and-whats-wrong-with-it">Step 1: The obvious cure, and what's wrong with it<a class="headerlink" href="#step-1-the-obvious-cure-and-whats-wrong-with-it" title="Permanent link">&para;</a></h2>
 <p>Too tight means too little, so add some. Say 20 units on the right of every letter. Before you write anything into the font, work out what that would give for four letters:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span><span class="p">,</span> <span class="n">run_text_dialog</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
+
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Halfmoon"</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">ask_text</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="s2">""</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">run_text_dialog</span><span class="p">(</span><span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">TITLE</span><span class="p">)</span>
+
 
 <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
 <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"n"</span><span class="p">,</span> <span class="s2">"o"</span><span class="p">,</span> <span class="s2">"H"</span><span class="p">,</span> <span class="s2">"D"</span><span class="p">]:</span>
-    <span class="n">rich</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+    <span class="n">rich</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">rich</span><span class="o">.</span><span class="n">getLSB</span><span class="p">(</span><span class="s2">"Bold"</span><span class="p">),</span> <span class="n">rich</span><span class="o">.</span><span class="n">getRSB</span><span class="p">(</span><span class="s2">"Bold"</span><span class="p">)</span> <span class="o">+</span> <span class="mi">20</span><span class="p">)</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>n 56 52
@@ -5364,7 +5377,7 @@ D 56 37
 <p>This sum also has a property that "add 20" lacks. It reads the Regular and writes the Bold. Run it twice and the second run finds everything already in place. Run it with 0.85 next week and you get 0.85 of the Regular, not 0.85 on top of 0.8. A script that works out its answer from a source it doesn't change can be run as often as you like.</p>
 <h2 id="step-3-ask-for-the-factor">Step 3: Ask for the factor<a class="headerlink" href="#step-3-ask-for-the-factor" title="Permanent link">&para;</a></h2>
 <p>0.8 is a guess from two letters, and Ines will want to try others. So the script asks, with <code>ask_text</code> from chapter 39 and a starting value in the field:</p>
-<div class="highlight"><pre><span></span><code><span class="n">text</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">ask_text</span><span class="p">(</span><span class="s2">"Right sides, as a share of the Regular's:"</span><span class="p">,</span> <span class="s2">"0.8"</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="n">text</span> <span class="o">=</span> <span class="n">ask_text</span><span class="p">(</span><span class="s2">"Right sides, as a share of the Regular's:"</span><span class="p">,</span> <span class="s2">"0.8"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="mi">66</span> <span class="o">*</span> <span class="n">text</span><span class="p">))</span>
 </code></pre></div>
 <p>Click OK, and:</p>
@@ -5391,13 +5404,13 @@ TypeError: type str doesn't define __round__ method
 </code></pre></div>
 <p>Python wants a point. And somebody will type <code>four fifths</code> one day, or nothing. A person who mistypes into a field shouldn't get a traceback for it. Chapter 19 had the tool: <code>try</code> the conversion, and if it raises <code>ValueError</code>, say so kindly and stop.</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">ask_factor</span><span class="p">(</span><span class="n">start</span><span class="p">):</span>
-    <span class="n">text</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">ask_text</span><span class="p">(</span><span class="s2">"Right sides, as a share of the Regular's:"</span><span class="p">,</span> <span class="n">start</span><span class="p">)</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">ask_text</span><span class="p">(</span><span class="s2">"Right sides, as a share of the Regular's:"</span><span class="p">,</span> <span class="n">start</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">text</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
     <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s2"> isn't a number I can read. Use a point, as in 0.8."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s2"> isn't a number I can read. Use a point, as in 0.8."</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">None</span>
 </code></pre></div>
 <p>The function has three ways out. Cancel gives <code>None</code>. A good number gives the number. Bad text gives a message and then <code>None</code>. Whoever calls it has one thing to check: <code>None</code> means stop.</p>
@@ -5406,26 +5419,46 @@ TypeError: type str doesn't define __round__ method
 <span class="c1"># Sets the Bold's right sidebearings to a share of the Regular's.</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">string</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.history.glyphs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">history</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.metrics.panel.model</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">metrics</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly.pens</span><span class="w"> </span><span class="kn">import</span> <span class="n">layer_of</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span><span class="p">,</span> <span class="n">run_text_dialog</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
+
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Halfmoon"</span>
 
 <span class="n">SOURCE</span> <span class="o">=</span> <span class="s2">"Regular"</span>
 <span class="n">TARGET</span> <span class="o">=</span> <span class="s2">"Bold"</span>
 <span class="n">LETTERS</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">ascii_uppercase</span> <span class="o">+</span> <span class="n">string</span><span class="o">.</span><span class="n">ascii_lowercase</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">ask</span><span class="p">(</span><span class="n">question</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">answer</span> <span class="o">=</span> <span class="n">run_standard_message_box</span><span class="p">(</span>
+        <span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">question</span><span class="p">,</span> <span class="s2">"Question"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Yes</span> <span class="o">|</span> <span class="n">box</span><span class="o">.</span><span class="n">No</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">answer</span> <span class="o">==</span> <span class="n">box</span><span class="o">.</span><span class="n">Yes</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">ask_text</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="s2">""</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">run_text_dialog</span><span class="p">(</span><span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">TITLE</span><span class="p">)</span>
+
+
 <span class="k">def</span><span class="w"> </span><span class="nf">ask_factor</span><span class="p">(</span><span class="n">start</span><span class="p">):</span>
-    <span class="n">text</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">ask_text</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Right sides, as a share of the </span><span class="si">{</span><span class="n">SOURCE</span><span class="si">}</span><span class="s2">'s:"</span><span class="p">,</span> <span class="n">start</span><span class="p">)</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">ask_text</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Right sides, as a share of the </span><span class="si">{</span><span class="n">SOURCE</span><span class="si">}</span><span class="s2">'s:"</span><span class="p">,</span> <span class="n">start</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">text</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
     <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s2"> isn't a number I can read. Use a point, as in 0.8."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s2"> isn't a number I can read. Use a point, as in 0.8."</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">None</span>
 
 
@@ -5434,7 +5467,7 @@ TypeError: type str doesn't define __round__ method
     <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">LETTERS</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">continue</span>
-        <span class="n">rich</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+        <span class="n">rich</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
         <span class="n">layer</span> <span class="o">=</span> <span class="n">layer_of</span><span class="p">(</span><span class="n">rich</span><span class="o">.</span><span class="n">fl</span><span class="p">,</span> <span class="n">TARGET</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">layer</span><span class="o">.</span><span class="n">metricsRight</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">str</span><span class="p">(</span><span class="n">layer</span><span class="o">.</span><span class="n">metricsWidth</span><span class="p">):</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: has a rule for its right side or width. Left alone."</span><span class="p">)</span>
@@ -5449,7 +5482,7 @@ TypeError: type str doesn't define __round__ method
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">font</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">factor</span> <span class="o">=</span> <span class="n">ask_factor</span><span class="p">(</span><span class="s2">"0.8"</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">factor</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -5459,7 +5492,7 @@ TypeError: type str doesn't define __round__ method
     <span class="k">for</span> <span class="n">rich</span><span class="p">,</span> <span class="n">layer</span><span class="p">,</span> <span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">,</span> <span class="n">width</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">rich</span><span class="o">.</span><span class="n">name</span><span class="si">:</span><span class="s2">&lt;4</span><span class="si">}{</span><span class="n">old</span><span class="si">:</span><span class="s2">&gt;5</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">new</span><span class="si">:</span><span class="s2">&gt;3</span><span class="si">}</span><span class="s2">   width </span><span class="si">{</span><span class="n">rich</span><span class="o">.</span><span class="n">getAdvance</span><span class="p">(</span><span class="n">TARGET</span><span class="p">)</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">width</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span><span class="si">}</span><span class="s2"> layers to change, factor </span><span class="si">{</span><span class="n">factor</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">rows</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">ask</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Set </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span><span class="si">}</span><span class="s2"> right sidebearings in the </span><span class="si">{</span><span class="n">TARGET</span><span class="si">}</span><span class="s2">?"</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">rows</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">ask</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Set </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span><span class="si">}</span><span class="s2"> right sidebearings in the </span><span class="si">{</span><span class="n">TARGET</span><span class="si">}</span><span class="s2">?"</span><span class="p">):</span>
         <span class="k">return</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">change</span><span class="p">():</span>

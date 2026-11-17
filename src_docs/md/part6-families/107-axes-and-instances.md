@@ -15,7 +15,6 @@ She has three drawings. How many weights the font can make from them is another 
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py` with `tell`.
 - Yesterday's `share`, which turned a weight into a part of the way between two masters.
 
 I couldn't run the code in FontLab 9. I ran it against a stand-in built from Plum's source file, and the output below comes from there.
@@ -181,8 +180,17 @@ When a function sorts things into cases, write down what happens at the borders 
 # Reads the weight axis, the masters on it and the font's instances,
 # and says where each wanted weight falls. Changes nothing.
 import fly.ap.core.scripting as scripting
-import halfmoon
-from fly import fl
+from fly import fl, qt
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
+
+
+# Chapter 39's tell, written out again so this script runs by itself.
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
 
 WANTED = [
     ("Thin", 100),
@@ -238,7 +246,7 @@ def place(value, masters):
 
 def main():
     if fl.CurrentFont() is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     package = scripting.current_package()
     axes = list(package.axes)

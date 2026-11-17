@@ -24,7 +24,7 @@ The `é` is pulled in under the bar of the `T`. The `ě` isn't. They're the same
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py` with `rich` and `tell`.
+- The helper `tell` from chapter 39. The scripts below write it out again, so each one runs by itself.
 - The `Uring` and `uring` from chapter 56 and the `ecaron` from chapter 60. If you skipped those chapters, the last part of today's report will be empty, and the rest holds.
 
 Nothing is changed today. I couldn't run the code in FontLab 9. The classes and their members come from Plum's source file.
@@ -166,8 +166,11 @@ Here's a rule that separates the two cases. The members of `R_eacute` are all bu
 Chapter 52 read a glyph's components, and chapter 63 used them to find accented letters. The base is the first component:
 
 ```python
+from fly.tr.proxy.fl.objects.glyph import pGlyph
+
+
 def base_letter(font, name):
-    rich = halfmoon.rich(font, font[name])
+    rich = pGlyph(font, font[name])
     found = parts.components(layer_of(rich.fl, MASTER))
     if len(found) < 2 or rich.contours(MASTER):
         return None
@@ -182,18 +185,26 @@ A glyph with fewer than two components, or with a drawing of its own, has no bas
 #FLM: List Kerning Classes
 # Prints the kerning classes of one master and the accented letters
 # that were left out of the class their relatives are in.
-import halfmoon
 import fly.ap.components.writer as parts
 import fly.ap.core.scripting as scripting
-from fly import fl
+from fly import fl, qt
 from fly.pens import layer_of
+from fly.ap.ui.dialogs import run_standard_message_box
+from fly.tr.proxy.fl.objects.glyph import pGlyph
+
+TITLE = "Halfmoon"
 
 MASTER = "Regular"
 PLACE = {"left": "first", "right": "second", "both": "either"}
 
 
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
+
 def base_letter(font, name):
-    rich = halfmoon.rich(font, font[name])
+    rich = pGlyph(font, font[name])
     found = parts.components(layer_of(rich.fl, MASTER))
     if len(found) < 2 or rich.contours(MASTER):
         return None
@@ -225,7 +236,7 @@ def left_out(font, classes):
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     package = scripting.current_package()
     classes = scripting.kerning_classes(package, MASTER)

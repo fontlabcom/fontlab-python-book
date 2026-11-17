@@ -14,7 +14,7 @@ So today has two results. One is a script that lists the differences between two
 
 ## What you need
 
-- `Plum-practice.vfj` open in FontLab 9, with Fly installed, and `halfmoon.py`.
+- `Plum-practice.vfj` open in FontLab 9, with Fly installed.
 - A few minutes to make a copy of the file, in Step 1.
 
 I couldn't run the code in FontLab 9. I ran the script in plain Python. The part that compares glyphs is Fly's own function, running for real on records I built from the shipped Plum. The part that reads two open fonts from FontLab is a stand-in.
@@ -111,8 +111,17 @@ from pathlib import Path
 import fly.ap.core.scripting as scripting
 import fly.ap.fonts.revisions.model as revisions
 import fly.ap.masters.inspect.model as masters_model
-import halfmoon
-from fly import fl
+from fly import fl, qt
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
+
+
+# Chapter 39's tell, written out again so this script runs by itself.
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
 
 QUIET = ["raw_node_state"]
 WORDS = {"state": "layer", "advance": "width", "geometry": "shape",
@@ -166,12 +175,12 @@ def kern_lines(old, new, master):
 
 def main():
     if fl.CurrentFont() is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     new = scripting.current_package()
     others = other_fonts(new)
     if len(others) != 1:
-        halfmoon.tell("Open two fonts, with the new one in front. "
+        tell("Open two fonts, with the new one in front. "
                       f"{len(others) + 1} are open.")
         return
     old = others[0]
@@ -263,7 +272,7 @@ Fly's `capture` and `compare` list which glyphs differ between one master of two
 
 ## Try it yourself
 
-1. Print the report's lines to a file, `changes.txt`, in the newest export folder, using `halfmoon.latest_export` from chapter 116.
+1. Print the report's lines to a file, `changes.txt`, in the newest export folder, using a copy of `latest_export` from chapter 115.
 2. Add the master's count of unchanged kerning pairs to its heading line, so `Regular: 3` becomes `Regular: 3 (104 pairs the same)`.
 3. Font Info isn't compared. Chapter 99's `sync_font_info.py` reads Font Info fields from every open font with `getattr`. Read the same fields from the two packages here and add lines such as `copyright: differs`.
 

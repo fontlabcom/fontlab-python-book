@@ -5292,18 +5292,18 @@
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>Plum-practice</code> open in FontLab 9, with Fly installed, and the Font window in front.</li>
-<li><code>halfmoon.py</code> with <code>rich</code>, <code>ask</code> and <code>tell</code>.</li>
+<li>The helpers <code>ask</code> and <code>tell</code> from chapter 39. The scripts below write them out again, so each one runs by itself.</li>
 <li>The <code>LEFT_LIKE</code> line that <code>spacing_groups.py</code> printed in chapter 64.</li>
 </ul>
 <p>This chapter changes the font, in one Undo step. I couldn't run it in FontLab 9. I can show you what the script stores. What FontLab then does with it, and when, I've read about and not seen. Step 5 is a check for that, and you should trust the check over my description.</p>
 <h2 id="step-1-read-the-three-fields">Step 1: Read the three fields<a class="headerlink" href="#step-1-read-the-three-fields" title="Permanent link">&para;</a></h2>
 <p>The fields are called <code>metricsLeft</code>, <code>metricsRight</code> and <code>metricsWidth</code>, and they belong to the layer:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly.pens</span><span class="w"> </span><span class="kn">import</span> <span class="n">layer_of</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
 
 <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
-<span class="n">layer</span> <span class="o">=</span> <span class="n">layer_of</span><span class="p">(</span><span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"g"</span><span class="p">])</span><span class="o">.</span><span class="n">fl</span><span class="p">,</span> <span class="s2">"Light"</span><span class="p">)</span>
+<span class="n">layer</span> <span class="o">=</span> <span class="n">layer_of</span><span class="p">(</span><span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"g"</span><span class="p">])</span><span class="o">.</span><span class="n">fl</span><span class="p">,</span> <span class="s2">"Light"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">layer</span><span class="o">.</span><span class="n">metricsLeft</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">layer</span><span class="o">.</span><span class="n">metricsRight</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">layer</span><span class="o">.</span><span class="n">metricsWidth</span><span class="p">)])</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>['', '', '']
@@ -5320,7 +5320,7 @@
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.history.glyphs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">history</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
 
-<span class="n">rich</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"g"</span><span class="p">])</span>
+<span class="n">rich</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"g"</span><span class="p">])</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">change</span><span class="p">():</span>
@@ -5393,8 +5393,8 @@ TypeError: can only concatenate str (not "int") to str
 <span class="n">LEFT_EXTRA</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"u"</span><span class="p">:</span> <span class="o">-</span><span class="mi">4</span><span class="p">}</span>
 
 <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">LEFT_LIKE</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-    <span class="n">want</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">model</span><span class="p">])</span><span class="o">.</span><span class="n">getLSB</span><span class="p">(</span><span class="s2">"Light"</span><span class="p">)</span> <span class="o">+</span> <span class="n">LEFT_EXTRA</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-    <span class="n">have</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">])</span><span class="o">.</span><span class="n">getLSB</span><span class="p">(</span><span class="s2">"Light"</span><span class="p">)</span>
+    <span class="n">want</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">model</span><span class="p">])</span><span class="o">.</span><span class="n">getLSB</span><span class="p">(</span><span class="s2">"Light"</span><span class="p">)</span> <span class="o">+</span> <span class="n">LEFT_EXTRA</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">have</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">])</span><span class="o">.</span><span class="n">getLSB</span><span class="p">(</span><span class="s2">"Light"</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">have</span><span class="p">,</span> <span class="n">want</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">have</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">want</span><span class="si">:</span><span class="s2">+</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>c 53 50 +3
@@ -5408,16 +5408,32 @@ u 80 80 +0
 <div class="highlight"><pre><span></span><code><span class="c1">#FLM: Link Metrics</span>
 <span class="c1"># Stores a left-sidebearing rule such as =n or =n-4 in each follower,</span>
 <span class="c1"># in every master, and checks whether the numbers agree with the rules.</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.history.glyphs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">history</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly.pens</span><span class="w"> </span><span class="kn">import</span> <span class="n">layer_of</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
+
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Halfmoon"</span>
 
 <span class="n">MASTERS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Light"</span><span class="p">,</span> <span class="s2">"Regular"</span><span class="p">,</span> <span class="s2">"Bold"</span><span class="p">]</span>
 <span class="n">LEFT_LIKE</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'b'</span><span class="p">:</span> <span class="s1">'n'</span><span class="p">,</span> <span class="s1">'h'</span><span class="p">:</span> <span class="s1">'n'</span><span class="p">,</span> <span class="s1">'k'</span><span class="p">:</span> <span class="s1">'n'</span><span class="p">,</span> <span class="s1">'l'</span><span class="p">:</span> <span class="s1">'n'</span><span class="p">,</span> <span class="s1">'m'</span><span class="p">:</span> <span class="s1">'n'</span><span class="p">,</span> <span class="s1">'p'</span><span class="p">:</span> <span class="s1">'n'</span><span class="p">,</span> <span class="s1">'r'</span><span class="p">:</span> <span class="s1">'n'</span><span class="p">,</span> <span class="s1">'c'</span><span class="p">:</span> <span class="s1">'o'</span><span class="p">,</span> <span class="s1">'d'</span><span class="p">:</span> <span class="s1">'o'</span><span class="p">,</span> <span class="s1">'e'</span><span class="p">:</span> <span class="s1">'o'</span><span class="p">,</span> <span class="s1">'g'</span><span class="p">:</span> <span class="s1">'o'</span><span class="p">,</span> <span class="s1">'q'</span><span class="p">:</span> <span class="s1">'o'</span><span class="p">,</span> <span class="s1">'u'</span><span class="p">:</span> <span class="s1">'n'</span><span class="p">}</span>
 <span class="n">LEFT_EXTRA</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"u"</span><span class="p">:</span> <span class="o">-</span><span class="mi">4</span><span class="p">}</span>
 <span class="n">CLEAR</span> <span class="o">=</span> <span class="kc">False</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">ask</span><span class="p">(</span><span class="n">question</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">answer</span> <span class="o">=</span> <span class="n">run_standard_message_box</span><span class="p">(</span>
+        <span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">question</span><span class="p">,</span> <span class="s2">"Question"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Yes</span> <span class="o">|</span> <span class="n">box</span><span class="o">.</span><span class="n">No</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">answer</span> <span class="o">==</span> <span class="n">box</span><span class="o">.</span><span class="n">Yes</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">rule</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">extra</span><span class="p">):</span>
@@ -5430,7 +5446,7 @@ u 80 80 +0
     <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">LEFT_LIKE</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">text</span> <span class="o">=</span> <span class="s2">""</span> <span class="k">if</span> <span class="n">CLEAR</span> <span class="k">else</span> <span class="n">rule</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">LEFT_EXTRA</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
-        <span class="n">rich</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+        <span class="n">rich</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
         <span class="k">for</span> <span class="n">master</span> <span class="ow">in</span> <span class="n">MASTERS</span><span class="p">:</span>
             <span class="n">layer</span> <span class="o">=</span> <span class="n">layer_of</span><span class="p">(</span><span class="n">rich</span><span class="o">.</span><span class="n">fl</span><span class="p">,</span> <span class="n">master</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">layer</span><span class="o">.</span><span class="n">metricsLeft</span><span class="p">)</span> <span class="o">!=</span> <span class="n">text</span><span class="p">:</span>
@@ -5441,8 +5457,8 @@ u 80 80 +0
 <span class="k">def</span><span class="w"> </span><span class="nf">off_rule</span><span class="p">(</span><span class="n">font</span><span class="p">):</span>
     <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">LEFT_LIKE</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="n">rich</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
-        <span class="n">base</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">model</span><span class="p">])</span>
+        <span class="n">rich</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">model</span><span class="p">])</span>
         <span class="k">for</span> <span class="n">master</span> <span class="ow">in</span> <span class="n">MASTERS</span><span class="p">:</span>
             <span class="n">off</span> <span class="o">=</span> <span class="n">rich</span><span class="o">.</span><span class="n">getLSB</span><span class="p">(</span><span class="n">master</span><span class="p">)</span> <span class="o">-</span> <span class="n">base</span><span class="o">.</span><span class="n">getLSB</span><span class="p">(</span><span class="n">master</span><span class="p">)</span> <span class="o">-</span> <span class="n">LEFT_EXTRA</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">off</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
@@ -5460,12 +5476,12 @@ u 80 80 +0
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">font</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">LEFT_LIKE</span><span class="p">)</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">LEFT_LIKE</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
     <span class="n">missing</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span> <span class="k">if</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">]))</span>
     <span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="sa">f</span><span class="s2">"No glyph named: </span><span class="si">{</span><span class="s1">' '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">missing</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="sa">f</span><span class="s2">"No glyph named: </span><span class="si">{</span><span class="s1">' '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">missing</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="k">return</span>
 
     <span class="n">rows</span> <span class="o">=</span> <span class="n">link_rows</span><span class="p">(</span><span class="n">font</span><span class="p">)</span>
@@ -5478,7 +5494,7 @@ u 80 80 +0
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">:</span><span class="s2">&lt;4</span><span class="si">}</span><span class="s2">left  </span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span><span class="si">}</span><span class="s2"> layers to change."</span><span class="p">)</span>
     <span class="n">show_off</span><span class="p">(</span><span class="n">font</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">rows</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">ask</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Store rules in </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span><span class="si">}</span><span class="s2"> layers?"</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">rows</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">ask</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Store rules in </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span><span class="si">}</span><span class="s2"> layers?"</span><span class="p">):</span>
         <span class="k">return</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">change</span><span class="p">():</span>

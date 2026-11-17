@@ -13,7 +13,7 @@ A class in feature code is a list of glyph names with a name of its own. Nothing
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py` with `tell` and `ask`, and `list_features.py` from chapter 87.
+- `list_features.py` from chapter 87. The script below defines `tell` and `ask` from [chapter 39](../part2-a-toolbox/039-ask-the-user.md) again, so it runs by itself.
 - The accented capitals you built in Part 3. If you built fewer than I did, your counts will be smaller than mine.
 
 I couldn't run the code in FontLab 9. I ran the reading, the comparing and the text building in plain Python on Plum's own prefix and glyph names, plus the fifteen capitals from Part 3. The write is the one from chapter 88, and I haven't seen it work.
@@ -180,9 +180,25 @@ Every other line, comments included, passes through untouched.
 # Does not compile: do that in the Features panel afterward.
 import unicodedata
 
-import halfmoon
-from fly import fl
+from fly import fl, qt
 import fly.ap.core.scripting as scripting
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
+
+
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
+
+def ask(question):
+    box = qt.QtGui.QMessageBox
+    answer = run_standard_message_box(
+        qt, fl.MainWindow(), TITLE, question, "Question", box.Yes | box.No
+    )
+    return answer == box.Yes
+
 
 WANTED = {"@cpsp": "Lu"}
 DRY_RUN = True
@@ -239,7 +255,7 @@ def new_prefix(prefix, font):
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     package = scripting.current_package()
     blocks = scripting.read_feature_blocks(package)
@@ -250,7 +266,7 @@ def main():
     if DRY_RUN:
         print("Dry run. Nothing written.")
         return
-    if not halfmoon.ask(f"Rewrite {changed} class lines in the prefix?"):
+    if not ask(f"Rewrite {changed} class lines in the prefix?"):
         return
     updated = {"prefix": prefix, "features": list(blocks["features"])}
     result = scripting.write_feature_blocks(

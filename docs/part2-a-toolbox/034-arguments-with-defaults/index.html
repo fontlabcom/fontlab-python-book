@@ -1546,10 +1546,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-whole-module" class="md-nav__link">
+  <a href="#the-whole-script" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The whole module
+        The whole script
       
     </span>
   </a>
@@ -5247,10 +5247,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-whole-module" class="md-nav__link">
+  <a href="#the-whole-script" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The whole module
+        The whole script
       
     </span>
   </a>
@@ -5308,51 +5308,54 @@
 
 <h1 id="34-arguments-you-can-leave-out">34. Arguments you can leave out<a class="headerlink" href="#34-arguments-you-can-leave-out" title="Permanent link">&para;</a></h1>
 <p>Wednesday. Mira is spacing the capitals, and she has <code>A</code>, <code>H</code>, <code>M</code> and <code>W</code> selected in the Font window. She wants to know which of those four is the widest. She has a function for the widest glyph. It tells her <code>emdash</code>, as it does every time, because it looks at the whole font and the em dash is the widest thing in it.</p>
-<p>She could write a second function, <code>widest_selected_glyph</code>, with the same loop and one line changed. Then a third for "widest glyph that's wider than some number", and by Friday the module would have six functions that all do nearly the same thing.</p>
+<p>She could write a second function, <code>widest_selected_glyph</code>, with the same loop and one line changed. Then a third for "widest glyph that's wider than some number", and by Friday she'd be pasting six functions into every script that all do nearly the same thing.</p>
 <p>What she wants is one function with a knob on it. Most days the knob stays where it is and she doesn't think about it. Now and then she turns it.</p>
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li>FontLab 9 with Fly installed, and <code>Plum-practice</code> open.</li>
-<li><code>halfmoon.py</code> from <a href="../033-your-own-module/">chapter 33</a>, and the <code>importlib.reload(halfmoon)</code> line in whatever script you test with, since you'll edit the module several times today.</li>
+<li>An empty window in the Scripting panel. Today's functions and the calls that test them all go in that one script. Save it as <code>widest.py</code> so you can come back to it. Each new call goes at the bottom, below the functions.</li>
 <li>The selection helper, <code>names_selected_names</code>, from <a href="../../part1-first-words/015-the-selection/">chapter 15</a>.</li>
 </ul>
 <h2 id="step-1-a-slot-with-something-already-in-it">Step 1: A slot with something already in it<a class="headerlink" href="#step-1-a-slot-with-something-already-in-it" title="Permanent link">&para;</a></h2>
 <p>You've thought of a function's parentheses as slots since chapter 16. <code>widest_glyph(font)</code> has one slot, and you must fill it. A slot can also come with a value already in it. You write the value into the <code>def</code> line, after an equals sign:</p>
-<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">wider_than</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">700</span><span class="p">):</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">wider_than</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">700</span><span class="p">):</span>
     <span class="n">names</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">glyph</span> <span class="ow">in</span> <span class="n">font</span><span class="o">.</span><span class="n">glyphs</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">glyph</span><span class="o">.</span><span class="n">width</span> <span class="o">&gt;</span> <span class="n">limit</span><span class="p">:</span>
             <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">glyph</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">names</span>
 </code></pre></div>
-<p>Put that in <code>halfmoon.py</code> and call it two ways:</p>
+<p>Call it two ways, below the function:</p>
 <div class="highlight"><pre><span></span><code><span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">halfmoon</span><span class="o">.</span><span class="n">wider_than</span><span class="p">(</span><span class="n">font</span><span class="p">)))</span>
-<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">halfmoon</span><span class="o">.</span><span class="n">wider_than</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="mi">800</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">wider_than</span><span class="p">(</span><span class="n">font</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">wider_than</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="mi">800</span><span class="p">)))</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>22
 11
 </code></pre></div>
 <p>The first call fills one slot and leaves the second alone. Python uses the value that was already there, 700, and finds 22 glyphs wider than that. The second call fills both, and 800 takes the place of 700 for that one call. The 700 isn't gone. The next call that leaves the slot empty gets it again.</p>
 <p>The value in the <code>def</code> line is called a <strong>default</strong>. It's what the function uses when you don't say otherwise.</p>
-<p>A good default is the answer you'd give nine times in ten. In chapter 17 the limit lived in a constant, <code>LIMIT = 700</code>, and that was right for a single script. In a module that several scripts share, a default is better: every script gets 700 without asking, and the one script that needs 800 can say so without changing anything for the others.</p>
+<p>A good default is the answer you'd give nine times in ten. In chapter 17 the limit lived in a constant, <code>LIMIT = 700</code>, and that was right for a single script. In a function that several scripts use, a default is better: every call gets 700 without asking, and the one script that needs 800 can say so without changing anything for the others.</p>
 <h2 id="step-2-say-the-name">Step 2: Say the name<a class="headerlink" href="#step-2-say-the-name" title="Permanent link">&para;</a></h2>
 <p>Look at this call as a stranger would:</p>
-<div class="highlight"><pre><span></span><code><span class="n">halfmoon</span><span class="o">.</span><span class="n">wider_than</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="mi">800</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="n">wider_than</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="mi">800</span><span class="p">)</span>
 </code></pre></div>
 <p>What is 800? You know today, because you wrote the function ten minutes ago. Python lets you say which slot you're filling, by name:</p>
-<div class="highlight"><pre><span></span><code><span class="n">halfmoon</span><span class="o">.</span><span class="n">wider_than</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">800</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="n">wider_than</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">800</span><span class="p">)</span>
 </code></pre></div>
 <p>It does the same thing, and it explains itself. You've already written calls like this. <code>open(path, "w", newline="")</code> in chapter 28 and <code>history.commit(..., operation="geometry", facts=facts)</code> in chapter 29 both fill slots by name. I asked you to copy them then, and now you can see how they work.</p>
 <p>So there are two ways to fill a slot. By position: the first value goes in the first slot, the second in the second. Or by name: <code>limit=800</code> goes in the slot called <code>limit</code>, wherever it sits in the line. The habit I'd recommend is the one those two calls follow. Fill the one or two obvious slots by position and name the rest.</p>
 <p>If you get the name wrong, Python tells you at once:</p>
-<div class="highlight"><pre><span></span><code><span class="n">halfmoon</span><span class="o">.</span><span class="n">wider_than</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">limt</span><span class="o">=</span><span class="mi">800</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="n">wider_than</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">limt</span><span class="o">=</span><span class="mi">800</span><span class="p">)</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>TypeError: wider_than() got an unexpected keyword argument 'limt'
 </code></pre></div>
 <p>"Keyword argument" is Python's term for a slot filled by name. The message says there's no slot called <code>limt</code>. Compare that with chapter 14, where a misspelled drawer name on the left of <code>=</code> was accepted in silence. A misspelled slot name is refused.</p>
 <h2 id="step-3-a-yes-or-no-knob">Step 3: A yes-or-no knob<a class="headerlink" href="#step-3-a-yes-or-no-knob" title="Permanent link">&para;</a></h2>
-<p>Now Mira's problem. The knob she wants has two positions: the whole font, or only what's selected. That's a <code>True</code> or <code>False</code>, like the switch in chapter 31, except that it sits in a slot. Here's the function from the module with the knob added:</p>
+<p>Now Mira's problem. The knob she wants has two positions: the whole font, or only what's selected. That's a <code>True</code> or <code>False</code>, like the switch in chapter 31, except that it sits in a slot. Here's <code>widest_glyph</code> from chapter 33 with the knob added. Replace the old one in your script with it:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
 
 
@@ -5370,16 +5373,16 @@
             <span class="n">widest</span> <span class="o">=</span> <span class="n">glyph</span>
     <span class="k">return</span> <span class="n">widest</span>
 </code></pre></div>
-<p>The import goes at the top of <code>halfmoon.py</code>, with the other one. Select <code>A</code>, <code>H</code>, <code>M</code> and <code>W</code> in the Font window and run:</p>
+<p>The import goes at the top of the script, below <code>from fly import fl</code>. Select <code>A</code>, <code>H</code>, <code>M</code> and <code>W</code> in the Font window and run:</p>
 <div class="highlight"><pre><span></span><code><span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">halfmoon</span><span class="o">.</span><span class="n">widest_glyph</span><span class="p">(</span><span class="n">font</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">halfmoon</span><span class="o">.</span><span class="n">widest_glyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">widest_glyph</span><span class="p">(</span><span class="n">font</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">widest_glyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>emdash
 W
 </code></pre></div>
 <p>The first half of the function decides which glyphs to look at. With the knob on, it builds a list from the selected names, as chapter 15 did. With the knob off, it takes all of them. Either way the result lands in a box called <code>glyphs</code>, and the second half of the function doesn't care which way it was filled. That's the trick to adding an option: branch once at the start to settle what you're working on, and write the real work once.</p>
-<p>The default is <code>False</code>, so every script that already calls <code>halfmoon.widest_glyph(font)</code> goes on working exactly as it did. <code>Friday Report.py</code> doesn't know the knob exists. This is what makes defaults so useful in a shared module: you can teach an old function something new without breaking the scripts that call it.</p>
+<p>The default is <code>False</code>, so every call that already says <code>widest_glyph(font)</code> goes on working exactly as it did. Paste this version into <code>Friday Report.py</code> and its old call doesn't need to change. It doesn't know the knob exists. This is what makes defaults so useful: you can teach an old function something new without breaking the lines that call it.</p>
 <p>The knob is named after the unusual behavior, so that <code>False</code> is the ordinary case and a call that says nothing gets the ordinary case. Chapter 31's switch worked the other way round, and for a reason: a switch that guards a change should default to safe, while an option on a report should default to ordinary.</p>
 <h2 id="step-4-when-theres-nothing-to-hand-back">Step 4: When there's nothing to hand back<a class="headerlink" href="#step-4-when-theres-nothing-to-hand-back" title="Permanent link">&para;</a></h2>
 <p>Two lines of that function changed for a reason I haven't given yet. The old version began with <code>widest = font[0]</code>: start with the first glyph and let the others challenge it. The new one begins with <code>widest = None</code>.</p>
@@ -5388,7 +5391,7 @@ W
 </code></pre></div>
 <p>You met this message in chapter 19, where the font itself was missing. Here the font is fine. The selection is empty, so the list of glyphs is empty, so the loop never runs, so <code>widest</code> is still the <code>None</code> it started as, and the function hands that back. Then the calling line asks <code>None</code> for its name.</p>
 <p>The function did the honest thing. Asked for the widest of no glyphs, it can't hand back the first glyph of the font, which is what the old opening line would have done. That would be a wrong answer that looks like a right one. <code>None</code> means "there isn't one", and it's the caller's job to ask:</p>
-<div class="highlight"><pre><span></span><code><span class="n">widest</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">widest_glyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="n">widest</span> <span class="o">=</span> <span class="n">widest_glyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">if</span> <span class="n">widest</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">"Select some glyphs first."</span><span class="p">)</span>
 <span class="k">else</span><span class="p">:</span>
@@ -5402,15 +5405,15 @@ W
 <p>Now the mistake. Mira decides that <code>only_selected</code> is the more important slot and moves it to the front:</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">widest_glyph</span><span class="p">(</span><span class="n">only_selected</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">font</span><span class="p">):</span>
 </code></pre></div>
-<p>Reload the module, and it won't load:</p>
+<p>Run the script, and none of it runs:</p>
 <div class="highlight"><pre><span></span><code>SyntaxError: non-default argument follows default argument
 </code></pre></div>
-<p>A <code>SyntaxError</code> means Python couldn't read the file at all, so nothing in the module works until it's fixed. The rule it's quoting: slots that must be filled come first, and slots with defaults come after them.</p>
+<p>A <code>SyntaxError</code> means Python couldn't read the script at all, so nothing in it runs until it's fixed, not even the lines above the mistake. The rule it's quoting: slots that must be filled come first, and slots with defaults come after them.</p>
 <p>Think about why. Suppose Python allowed that line, and you called <code>widest_glyph(font)</code>. One value, two slots. Does the value go in the first slot, because it's first? Then <code>only_selected</code> holds a font and <code>font</code> holds nothing. Or should Python skip the first slot because it has a default? It would have to guess, and Python refuses to guess. With the required slots at the front, a call by position always fills them first and whatever's left over goes into the optional ones.</p>
 <p>Put the line back as it was.</p>
 <p>Two more messages belong to this family, and you'll see both sooner or later:</p>
-<div class="highlight"><pre><span></span><code><span class="n">halfmoon</span><span class="o">.</span><span class="n">widest_glyph</span><span class="p">()</span>
-<span class="n">halfmoon</span><span class="o">.</span><span class="n">widest_glyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="mi">800</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="n">widest_glyph</span><span class="p">()</span>
+<span class="n">widest_glyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="mi">800</span><span class="p">)</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>TypeError: widest_glyph() missing 1 required positional argument: 'font'
 TypeError: widest_glyph() takes from 1 to 2 positional arguments but 3 were given
@@ -5435,9 +5438,9 @@ TypeError: widest_glyph() takes from 1 to 2 positional arguments but 3 were give
     <span class="k">return</span> <span class="n">names</span>
 </code></pre></div>
 <p>With <code>A</code>, <code>H</code>, <code>M</code> and <code>W</code> selected again:</p>
-<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="n">halfmoon</span><span class="o">.</span><span class="n">wider_than</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">halfmoon</span><span class="o">.</span><span class="n">wider_than</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span> <span class="n">only_selected</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">halfmoon</span><span class="o">.</span><span class="n">wider_than</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">900</span><span class="p">)))</span>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="n">wider_than</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">wider_than</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span> <span class="n">only_selected</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">wider_than</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">900</span><span class="p">)))</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>['M', 'W']
 ['H', 'M', 'W']
@@ -5445,10 +5448,10 @@ TypeError: widest_glyph() takes from 1 to 2 positional arguments but 3 were give
 </code></pre></div>
 <p>The first call skips <code>limit</code> and sets the knob after it. You can only do that by name. By position you'd have to write <code>wider_than(font, 700, True)</code>, repeating a default you didn't want to think about, and leaving a bare <code>True</code> that tells a reader nothing. Naming the slot is the only good way to write that call.</p>
 <p><code>glyphs_of</code> shows something else. A function can have more than one <code>return</code>. The first one hands back the whole font and leaves at once, and the rest of the function is only reached when the knob is on.</p>
-<h2 id="the-whole-module">The whole module<a class="headerlink" href="#the-whole-module" title="Permanent link">&para;</a></h2>
-<p>These are the parts of <code>halfmoon.py</code> that changed today. The constants, <code>LEGEND</code>, <code>rich</code>, <code>is_empty</code> and <code>status_tally</code> stay as they were.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
+<h2 id="the-whole-script">The whole script<a class="headerlink" href="#the-whole-script" title="Permanent link">&para;</a></h2>
+<p>Here is <code>widest.py</code> as it stands by this evening, with the test calls at the bottom. It needs nothing but Fly.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">glyphs_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -5474,16 +5477,25 @@ TypeError: widest_glyph() takes from 1 to 2 positional arguments but 3 were give
         <span class="k">if</span> <span class="n">glyph</span><span class="o">.</span><span class="n">width</span> <span class="o">&gt;</span> <span class="n">limit</span><span class="p">:</span>
             <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">glyph</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">names</span>
+
+
+<span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
+<span class="n">widest</span> <span class="o">=</span> <span class="n">widest_glyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">widest</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Select some glyphs first."</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">widest</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">widest</span><span class="o">.</span><span class="n">width</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">wider_than</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">700</span><span class="p">,</span> <span class="n">only_selected</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
 </code></pre></div>
 <p><code>widest_glyph</code> is shorter than it was in Step 3, because <code>glyphs_of</code> took over its first half.</p>
-<p>Mira selects her four capitals and gets her answer: <code>W</code>, at 859 units. Then she selects all 26 and asks which are wider than 700. Nothing in the Friday report changed, and she didn't have to open it to be sure.</p>
+<p>Mira selects her four capitals and gets her answer: <code>W</code>, at 859 units. Then she selects all 26 and asks which are wider than 700. The old calls in her other scripts still mean what they meant, because a call that says nothing gets the ordinary case.</p>
 <h2 id="what-you-learned">What you learned<a class="headerlink" href="#what-you-learned" title="Permanent link">&para;</a></h2>
 <p>A slot in a <code>def</code> line can carry a default, written <code>name=value</code>, and a call that leaves the slot empty gets that value. You can fill any slot by name, which makes a call explain itself and lets you skip the optional slots you don't care about. Slots that must be filled come before slots with defaults. A function that has nothing to hand back should return <code>None</code>, and its caller should ask <code>is None</code> before using the result.</p>
 <h2 id="try-it-yourself">Try it yourself<a class="headerlink" href="#try-it-yourself" title="Permanent link">&para;</a></h2>
 <ol>
-<li>Give <code>status_tally</code> in <code>halfmoon.py</code> an <code>only_selected=False</code> slot, using <code>glyphs_of</code>. Select the capitals and print the tally for them alone. Which line of the function did you have to change, besides the <code>def</code> line?</li>
+<li>Copy <code>status_tally</code> and <code>LEGEND</code> from chapter 33 into <code>widest.py</code>, and give <code>status_tally</code> an <code>only_selected=False</code> slot, using <code>glyphs_of</code>. Select the capitals and print the tally for them alone. Which line of the function did you have to change, besides the <code>def</code> line?</li>
 <li>Write <code>narrower_than(font, limit=300, only_selected=False)</code>. Then look at it next to <code>wider_than</code>. They differ in one character. Is that worth a single function with a third knob, or are two functions clearer? There's no right answer, but decide, and say why in a comment.</li>
-<li>Call <code>halfmoon.wider_than(font, only_selected=True, limit=600)</code>, with the two named slots the other way around. Does it work? Then call <code>halfmoon.wider_than(limit=600, font=font)</code>. What does that tell you about slots filled by name?</li>
+<li>Call <code>wider_than(font, only_selected=True, limit=600)</code>, with the two named slots the other way around. Does it work? Then call <code>wider_than(limit=600, font=font)</code>. What does that tell you about slots filled by name?</li>
 </ol>
 <h2 id="next">Next<a class="headerlink" href="#next" title="Permanent link">&para;</a></h2>
 <p><code>wider_than</code> hands back names, and Mira wants the widths beside them. Chapter 35 builds rows: lists that hold lists.</p>

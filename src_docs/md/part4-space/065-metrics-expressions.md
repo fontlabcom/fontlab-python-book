@@ -15,7 +15,7 @@ For Python, the expression is a string. Python doesn't know what `=o` means and 
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed, and the Font window in front.
-- `halfmoon.py` with `rich`, `ask` and `tell`.
+- The helpers `ask` and `tell` from chapter 39. The scripts below write them out again, so each one runs by itself.
 - The `LEFT_LIKE` line that `spacing_groups.py` printed in chapter 64.
 
 This chapter changes the font, in one Undo step. I couldn't run it in FontLab 9. I can show you what the script stores. What FontLab then does with it, and when, I've read about and not seen. Step 5 is a check for that, and you should trust the check over my description.
@@ -25,12 +25,12 @@ This chapter changes the font, in one Undo step. I couldn't run it in FontLab 9.
 The fields are called `metricsLeft`, `metricsRight` and `metricsWidth`, and they belong to the layer:
 
 ```python
-import halfmoon
 from fly import fl
 from fly.pens import layer_of
+from fly.tr.proxy.fl.objects.glyph import pGlyph
 
 font = fl.CurrentFont()
-layer = layer_of(halfmoon.rich(font, font["g"]).fl, "Light")
+layer = layer_of(pGlyph(font, font["g"]).fl, "Light")
 print([str(layer.metricsLeft), str(layer.metricsRight), str(layer.metricsWidth)])
 ```
 
@@ -60,7 +60,7 @@ Chapter 64's report had one odd line in the Light: the `g` has 85 on its right w
 import fly.ap.core.history.glyphs as history
 import fly.ap.core.scripting as scripting
 
-rich = halfmoon.rich(font, font["g"])
+rich = pGlyph(font, font["g"])
 
 
 def change():
@@ -175,8 +175,8 @@ LEFT_LIKE = {"c": "o", "e": "o", "u": "n"}
 LEFT_EXTRA = {"u": -4}
 
 for name, model in LEFT_LIKE.items():
-    want = halfmoon.rich(font, font[model]).getLSB("Light") + LEFT_EXTRA.get(name, 0)
-    have = halfmoon.rich(font, font[name]).getLSB("Light")
+    want = pGlyph(font, font[model]).getLSB("Light") + LEFT_EXTRA.get(name, 0)
+    have = pGlyph(font, font[name]).getLSB("Light")
     print(name, have, want, f"{have - want:+}")
 ```
 
@@ -198,16 +198,32 @@ Run this before you write the rules and again after. Before, it tells you which 
 #FLM: Link Metrics
 # Stores a left-sidebearing rule such as =n or =n-4 in each follower,
 # in every master, and checks whether the numbers agree with the rules.
-import halfmoon
 import fly.ap.core.history.glyphs as history
 import fly.ap.core.scripting as scripting
-from fly import fl
+from fly import fl, qt
 from fly.pens import layer_of
+from fly.ap.ui.dialogs import run_standard_message_box
+from fly.tr.proxy.fl.objects.glyph import pGlyph
+
+TITLE = "Halfmoon"
 
 MASTERS = ["Light", "Regular", "Bold"]
 LEFT_LIKE = {'b': 'n', 'h': 'n', 'k': 'n', 'l': 'n', 'm': 'n', 'p': 'n', 'r': 'n', 'c': 'o', 'd': 'o', 'e': 'o', 'g': 'o', 'q': 'o', 'u': 'n'}
 LEFT_EXTRA = {"u": -4}
 CLEAR = False
+
+
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
+
+def ask(question):
+    box = qt.QtGui.QMessageBox
+    answer = run_standard_message_box(
+        qt, fl.MainWindow(), TITLE, question, "Question", box.Yes | box.No
+    )
+    return answer == box.Yes
 
 
 def rule(model, extra):
@@ -220,7 +236,7 @@ def link_rows(font):
     rows = []
     for name, model in LEFT_LIKE.items():
         text = "" if CLEAR else rule(model, LEFT_EXTRA.get(name, 0))
-        rich = halfmoon.rich(font, font[name])
+        rich = pGlyph(font, font[name])
         for master in MASTERS:
             layer = layer_of(rich.fl, master)
             if str(layer.metricsLeft) != text:
@@ -231,8 +247,8 @@ def link_rows(font):
 def off_rule(font):
     lines = []
     for name, model in LEFT_LIKE.items():
-        rich = halfmoon.rich(font, font[name])
-        base = halfmoon.rich(font, font[model])
+        rich = pGlyph(font, font[name])
+        base = pGlyph(font, font[model])
         for master in MASTERS:
             off = rich.getLSB(master) - base.getLSB(master) - LEFT_EXTRA.get(name, 0)
             if off != 0:
@@ -250,12 +266,12 @@ def show_off(font):
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     names = list(LEFT_LIKE) + list(LEFT_LIKE.values())
     missing = sorted(set([name for name in names if font[name] is None]))
     if missing:
-        halfmoon.tell(f"No glyph named: {' '.join(missing)}")
+        tell(f"No glyph named: {' '.join(missing)}")
         return
 
     rows = link_rows(font)
@@ -268,7 +284,7 @@ def main():
         print(f"{name:<4}left  {text}")
     print(f"{len(rows)} layers to change.")
     show_off(font)
-    if not rows or not halfmoon.ask(f"Store rules in {len(rows)} layers?"):
+    if not rows or not ask(f"Store rules in {len(rows)} layers?"):
         return
 
     def change():

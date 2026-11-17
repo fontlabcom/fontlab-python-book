@@ -5322,7 +5322,7 @@ T ecaron
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>Plum-practice</code> open in FontLab 9, with Fly installed.</li>
-<li><code>halfmoon.py</code> with <code>rich</code> and <code>tell</code>.</li>
+<li>The helper <code>tell</code> from chapter 39. The scripts below write it out again, so each one runs by itself.</li>
 <li>The <code>Uring</code> and <code>uring</code> from chapter 56 and the <code>ecaron</code> from chapter 60. If you skipped those chapters, the last part of today's report will be empty, and the rest holds.</li>
 </ul>
 <p>Nothing is changed today. I couldn't run the code in FontLab 9. The classes and their members come from Plum's source file.</p>
@@ -5411,8 +5411,11 @@ R_yacute right 4
 <h2 id="step-5-who-ought-to-be-in">Step 5: Who ought to be in<a class="headerlink" href="#step-5-who-ought-to-be-in" title="Permanent link">&para;</a></h2>
 <p>Here's a rule that separates the two cases. The members of <code>R_eacute</code> are all built the same way: an <code>e</code> with an accent on top, as components. A glyph that's built on that base letter with an accent, and isn't a member, was probably forgotten. The plain <code>e</code> isn't built on anything, so the rule leaves it alone.</p>
 <p>Chapter 52 read a glyph's components, and chapter 63 used them to find accented letters. The base is the first component:</p>
-<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">base_letter</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-    <span class="n">rich</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">base_letter</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="n">rich</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
     <span class="n">found</span> <span class="o">=</span> <span class="n">parts</span><span class="o">.</span><span class="n">components</span><span class="p">(</span><span class="n">layer_of</span><span class="p">(</span><span class="n">rich</span><span class="o">.</span><span class="n">fl</span><span class="p">,</span> <span class="n">MASTER</span><span class="p">))</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">found</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">rich</span><span class="o">.</span><span class="n">contours</span><span class="p">(</span><span class="n">MASTER</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">None</span>
@@ -5423,18 +5426,26 @@ R_yacute right 4
 <div class="highlight"><pre><span></span><code><span class="c1">#FLM: List Kerning Classes</span>
 <span class="c1"># Prints the kerning classes of one master and the accented letters</span>
 <span class="c1"># that were left out of the class their relatives are in.</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.components.writer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">parts</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly.pens</span><span class="w"> </span><span class="kn">import</span> <span class="n">layer_of</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
+
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Halfmoon"</span>
 
 <span class="n">MASTER</span> <span class="o">=</span> <span class="s2">"Regular"</span>
 <span class="n">PLACE</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"left"</span><span class="p">:</span> <span class="s2">"first"</span><span class="p">,</span> <span class="s2">"right"</span><span class="p">:</span> <span class="s2">"second"</span><span class="p">,</span> <span class="s2">"both"</span><span class="p">:</span> <span class="s2">"either"</span><span class="p">}</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+
+
 <span class="k">def</span><span class="w"> </span><span class="nf">base_letter</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-    <span class="n">rich</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+    <span class="n">rich</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
     <span class="n">found</span> <span class="o">=</span> <span class="n">parts</span><span class="o">.</span><span class="n">components</span><span class="p">(</span><span class="n">layer_of</span><span class="p">(</span><span class="n">rich</span><span class="o">.</span><span class="n">fl</span><span class="p">,</span> <span class="n">MASTER</span><span class="p">))</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">found</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">rich</span><span class="o">.</span><span class="n">contours</span><span class="p">(</span><span class="n">MASTER</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">None</span>
@@ -5466,7 +5477,7 @@ R_yacute right 4
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">font</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">package</span> <span class="o">=</span> <span class="n">scripting</span><span class="o">.</span><span class="n">current_package</span><span class="p">()</span>
     <span class="n">classes</span> <span class="o">=</span> <span class="n">scripting</span><span class="o">.</span><span class="n">kerning_classes</span><span class="p">(</span><span class="n">package</span><span class="p">,</span> <span class="n">MASTER</span><span class="p">)</span>

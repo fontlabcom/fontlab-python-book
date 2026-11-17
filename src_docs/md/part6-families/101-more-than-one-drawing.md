@@ -15,7 +15,6 @@ Today's script asks the font instead.
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py`.
 
 I couldn't run the code in FontLab 9. I ran the script in plain Python against a stand-in with the glyphs this book has added. The layer order in step 3 is read from Plum's source file, where it's plain to see. What FontLab hands a script may be ordered differently, and step 3 is written so that it doesn't matter.
 
@@ -121,10 +120,19 @@ The indentation says which loop a line belongs to. `fl_glyph = ...` is done once
 #FLM: Masters Report
 # Lists the font's masters, then looks in every glyph for a layer
 # for every master. Changes nothing.
-import halfmoon
-from fly import fl
+from fly import fl, qt
 import fly.ap.core.scripting as scripting
 import fly.ap.masters.inspect.model as masters_model
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
+
+
+# Chapter 39's tell, written out again so this script runs by itself.
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
 
 
 def has_layer(glyph, master):
@@ -135,7 +143,7 @@ def has_layer(glyph, master):
 def main():
     package = scripting.current_package()
     if package is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     masters = masters_model.master_order(package)
     for master in masters:

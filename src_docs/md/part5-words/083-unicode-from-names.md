@@ -13,7 +13,7 @@ Yesterday the number was trusted and the name was made from it. Today the name i
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed. Chapter 82's three planted names should be mended, so that the font has `asciicircum`, `bar` and `numbersign` again.
-- `halfmoon.py` with `tell`.
+- The `tell` function from [chapter 39](../part2-a-toolbox/039-ask-the-user.md). The script below defines it again, so it runs by itself.
 - The Font window in front, and no Glyph window or glyph tab open. Fly refuses to write code points while a glyph is open for editing.
 
 I couldn't run the code in FontLab 9. The plans and counts below were computed in plain Python from Plum's source file and from Fly's own planning code. I haven't seen the write happen, and I haven't seen what Fly says when a glyph tab is open.
@@ -213,13 +213,21 @@ Then set both switches back.
 # Finds glyphs whose name implies a code point they don't have.
 # Prints a plan. With DRY_RUN = True it stops there.
 # OVERWRITE = True also replaces a code point that disagrees with the name.
-import halfmoon
 from fly import fl, qt
 import fly.ap.glyphs.names.model as names
 from fly.ap.glyphs.identity_tools.glyph_identity.unicode_from_names import (
     apply_unicodes,
     plan_unicodes,
 )
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
+
+
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
 
 DRY_RUN = True
 OVERWRITE = False
@@ -234,7 +242,7 @@ def show_codes(codes):
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     facts = names.scan()
     everyone = list(facts.entries)

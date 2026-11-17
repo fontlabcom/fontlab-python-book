@@ -13,7 +13,7 @@ Chapter 61 tested sidebearings with one such word, `minimum`, typed by hand. Tod
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py` with `tell`.
+- The helper `tell` from chapter 39. The scripts below write it out again, so each one runs by itself.
 - The kerning as chapter 75 left it. The Regular has 104 pairs.
 
 I couldn't run the code in FontLab 9. The strings below were built in plain Python from Plum's source file. I haven't seen the tab that the last step opens.
@@ -149,12 +149,19 @@ The tab shows whichever master is current in FontLab. The pairs differ a little 
 #FLM: Kerning Proof Text
 # Builds one proof word for each kerning pair of MASTER, with HH or nn
 # on either side, and opens them in a Glyph window tab.
-import halfmoon
 import fly.ap.core.scripting as scripting
 import fly.ap.proof.tabs.text as proof_tab
-from fly import fl
+from fly import fl, qt
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
 
 MASTER = "Regular"
+
+
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
 
 
 def frame(name):
@@ -185,7 +192,7 @@ def proof_words(pairs, classes):
 
 def main():
     if fl.CurrentFont() is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     package = scripting.current_package()
     pairs = scripting.kerning_pairs(package, MASTER)

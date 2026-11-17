@@ -13,7 +13,7 @@ By the end, your script will draw Plum's own period, node for node, from a cente
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py` with `box`, `rect` and the rest.
+- `box` from chapter 43. You'll write it out again here.
 - A new empty glyph called `bullet`, made with **Add Glyphs From List** as you made `notdef.new` yesterday.
 
 The outputs below were computed from Plum's source file, not copied from FontLab's Output panel. Every number comes from running the pens in plain Python and from that file.
@@ -88,7 +88,7 @@ A font's curves can't draw an exact circle at all. Four of them come within a ha
 
 ## Step 3: Plum's period, from two numbers
 
-Clean up the rough function, give it a center, and put it in `halfmoon.py`:
+Clean up the rough function, give it a center, and define it in this script:
 
 ```python
 KAPPA = 0.5523  # handle length for a quarter circle, as a share of the radius
@@ -104,11 +104,11 @@ def circle(pen, cx, cy, radius):
     pen.closePath()
 ```
 
-Plum's period in the Regular master has a box from 41 to 161 across and from −10 to 110 up, as `halfmoon.box` will tell you. So its center is at 101, 50 and its radius is 60. Draw that into a recording pen and look at the first curve:
+Plum's period in the Regular master has a box from 41 to 161 across and from −10 to 110 up, as `box` from chapter 43 will tell you. So its center is at 101, 50 and its radius is 60. Draw that into a recording pen and look at the first curve:
 
 ```python
 pen = RecordingPen()
-halfmoon.circle(pen, 101, 50, 60)
+circle(pen, 101, 50, 60)
 print(pen.value[1])
 ```
 
@@ -138,7 +138,7 @@ Run it again and print all the orders:
 Now ask Plum for its period:
 
 ```python
-for node in halfmoon.rich(font, font["period"]).nodes("Regular"):
+for node in pGlyph(font, font["period"]).nodes("Regular"):
     print(node.x, node.y)
 ```
 
@@ -166,9 +166,9 @@ I didn't arrange that. I wrote the function, ran it and then looked at the font.
 A bullet is a bigger circle, higher up. How much bigger is Mira's call, and she says one and a half times the period, sitting at half the height of the lowercase. Both of those can be measured, per master, with the tools from chapter 43 and yesterday:
 
 ```python
-left, bottom, right, top = halfmoon.box(font, font["period"], master)
+left, bottom, right, top = box(font, font["period"], master)
 radius = round((right - left) / 2 * 1.5)
-cy = halfmoon.box(font, font["x"], master)[3] / 2
+cy = box(font, font["x"], master)[3] / 2
 ```
 
 The period's box is as wide as its circle, so half of that is the radius. The top of the `x` is the x-height, and half of that is where the center goes.
@@ -177,18 +177,39 @@ One warning about `round`. The Light's period has a radius of 33, and one and a 
 
 ## The whole script
 
-Here is `draw_circle.py`. `halfmoon.py` gains `KAPPA` and `circle`.
+Here is `draw_circle.py`. It writes out `box`, `KAPPA` and `circle` at the top, so it runs by itself.
 
 ```python
 # Draws a bullet in every empty master of the current glyph:
 # one and a half times the period, centered at half the x-height.
-import halfmoon
 from fly import fl
 from fly.pens import FlPen, layer_of
 from fly.tr.proxy.fl.objects.glyph import pGlyph
 
 MASTERS = ["Light", "Regular", "Bold"]
 TIMES_PERIOD = 1.5
+
+
+def box(font, glyph, master="Regular"):
+    nodes = pGlyph(font, glyph).nodes(master)
+    if not nodes:
+        return None
+    xs = [node.x for node in nodes]
+    ys = [node.y for node in nodes]
+    return min(xs), min(ys), max(xs), max(ys)
+
+
+KAPPA = 0.5523  # handle length for a quarter circle, as a share of the radius
+
+
+def circle(pen, cx, cy, radius):
+    h = round(radius * KAPPA)
+    pen.moveTo((cx - radius, cy))
+    pen.curveTo((cx - radius, cy - h), (cx - h, cy - radius), (cx, cy - radius))
+    pen.curveTo((cx + h, cy - radius), (cx + radius, cy - h), (cx + radius, cy))
+    pen.curveTo((cx + radius, cy + h), (cx + h, cy + radius), (cx, cy + radius))
+    pen.curveTo((cx - h, cy + radius), (cx - radius, cy + h), (cx - radius, cy))
+    pen.closePath()
 
 
 def main():
@@ -199,12 +220,12 @@ def main():
             print(f"{master}: already has outlines, skipped")
             continue
         layer = layer_of(glyph.fl, master)
-        left, bottom, right, top = halfmoon.box(font, font["period"], master)
+        left, bottom, right, top = box(font, font["period"], master)
         radius = round((right - left) / 2 * TIMES_PERIOD)
         cx = layer.advanceWidth / 2
-        cy = halfmoon.box(font, font["x"], master)[3] / 2
+        cy = box(font, font["x"], master)[3] / 2
         with FlPen(layer, notify="Draw bullet") as pen:
-            halfmoon.circle(pen, cx, cy, radius)
+            circle(pen, cx, cy, radius)
         print(f"{master:<9}radius {radius:>4}  center {cx}, {cy}")
 
 

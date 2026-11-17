@@ -12,7 +12,7 @@ Somebody has already written a tool that photographs FontLab's windows. Today yo
 
 ## What you need
 
-`Plum-practice` open, and an export folder with fonts in it, from chapter 119. `release.py` from chapter 120. And GrabLab, which comes as a folder called `fontlab-grablab` from the same place as Fly. It has an `install.vfpy` of the kind you met in chapter 133: drag it onto FontLab, then restart.
+`Plum-practice` open, and an export folder with fonts in it, from chapter 119. And GrabLab, which comes as a folder called `fontlab-grablab` from the same place as Fly. It has an `install.vfpy` of the kind you met in chapter 133: drag it onto FontLab, then restart.
 
 GrabLab isn't in Fly's toolbag, so today's script imports it by its own name, `grablab`. That makes it the second and last exception to the rule from chapter 4, after yesterday's. Yesterday's script ran outside FontLab. This one runs inside, and the reason is plainer: Fly has no alias for it.
 
@@ -93,14 +93,33 @@ You can also ask for less in the first place. `Grab` takes settings by name, and
 
 The pictures belong in the release folder. Chapter 120's `release.py` has a function that finds it, `shipped_folder`, and the natural line is `import release`.
 
-Try it and the release summary prints, all 21 lines, and `RELEASE.txt` is written again. `release.py` ends with a bare `main()`, so importing it runs it. You've met this three times, in chapters 114, 119 and 132, and the cure is the same. Open `release.py` and change its last line to:
+Try it and the release summary prints, all 21 lines, and `RELEASE.txt` is written again. `release.py` ends with a bare `main()`, so importing it runs it. You've met this three times, in chapters 114, 119 and 132. And there's a second cost that you'll meet in chapter 139: a script that borrows from another script breaks when somebody changes that one.
+
+`shipped_folder` is eight lines. Copy it, with the `FORMATS` list it reads, into today's script:
+
+```python
+FORMATS = [".otf", ".ttf"]
+
+
+def shipped_folder(font):
+    exports = Path(font.path).parent / "exports"
+    if not exports.exists():
+        return None
+    found = None
+    for folder in sorted(exports.iterdir()):
+        if any([p.suffix.lower() in FORMATS for p in folder.rglob("*")]):
+            found = folder
+    return found
+```
+
+It's chapter 120's function, word for word. Now `release_shots.py` runs by itself, and nothing in `release.py` has to change. Today's script ends with the guard all the same:
 
 ```python
 if __name__ == "__main__":
     main()
 ```
 
-Now it runs when it's run and keeps quiet when it's borrowed. A script you may one day borrow from should end this way from the start.
+It runs when it's run and keeps quiet when it's borrowed. A script somebody may one day borrow from should end this way from the start.
 
 ## The whole script
 
@@ -111,12 +130,29 @@ Now it runs when it's run and keeps quiet when it's borrowed. A script you may o
 import shutil
 from pathlib import Path
 
-import halfmoon
-import release
-from fly import fl
+from fly import fl, qt
+from fly.ap.ui.dialogs import run_standard_message_box
 from grablab import Grab
 
 KEEP = ["fl_gv_", "fl_gvd_"]
+FORMATS = [".otf", ".ttf"]
+TITLE = "Release Shots"
+
+
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
+
+def shipped_folder(font):
+    exports = Path(font.path).parent / "exports"
+    if not exports.exists():
+        return None
+    found = None
+    for folder in sorted(exports.iterdir()):
+        if any([p.suffix.lower() in FORMATS for p in folder.rglob("*")]):
+            found = folder
+    return found
 
 
 def wanted(paths):
@@ -144,11 +180,11 @@ def copy_shots(shots, folder):
 def main():
     font = fl.CurrentFont()
     if font is None or not font.path:
-        halfmoon.tell("Open a saved font first.")
+        tell("Open a saved font first.")
         return 1
-    folder = release.shipped_folder(font)
+    folder = shipped_folder(font)
     if folder is None:
-        halfmoon.tell("No export folder holds fonts yet. Run the Friday build.")
+        tell("No export folder holds fonts yet. Run the Friday build.")
         return 1
     grab = Grab(grab_svg=False)
     grab.newGrab()
@@ -166,7 +202,7 @@ if __name__ == "__main__":
     main()
 ```
 
-Save it as `release_shots.py`, beside `release.py`.
+Save it as `release_shots.py` in your Scripts folder. `tell` is chapter 39's message box and `shipped_folder` is chapter 120's, both here again so that the script runs by itself.
 
 `copy_shots` copies; it doesn't move. GrabLab's originals stay in Pictures, with their sidecar files beside them. Each picture GrabLab takes has two small text files with the same name that record sizes and what was photographed. Leave them where they are.
 
@@ -222,4 +258,4 @@ Calling another person's tool means working with their choices: their order of s
 
 ## Next
 
-This morning's build stopped the first time through, at the glyph proof. Days earlier somebody had changed one function in `halfmoon.py`, three scripts that use it stopped working, and nobody knew until today. Chapter 139 writes down what your functions are supposed to do, in a form Python can check in two seconds, without opening FontLab.
+This morning's build stopped the first time through, at the glyph proof. Days earlier somebody had changed one small function in the glyph proof's script, the proof stopped finding a font, and nobody knew until today. Chapter 139 writes down what your functions are supposed to do, in a form Python can check in two seconds, without opening FontLab.

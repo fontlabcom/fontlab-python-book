@@ -11,7 +11,7 @@ That's a table, with one line per glyph and the same kinds of things in each lin
 ## What you need
 
 - FontLab 9 with Fly installed, and `Plum-practice` open.
-- `halfmoon.py` as [chapter 34](034-arguments-with-defaults.md) left it.
+- `glyphs_of` from [chapter 34](034-arguments-with-defaults.md). It's repeated below, so you don't need the old script open.
 - Six glyphs selected in the Font window: `H`, `O`, `A`, `n`, `o` and `v`.
 
 ## Step 1: The white on each side
@@ -22,11 +22,11 @@ The rich glyph from chapter 14 knows both. Ask it about the `n`:
 
 ```python
 from fly import fl
-import halfmoon
+from fly.tr.proxy.fl.objects.glyph import pGlyph
 
 font = fl.CurrentFont()
 glyph = font["n"]
-rich = halfmoon.rich(font, glyph)
+rich = pGlyph(font, glyph)
 print(rich.getLSB(), glyph.width, rich.getRSB())
 ```
 
@@ -58,9 +58,12 @@ A list doesn't have to hold things of one kind. This one holds a string and thre
 Now do it for every selected glyph, and keep the rows in a list of their own:
 
 ```python
+import fly.ap.core.scripting as scripting
+
 rows = []
-for glyph in halfmoon.glyphs_of(font, only_selected=True):
-    rich = halfmoon.rich(font, glyph)
+for name in scripting.names_selected_names():
+    glyph = font[name]
+    rich = pGlyph(font, glyph)
     rows.append([glyph.name, rich.getLSB(), int(glyph.width), rich.getRSB()])
 
 print(rows)
@@ -217,30 +220,36 @@ One thing to know about `zip`: if the lists are of different lengths, it stops a
 
 ## The whole script
 
-The row-making belongs in the module, because the next three chapters will use it. Add this to `halfmoon.py`:
-
-```python
-def metrics_rows(font, only_selected=False):
-    rows = []
-    for glyph in glyphs_of(font, only_selected):
-        if not is_empty(font, glyph):
-            measured = rich(font, glyph)
-            rows.append((glyph.name, measured.getLSB(), int(glyph.width), measured.getRSB()))
-    return rows
-```
-
-There are two things to notice in it. Each row is a tuple, so there are double parentheses in the `append` line: the outer pair belongs to `append` and the inner pair makes the tuple. And empty glyphs are left out by the `if not is_empty` test. A space has a width, but with no shape in it there's no leftmost point to measure a sidebearing from, and I'd sooner leave the row out than print a number that means nothing.
-
-Then `metrics_rows.py` is short:
+The row-making goes in a function of its own, because the next three chapters will use it. Here is `metrics_rows.py` in full, with `glyphs_of` from chapter 34 repeated at the top so that the script runs by itself:
 
 ```python
 # Prints left sidebearing, width and right sidebearing
 # for the glyphs selected in the Font window.
 from fly import fl
-import halfmoon
+from fly.tr.proxy.fl.objects.glyph import pGlyph
+import fly.ap.core.scripting as scripting
+
+
+def glyphs_of(font, only_selected=False):
+    if not only_selected:
+        return font.glyphs
+    glyphs = []
+    for name in scripting.names_selected_names():
+        glyphs.append(font[name])
+    return glyphs
+
+
+def metrics_rows(font, only_selected=False):
+    rows = []
+    for glyph in glyphs_of(font, only_selected):
+        measured = pGlyph(font, glyph)
+        if not measured.isEmpty():
+            rows.append((glyph.name, measured.getLSB(), int(glyph.width), measured.getRSB()))
+    return rows
+
 
 font = fl.CurrentFont()
-rows = halfmoon.metrics_rows(font, only_selected=True)
+rows = metrics_rows(font, only_selected=True)
 
 if not rows:
     print("Select some glyphs with shapes in them first.")
@@ -260,6 +269,8 @@ o          38    520   38
 v           8    455    3
 ```
 
+There are two things to notice in `metrics_rows`. Each row is a tuple, so there are double parentheses in the `append` line: the outer pair belongs to `append` and the inner pair makes the tuple. And empty glyphs are left out by the `if not measured.isEmpty()` test, which is the question chapter 8 asked. A space has a width, but with no shape in it there's no leftmost point to measure a sidebearing from, and I'd sooner leave the row out than print a number that means nothing.
+
 `if not rows:` is the truthiness rule from chapter 31 at work. An empty list counts as no, so the line reads "if there are no rows".
 
 Mira prints the table for all the capitals, finds two more with lopsided sidebearings and fixes them by hand before lunch. Then she asks for the obvious next thing, which is the table with the widest glyph at the top.
@@ -270,7 +281,7 @@ A table is a list of rows, and a row is a small list or tuple with the same fiel
 
 ## Try it yourself
 
-1. Add a fifth field to each row in `metrics_rows`: the width of the black part, which is the width minus both sidebearings. Which other lines, in which files, have to change? Run `metrics_rows.py` before you fix them and read the error.
+1. Add a fifth field to each row in `metrics_rows`: the width of the black part, which is the width minus both sidebearings. Which other lines of the script have to change? Run `metrics_rows.py` before you fix them and read the error.
 2. Print only the rows whose two sidebearings differ by more than 4 units. For the six glyphs in this chapter that should leave one or two rows. `abs()` turns a negative number into a positive one, so `abs(lsb - rsb)` is the size of the difference whichever side is bigger.
 3. Send the rows to a CSV file with the writer from chapter 28, with a header row. Then open the file in a spreadsheet. A writer takes a tuple as happily as a list.
 

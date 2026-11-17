@@ -11,17 +11,37 @@ That's three orders for the same rows. You've had `sorted` since chapter 10, and
 ## What you need
 
 - FontLab 9 with Fly installed, and `Plum-practice` open.
-- `halfmoon.py` with `metrics_rows` from [chapter 35](035-lists-of-lists.md).
+- `metrics_rows` and `glyphs_of` from [chapter 35](035-lists-of-lists.md). They're repeated below, so you don't need the old script.
 - The same six glyphs selected: `H`, `O`, `A`, `n`, `o` and `v`.
 
-Start every listing in this chapter with these lines:
+Start every listing in this chapter with these lines. They are the two functions from chapter 35, copied in so that each listing runs by itself:
 
 ```python
 from fly import fl
-import halfmoon
+from fly.tr.proxy.fl.objects.glyph import pGlyph
+import fly.ap.core.scripting as scripting
+
+
+def glyphs_of(font, only_selected=False):
+    if not only_selected:
+        return font.glyphs
+    glyphs = []
+    for name in scripting.names_selected_names():
+        glyphs.append(font[name])
+    return glyphs
+
+
+def metrics_rows(font, only_selected=False):
+    rows = []
+    for glyph in glyphs_of(font, only_selected):
+        measured = pGlyph(font, glyph)
+        if not measured.isEmpty():
+            rows.append((glyph.name, measured.getLSB(), int(glyph.width), measured.getRSB()))
+    return rows
+
 
 font = fl.CurrentFont()
-rows = halfmoon.metrics_rows(font, only_selected=True)
+rows = metrics_rows(font, only_selected=True)
 ```
 
 ## Step 1: What sorted does to rows
@@ -122,7 +142,7 @@ v         8   455    3
 If you only want the top few, slice the sorted list. The slice comes from chapter 10. To get the five widest glyphs in the whole font, leave `only_selected` out so that the rows cover every glyph with a shape:
 
 ```python
-rows = halfmoon.metrics_rows(font)
+rows = metrics_rows(font)
 for name, lsb, width, rsb in sorted(rows, key=by_width, reverse=True)[:5]:
     print(f"{name:<12}{width:>5}")
 ```
@@ -147,7 +167,7 @@ def lopsided(row):
     return abs(lsb - rsb)
 
 
-rows = halfmoon.metrics_rows(font, only_selected=True)
+rows = metrics_rows(font, only_selected=True)
 for row in sorted(rows, key=lopsided, reverse=True):
     print(row, lopsided(row))
 ```
@@ -188,8 +208,30 @@ A H n O o v
 
 In chapter 22 you counted glyphs by width and got a dictionary. Chapter 22 left the tally unsorted. In chapter 32 you got another, the tally of statuses. A dictionary can't be sorted where it stands, but `items()` hands you its pairs, and pairs are rows of two:
 
+`status_tally` is the counter from chapter 33. Here it is again, with the colour numbers it needs, so that this listing runs after the starter lines:
+
 ```python
-tally = halfmoon.status_tally(font)
+RED = 1
+YELLOW = 61
+GREEN = 121
+
+LEGEND = {
+    0: "untouched",
+    RED: "not-drawn",
+    YELLOW: "needs-work",
+    GREEN: "done",
+}
+
+
+def status_tally(font):
+    tally = {}
+    for glyph in font.glyphs:
+        status = LEGEND.get(pGlyph(font, glyph).mark, "unknown-color")
+        tally[status] = tally.get(status, 0) + 1
+    return tally
+
+
+tally = status_tally(font)
 
 
 def by_count(pair):
@@ -221,9 +263,37 @@ Each pair is `(status, count)`. The key picks the count, and `reverse=True` puts
 
 ## The whole script
 
-Put the two key functions that other scripts will want into `halfmoon.py`:
+Save this as `widest_first.py`. It carries its own copies of `glyphs_of` and `metrics_rows`, plus the two key functions, so it needs nothing but Fly:
 
 ```python
+#FLM: Widest First
+# Prints the metrics of the selected glyphs, widest first,
+# and then the three most lopsided of them.
+from fly import fl
+from fly.tr.proxy.fl.objects.glyph import pGlyph
+import fly.ap.core.scripting as scripting
+
+HOW_MANY = 3
+
+
+def glyphs_of(font, only_selected=False):
+    if not only_selected:
+        return font.glyphs
+    glyphs = []
+    for name in scripting.names_selected_names():
+        glyphs.append(font[name])
+    return glyphs
+
+
+def metrics_rows(font, only_selected=False):
+    rows = []
+    for glyph in glyphs_of(font, only_selected):
+        measured = pGlyph(font, glyph)
+        if not measured.isEmpty():
+            rows.append((glyph.name, measured.getLSB(), int(glyph.width), measured.getRSB()))
+    return rows
+
+
 def by_width(row):
     return row[2]
 
@@ -231,33 +301,22 @@ def by_width(row):
 def lopsided(row):
     name, lsb, width, rsb = row
     return abs(lsb - rsb)
-```
 
-And save this as `widest_first.py`:
-
-```python
-#FLM: Widest First
-# Prints the metrics of the selected glyphs, widest first,
-# and then the three most lopsided of them.
-from fly import fl
-import halfmoon
-
-HOW_MANY = 3
 
 font = fl.CurrentFont()
-rows = halfmoon.metrics_rows(font, only_selected=True)
+rows = metrics_rows(font, only_selected=True)
 
 if not rows:
     print("Select some glyphs with shapes in them first.")
 else:
     print(f"{'glyph':<8}{'LSB':>5}{'width':>7}{'RSB':>5}")
-    for name, lsb, width, rsb in sorted(rows, key=halfmoon.by_width, reverse=True):
+    for name, lsb, width, rsb in sorted(rows, key=by_width, reverse=True):
         print(f"{name:<8}{lsb:>5}{width:>7}{rsb:>5}")
 
     print()
     print("Most lopsided:")
-    for row in sorted(rows, key=halfmoon.lopsided, reverse=True)[:HOW_MANY]:
-        print(f"  {row[0]:<6}{halfmoon.lopsided(row):>3}")
+    for row in sorted(rows, key=lopsided, reverse=True)[:HOW_MANY]:
+        print(f"  {row[0]:<6}{lopsided(row):>3}")
 ```
 
 ```text
@@ -275,7 +334,7 @@ Most lopsided:
   n       4
 ```
 
-`key=halfmoon.by_width` has a dot in it and still no parentheses. You're taking a function out of the module's drawer and handing it on unopened. And the bare `print()` in the middle, with nothing in its slot, prints an empty line.
+`key=by_width` has no parentheses. You're handing the function on unopened, and `sorted` calls it for you. And the bare `print()` in the middle, with nothing in its slot, prints an empty line.
 
 Mira will want this one every time she spaces, so put it in the menu, as you did with the Friday report in chapter 18. The first line, `#FLM: Widest First`, is the name the menu will show. Save a copy as `Widest First.py` in the `Halfmoon` folder inside FontLab's `Scripts` folder, and choose **Scripts > Refresh Scripts**. Select a few cells and pick it from the menu.
 

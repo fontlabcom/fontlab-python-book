@@ -31,4 +31,4 @@ It's crossed out in chapter 119.
 
 Three things in this part a script doesn't do, and each chapter says so where it matters. The export itself is done by hand in **File > Export Font As**, with scripts on both sides of it. The instances are typed into Font Info from a line a script prepares. And five weights ship, not nine: the other four need drawings nobody has made.
 
-You need the toolbox from Part 2 (`halfmoon.py`), the practice copy of Plum as Part 5 left it, and Fly installed in FontLab 9. Nothing in this part was run in FontLab 9 by me. Each chapter says how its outputs were computed.
+You need the practice copy of Plum as Part 5 left it, and Fly installed in FontLab 9. Nothing in this part was run in FontLab 9 by me. Each chapter says how its outputs were computed.

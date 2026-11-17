@@ -5291,19 +5291,19 @@
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>Plum-practice</code> open in FontLab 9, with Fly installed.</li>
-<li><code>halfmoon.py</code> with <code>rich</code> and <code>tell</code>.</li>
+<li>The helper <code>tell</code> from chapter 39. The scripts below write it out again, so each one runs by itself.</li>
 <li>The font as chapters 62 and 63 left it: the Bold <code>m</code> with 32 on the right, the Bold <code>i</code> with 56 on the left, and the Light <code>d</code>, <code>g</code> and <code>q</code> with 50 on the left.</li>
 </ul>
 <p>This chapter reads and prints. It changes nothing in the font. I couldn't run it in FontLab 9, and the numbers come from Plum's source file with those three changes applied.</p>
 <h2 id="step-1-let-the-font-show-its-families">Step 1: Let the font show its families<a class="headerlink" href="#step-1-let-the-font-show-its-families" title="Permanent link">&para;</a></h2>
 <p>Before you write Mira's columns down, see whether the font agrees with her. Go through the lowercase and put each letter into a list with the others that have the same left sidebearing. That's the dictionary of lists from chapter 52, where the key was a base glyph. Here the key is a number:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
 
 <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
 <span class="n">groups</span> <span class="o">=</span> <span class="p">{}</span>
 <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="s2">"abcdefghijklmnopqrstuvwxyz"</span><span class="p">:</span>
-    <span class="n">left</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">])</span><span class="o">.</span><span class="n">getLSB</span><span class="p">(</span><span class="s2">"Regular"</span><span class="p">)</span>
+    <span class="n">left</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">])</span><span class="o">.</span><span class="n">getLSB</span><span class="p">(</span><span class="s2">"Regular"</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">left</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">:</span>
         <span class="n">groups</span><span class="p">[</span><span class="n">left</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">groups</span><span class="p">[</span><span class="n">left</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
@@ -5378,8 +5378,8 @@ TypeError: unhashable type: 'list'
 <h2 id="step-5-who-is-out-of-line">Step 5: Who is out of line?<a class="headerlink" href="#step-5-who-is-out-of-line" title="Permanent link">&para;</a></h2>
 <p>With families written down, one question can be asked of the whole font: which followers don't have their model's value? For one follower and one model, in all three masters:</p>
 <div class="highlight"><pre><span></span><code><span class="n">MASTERS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Light"</span><span class="p">,</span> <span class="s2">"Regular"</span><span class="p">,</span> <span class="s2">"Bold"</span><span class="p">]</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"o"</span><span class="p">])</span>
-<span class="n">rich</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"c"</span><span class="p">])</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"o"</span><span class="p">])</span>
+<span class="n">rich</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"c"</span><span class="p">])</span>
 
 <span class="n">offs</span> <span class="o">=</span> <span class="p">[</span><span class="n">rich</span><span class="o">.</span><span class="n">getLSB</span><span class="p">(</span><span class="n">master</span><span class="p">)</span> <span class="o">-</span> <span class="n">model</span><span class="o">.</span><span class="n">getLSB</span><span class="p">(</span><span class="n">master</span><span class="p">)</span> <span class="k">for</span> <span class="n">master</span> <span class="ow">in</span> <span class="n">MASTERS</span><span class="p">]</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">offs</span><span class="p">)</span>
@@ -5395,8 +5395,11 @@ TypeError: unhashable type: 'list'
 <div class="highlight"><pre><span></span><code><span class="c1">#FLM: Spacing Groups</span>
 <span class="c1"># Checks families of letters that should share a sidebearing,</span>
 <span class="c1"># and prints the follower maps for copy_sb.py.</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
+
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Halfmoon"</span>
 
 <span class="n">MASTERS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Light"</span><span class="p">,</span> <span class="s2">"Regular"</span><span class="p">,</span> <span class="s2">"Bold"</span><span class="p">]</span>
 <span class="n">LEFT</span> <span class="o">=</span> <span class="p">{</span>
@@ -5408,6 +5411,11 @@ TypeError: unhashable type: 'list'
     <span class="s2">"o"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"b"</span><span class="p">,</span> <span class="s2">"p"</span><span class="p">],</span>
     <span class="s2">"l"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"d"</span><span class="p">,</span> <span class="s2">"g"</span><span class="p">,</span> <span class="s2">"q"</span><span class="p">,</span> <span class="s2">"u"</span><span class="p">],</span>
 <span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">follower_map</span><span class="p">(</span><span class="n">families</span><span class="p">):</span>
@@ -5422,7 +5430,7 @@ TypeError: unhashable type: 'list'
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">side_values</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">side</span><span class="p">):</span>
-    <span class="n">rich</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+    <span class="n">rich</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
     <span class="k">if</span> <span class="n">side</span> <span class="o">==</span> <span class="s2">"left"</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">rich</span><span class="o">.</span><span class="n">getLSB</span><span class="p">(</span><span class="n">master</span><span class="p">)</span> <span class="k">for</span> <span class="n">master</span> <span class="ow">in</span> <span class="n">MASTERS</span><span class="p">]</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">rich</span><span class="o">.</span><span class="n">getRSB</span><span class="p">(</span><span class="n">master</span><span class="p">)</span> <span class="k">for</span> <span class="n">master</span> <span class="ow">in</span> <span class="n">MASTERS</span><span class="p">]</span>
@@ -5446,7 +5454,7 @@ TypeError: unhashable type: 'list'
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">font</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">left_like</span><span class="p">,</span> <span class="n">left_doubles</span> <span class="o">=</span> <span class="n">follower_map</span><span class="p">(</span><span class="n">LEFT</span><span class="p">)</span>
     <span class="n">right_like</span><span class="p">,</span> <span class="n">right_doubles</span> <span class="o">=</span> <span class="n">follower_map</span><span class="p">(</span><span class="n">RIGHT</span><span class="p">)</span>

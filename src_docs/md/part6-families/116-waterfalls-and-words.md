@@ -12,7 +12,7 @@ That makes five styles, nine lines each, and every line is the same piece of HTM
 
 ## What you need
 
-- `Plum-practice` open in FontLab 9, with Fly installed, and `halfmoon.py`.
+- `Plum-practice` open in FontLab 9, with Fly installed.
 - The export folder for version 1.002 with five OTF files in it.
 - `proof_html.py` from chapter 115, to borrow from.
 
@@ -39,17 +39,15 @@ The braces in `${size}pt` mark where the name ends. Without them Python would lo
 
 Why not an f-string? An f-string is filled once, at the line where it's written. A template is written in one place and filled in another, many times. And a template doesn't care about curly braces, so a style sheet can sit inside one as it is, with none of chapter 88's doubling.
 
-## Step 2: Do what chapter 115 said
+## Step 2: Borrow three functions from chapter 115
 
-Chapter 115 copied `key` from chapter 112 and said that a third script wanting it would send it to `halfmoon.py`. This is the third script. It also needs `latest_export` and `font_file`.
-
-Open `halfmoon.py`. If the top of the file doesn't already have this line, add it:
+This script needs three functions you already have: `key` from chapter 112, and `latest_export` and `font_file` from chapter 115. Copy them in, unchanged, so this script runs by itself. They need `Path`, so the script's imports gain this line:
 
 ```python
 from pathlib import Path
 ```
 
-Then move the three functions across from `proof_html.py`, unchanged:
+And here are the three:
 
 ```python
 def key(text):
@@ -73,7 +71,7 @@ def font_file(folder, family, style):
     return None
 ```
 
-In `proof_html.py`, delete the three and write `halfmoon.latest_export` and `halfmoon.font_file` where they're called. Chapter 112's `export_family.py` has its own copy of `key`: delete that one too and write `halfmoon.key` in its place, so there is one `key` in the house. Run it once to see that Friday's page still comes out. FontLab may be holding the old `halfmoon` in memory, so use chapter 33's reload if it complains that the module has no `latest_export`.
+That makes three copies of `key` in three scripts. Chapter 114 said a copy is two things to mend. It is, but each script still runs on its own, and `key` is one line that hasn't changed since chapter 112.
 
 ## Step 3: The mistake
 
@@ -114,11 +112,21 @@ Now there's a decision. The script could draw the page anyway, or it could stop.
 # Writes a web page that sets words and a paragraph in every exported
 # style, at a ladder of sizes. Changes nothing in the font.
 import html
+from pathlib import Path
 from string import Template
 
 import fly.ap.core.scripting as scripting
-import halfmoon
-from fly import fl
+from fly import fl, qt
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
+
+
+# Chapter 39's tell, written out again so this script runs by itself.
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
 
 STYLES = ["Light", "Regular", "Medium", "SemiBold", "Bold"]
 SIZES = [9, 10, 12, 14, 18, 24, 36]
@@ -151,6 +159,27 @@ $blocks
 """)
 
 
+def key(text):
+    return "".join([c for c in text.lower() if c.isalnum()])
+
+
+def latest_export(font, package):
+    info = package.info
+    ending = f"-v{info.versionMajor}.{info.versionMinor:03d}"
+    exports = Path(font.path).parent / "exports"
+    if not exports.exists():
+        return None
+    folders = [f for f in sorted(exports.iterdir()) if f.name.endswith(ending)]
+    return folders[-1] if folders else None
+
+
+def font_file(folder, family, style):
+    for path in sorted(folder.rglob("*.otf")):
+        if key(path.stem) == key(family + style):
+            return path
+    return None
+
+
 def absent(font, text):
     codes = {glyph.unicode for glyph in font.glyphs if glyph.unicode is not None}
     return sorted({c for c in text if ord(c) not in codes})
@@ -170,22 +199,22 @@ def block(style, family):
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     package = scripting.current_package()
     lacking = absent(font, WORDS + TEXT)
     if lacking:
         listed = ", ".join([f"{c} (U+{ord(c):04X})" for c in lacking])
-        halfmoon.tell(f"The font has no glyph for: {listed}. Change the text.")
+        tell(f"The font has no glyph for: {listed}. Change the text.")
         return
-    folder = halfmoon.latest_export(font, package)
+    folder = latest_export(font, package)
     if folder is None:
-        halfmoon.tell("No export folder for this version. Export first.")
+        tell("No export folder for this version. Export first.")
         return
     faces = []
     blocks = []
     for style in STYLES:
-        source = halfmoon.font_file(folder, package.info.familyName, style)
+        source = font_file(folder, package.info.familyName, style)
         if source is None:
             print(f"No {style} .otf in {folder.name}. Left out.")
             continue

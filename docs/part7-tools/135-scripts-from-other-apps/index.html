@@ -5311,7 +5311,7 @@
 <p>A stray point is a path with a single node. It prints as nothing, and it can turn up later as a dot in somebody's PDF. Mira would like to know whether Plum has any. She opens the file, sees <code>from GlyphsApp import Glyphs</code> on line six, and passes it across the desk to you.</p>
 <p>Today you read a script written for another program, ask a tool what it needs before you run it, and then run it without changing a character of it.</p>
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
-<p><code>Plum-practice</code> open, Fly installed, and <code>halfmoon.py</code>. Type the friend's script from step 1 and save it as <code>Find Stray Points.py</code> in your Downloads folder. That's where a file somebody sends you lands.</p>
+<p><code>Plum-practice</code> open and Fly installed. Type the friend's script from step 1 and save it as <code>Find Stray Points.py</code> in your Downloads folder. That's where a file somebody sends you lands.</p>
 <p>I haven't run this chapter in FontLab 9. The part that reads the friend's script without running it works outside FontLab, and I ran it as printed: the reports below are what it said. I also ran the friend's script, unchanged, through the same translating layer on the small test font that layer ships with, which has one glyph. What I haven't seen is that script walking Plum inside FontLab.</p>
 <h2 id="step-1-read-it-before-you-run-it">Step 1: Read it before you run it<a class="headerlink" href="#step-1-read-it-before-you-run-it" title="Permanent link">&para;</a></h2>
 <p>Here is the whole of what arrived:</p>
@@ -5390,11 +5390,24 @@
 <span class="c1"># through Glyport if you agree. What the other script does is its business.</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly.gp</span><span class="w"> </span><span class="kn">import</span> <span class="n">inspect_source</span><span class="p">,</span> <span class="n">run_script</span>
 
 <span class="n">SCRIPT</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span> <span class="o">/</span> <span class="s2">"Downloads"</span> <span class="o">/</span> <span class="s2">"Find Stray Points.py"</span>
 <span class="n">KNOWN</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"glyphs:model"</span><span class="p">]</span>
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Try A Glyphs Script"</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">ask</span><span class="p">(</span><span class="n">question</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">answer</span> <span class="o">=</span> <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">question</span><span class="p">,</span> <span class="s2">"Question"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Yes</span> <span class="o">|</span> <span class="n">box</span><span class="o">.</span><span class="n">No</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">answer</span> <span class="o">==</span> <span class="n">box</span><span class="o">.</span><span class="n">Yes</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">findings</span><span class="p">(</span><span class="n">report</span><span class="p">):</span>
@@ -5417,7 +5430,7 @@
 
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">SCRIPT</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="sa">f</span><span class="s2">"There's no file at </span><span class="si">{</span><span class="n">SCRIPT</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="sa">f</span><span class="s2">"There's no file at </span><span class="si">{</span><span class="n">SCRIPT</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">report</span> <span class="o">=</span> <span class="n">inspect_source</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">SCRIPT</span><span class="p">))</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">SCRIPT</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
@@ -5432,7 +5445,7 @@
     <span class="k">if</span> <span class="n">extra</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Needs something this script doesn't know: </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">extra</span><span class="p">)</span><span class="si">}</span><span class="s2">. Not run."</span><span class="p">)</span>
         <span class="k">return</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">ask</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Run </span><span class="si">{</span><span class="n">SCRIPT</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> on the current font?"</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ask</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Run </span><span class="si">{</span><span class="n">SCRIPT</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> on the current font?"</span><span class="p">):</span>
         <span class="k">return</span>
     <span class="n">handle</span> <span class="o">=</span> <span class="n">run_script</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">SCRIPT</span><span class="p">))</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">"Ran."</span><span class="p">)</span>
@@ -5443,7 +5456,7 @@
 </code></pre></div>
 <p>Save it as <code>try_script.py</code>.</p>
 <p>Three small functions read the report and <code>main</code> decides. <code>findings</code> turns imports and any note above "info" into lines for the Output panel. <code>unknown</code> lists what the script needs beyond <code>KNOWN</code>, the short list of things you have decided you trust the adapter with. <code>stops</code> collects the messages of errors, which mean Python couldn't read the file at all.</p>
-<p><code>main</code> has four ways to stop before running anything: no file, a file Python can't read, a need outside <code>KNOWN</code>, and you saying no. Only then does it call <code>run_script</code>, which runs the friend's file through the adapter as she wrote it, character for character. <code>run_script</code> runs the file and gives back a handle, an object that stands for that one run. <code>close()</code> tells Glyport you're done with it, so that whatever the other script held is let go. Glyport's own introduction shows the handle in a <code>with</code> block. The code doesn't support that, so the script calls <code>close()</code> itself.</p>
+<p><code>tell</code> and <code>ask</code> are chapter 39's message boxes, here again so that the script runs by itself. <code>main</code> has four ways to stop before running anything: no file, a file Python can't read, a need outside <code>KNOWN</code>, and you saying no. Only then does it call <code>run_script</code>, which runs the friend's file through the adapter as she wrote it, character for character. <code>run_script</code> runs the file and gives back a handle, an object that stands for that one run. <code>close()</code> tells Glyport you're done with it, so that whatever the other script held is let go. Glyport's own introduction shows the handle in a <code>with</code> block. The code doesn't support that, so the script calls <code>close()</code> itself.</p>
 <p>The question in the prompt is plain on purpose. You've read this script and know it only reads. The next one somebody sends may not, and <code>try_script.py</code> can't tell the difference. The person who reads the script decides.</p>
 <h2 id="run-it">Run it<a class="headerlink" href="#run-it" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code>Find Stray Points.py

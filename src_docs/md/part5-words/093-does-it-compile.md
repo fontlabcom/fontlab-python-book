@@ -13,7 +13,7 @@ I know of no call that compiles from Python. You do it with the **Compile** butt
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py`.
+- The `tell` function from [chapter 39](../part2-a-toolbox/039-ask-the-user.md). The script below defines it again, so it runs by itself.
 - The eight features the font has after chapter 92: `liga`, `cpsp`, `smcp`, `ss01`, `zero`, `numr`, `dnom`, `frac`.
 
 I couldn't run the code in FontLab 9. I ran the checker in plain Python on Plum's two features plus the text that chapters 88 to 92 produce, and on the broken strings below. I haven't seen FontLab's compiler accept or refuse any of it.
@@ -152,9 +152,17 @@ Each broken text gets the complaint it deserves, with the line number. `replace`
 #FLM: Check Features
 # Reads the feature text and reports what a compiler would trip over.
 # Changes nothing. It does not compile: the Features panel does that.
-import halfmoon
-from fly import fl
+from fly import fl, qt
 import fly.ap.core.scripting as scripting
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
+
+
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
 
 WORDS = {"sub", "by", "from", "pos", "="}
 PUNCTUATION = "[];'<>"
@@ -230,7 +238,7 @@ def prefix_classes(prefix):
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     known = {glyph.name for glyph in font.glyphs}
     package = scripting.current_package()

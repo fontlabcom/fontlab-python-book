@@ -5335,7 +5335,7 @@
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>Plum-practice</code> open in FontLab 9, with Fly installed, and the three code points from chapter 83 mended.</li>
-<li><code>halfmoon.py</code> with <code>tell</code>.</li>
+<li>The <code>tell</code> function from <a href="../../part2-a-toolbox/039-ask-the-user/">chapter 39</a>. The script below defines it again, so it runs by itself.</li>
 <li>The Font window in front and no glyph open for editing, as in chapter 83.</li>
 </ul>
 <p>I couldn't run the code in FontLab 9. The list behavior in Steps 1 to 3 is plain Python and I ran it. The report and plan were computed from Plum's source file. I haven't seen FontLab accept a list of two code points from a script: Fly's own tools shorten such lists and never lengthen them, so the write in this chapter is one step past what I could read in source. Keep the dry run on until you've looked at the plan, and check the glyph afterward.</p>
@@ -5454,9 +5454,17 @@ Dry run. Nothing changed. Set DRY_RUN = False to add.
 <div class="highlight"><pre><span></span><code><span class="c1">#FLM: Double Encoded</span>
 <span class="c1"># Reports glyphs with more than one code point and code points on two glyphs.</span>
 <span class="c1"># Then adds the extra code points in WANTED, each as a second code point.</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.glyphs.names.model</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">names</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span>
+
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Halfmoon"</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+
 
 <span class="n">DRY_RUN</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="n">WANTED</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"space"</span><span class="p">:</span> <span class="mh">0xA0</span><span class="p">,</span> <span class="s2">"hyphen"</span><span class="p">:</span> <span class="mh">0xAD</span><span class="p">}</span>
@@ -5513,7 +5521,7 @@ Dry run. Nothing changed. Set DRY_RUN = False to add.
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">font</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">all_codes</span> <span class="o">=</span> <span class="p">{</span><span class="n">glyph</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">glyph</span><span class="o">.</span><span class="n">unicodes</span><span class="p">)</span> <span class="k">for</span> <span class="n">glyph</span> <span class="ow">in</span> <span class="n">font</span><span class="o">.</span><span class="n">glyphs</span><span class="p">}</span>
     <span class="n">report</span><span class="p">(</span><span class="n">all_codes</span><span class="p">)</span>

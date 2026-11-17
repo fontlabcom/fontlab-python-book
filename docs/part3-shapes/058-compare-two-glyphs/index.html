@@ -5336,19 +5336,19 @@
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>Plum-practice</code> open in FontLab 9, with Fly installed.</li>
-<li><code>halfmoon.py</code> as chapter 49 left it.</li>
+<li>The scripts from chapters 42 to 49.</li>
 </ul>
 <p>Nothing in this chapter changes the font. The outputs below were computed from Plum's source file, not copied from FontLab's Output panel.</p>
 <h2 id="step-1-a-glyph-as-a-list-of-points">Step 1: A glyph as a list of points<a class="headerlink" href="#step-1-a-glyph-as-a-list-of-points" title="Permanent link">&para;</a></h2>
 <p>For comparing, a glyph is its points and nothing else. Make each node into a pair of numbers:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
 
 <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">points_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">master</span><span class="p">):</span>
-    <span class="n">nodes</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">])</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="n">master</span><span class="p">)</span>
+    <span class="n">nodes</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">])</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="n">master</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">[(</span><span class="n">node</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">]</span>
 
 
@@ -5471,11 +5471,13 @@ parenleft parenright flip
 <div class="highlight"><pre><span></span><code><span class="c1">#FLM: Compare Glyph Pairs</span>
 <span class="c1"># Tells whether pairs of glyphs are still the same drawing, turned upside</span>
 <span class="c1"># down or mirrored. Changes nothing.</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
 
 <span class="n">MASTERS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Light"</span><span class="p">,</span> <span class="s2">"Regular"</span><span class="p">,</span> <span class="s2">"Bold"</span><span class="p">]</span>
 <span class="n">TOLERANCE</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Halfmoon"</span>
 <span class="n">PAIRS</span> <span class="o">=</span> <span class="p">[</span>
     <span class="p">(</span><span class="s2">"six"</span><span class="p">,</span> <span class="s2">"nine"</span><span class="p">,</span> <span class="s2">"turn"</span><span class="p">),</span>
     <span class="p">(</span><span class="s2">"n"</span><span class="p">,</span> <span class="s2">"u"</span><span class="p">,</span> <span class="s2">"turn"</span><span class="p">),</span>
@@ -5490,8 +5492,13 @@ parenleft parenright flip
 <span class="p">]</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+
+
 <span class="k">def</span><span class="w"> </span><span class="nf">points_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">master</span><span class="p">):</span>
-    <span class="n">nodes</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">])</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="n">master</span><span class="p">)</span>
+    <span class="n">nodes</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">])</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="n">master</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">[(</span><span class="n">node</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">]</span>
 
 
@@ -5538,7 +5545,7 @@ parenleft parenright flip
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">font</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">have</span> <span class="o">=</span> <span class="p">{</span><span class="n">glyph</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">glyph</span> <span class="ow">in</span> <span class="n">font</span><span class="o">.</span><span class="n">glyphs</span><span class="p">}</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">''</span><span class="si">:</span><span class="s2">&lt;27</span><span class="si">}{</span><span class="s1">'how'</span><span class="si">:</span><span class="s2">&lt;6</span><span class="si">}{</span><span class="s1">'L'</span><span class="si">:</span><span class="s2">&gt;4</span><span class="si">}{</span><span class="s1">'R'</span><span class="si">:</span><span class="s2">&gt;4</span><span class="si">}{</span><span class="s1">'B'</span><span class="si">:</span><span class="s2">&gt;4</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>

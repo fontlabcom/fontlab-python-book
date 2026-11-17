@@ -10,7 +10,7 @@ Nothing had gone wrong. The tool was busy, and a busy tool that says nothing loo
 
 ## What you need
 
-`Plum-practice` open, Fly installed, `halfmoon.py`. The script only measures. It changes nothing in the font, so you can run it, stop it and break it as often as you like.
+`Plum-practice` open and Fly installed. The script only measures. It changes nothing in the font, so you can run it, stop it and break it as often as you like.
 
 I haven't run this chapter in FontLab 9. The whole script ran against stand-in widgets, a stand-in timer that I ticked by hand, and a stand-in font with the 274 glyph names yours should have by now. The slice counts below come from that run. How long anything takes, and what a frozen window looks like on your machine, I haven't seen.
 
@@ -96,18 +96,25 @@ Cancelling doesn't throw anything away. The rows measured before the click are s
 #FLM: Long Job
 # Measures every glyph in every master, a slice at a time, behind a
 # progress window with a Cancel button. Changes nothing.
-import halfmoon
 import fly.ap.core.scripting as scripting
 from fly import fl, qt
+from fly.ap.ui.dialogs import run_standard_message_box
+from fly.tr.proxy.fl.objects.glyph import pGlyph
 
 core, gui = qt.QtCore, qt.QtGui
-KEY = "halfmoon.longjob"
+KEY = "tools.longjob"
 SLICE = 25
 SHOWN = 6
+TITLE = "Long Job"
+
+
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
 
 
 def measure(font, name, master):
-    rich = halfmoon.rich(font, font[name])
+    rich = pGlyph(font, font[name])
     return (name, master, rich.getLSB(master), rich.getAdvance(master), rich.getRSB(master))
 
 
@@ -159,7 +166,7 @@ class LongJob:
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     masters = scripting.current_package().masters
     jobs = []
@@ -238,7 +245,7 @@ FontLab's event loop does one thing at a time, so a slot that doesn't return lea
 ## Try it yourself
 
 1. Make the label say how far the job has got, as in `Measuring... 350 of 822`, by calling `setLabelText` in `on_tick`. Then change it to say which glyph is being measured. Which of the two would you rather watch?
-2. After a Cancel the window is gone, and the sentence about where the job stopped is in a panel Ines may not have open. Use `halfmoon.tell` to say it in a message box as well. Where does the call go so that it appears once, and only after a Cancel?
+2. After a Cancel the window is gone, and the sentence about where the job stopped is in a panel Ines may not have open. Use the script's `tell`, chapter 39's message box, to say it in a message box as well. Where does the call go so that it appears once, and only after a Cancel?
 3. Give `finish` one more line of output: how many of the measured rows have a negative number on either side. Use the bracketed list from chapter 37 with an `if`.
 
 ## Next

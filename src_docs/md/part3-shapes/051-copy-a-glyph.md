@@ -13,7 +13,7 @@ So today a script copies each capital into its small-cap glyph, scaled down. Tha
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py` with `box`, `rich` and `set_width`.
+- `box` from chapter 43 and `set_width` from chapter 49. You'll write them out again here.
 - The small-cap glyphs from chapters 8 and 40: `a.sc` to `h.sc`, `zero.sc` and `one.sc`. Leave the box in `e.sc` where it is. It has a part to play. Every other `.sc` glyph has to be empty in all three masters. If you drew boxes in `f.sc` or `g.sc`, did exercise 2 of chapter 46 without undoing it, or left a practice sketch from chapters 44 and 45, delete those outlines first. If you don't, your run will say `already has outlines, skipped` where this chapter shows a draft.
 
 The outputs below were computed from Plum's source file, not copied from FontLab's Output panel. The pen numbers come from running the pens in plain Python.
@@ -129,11 +129,11 @@ Which do you want for small caps? A copy, and for a plain reason: the small caps
 
 ## Step 5: How much smaller
 
-A small cap stands about as tall as the lowercase `x`. In the Regular, the top of `x` is at 478 and the top of `H` is at 688, as chapter 43 found. The factor is one divided by the other:
+A small cap stands about as tall as the lowercase `x`. In the Regular, the top of `x` is at 478 and the top of `H` is at 688, as chapter 43 found. The factor is one divided by the other, with `box` from that chapter:
 
 ```python
-x_top = halfmoon.box(font, font["x"], master)[3]
-cap_top = halfmoon.box(font, font["H"], master)[3]
+x_top = box(font, font["x"], master)[3]
+cap_top = box(font, font["H"], master)[3]
 factor = x_top / cap_top
 print(round(factor, 3))
 ```
@@ -175,18 +175,38 @@ One more thing, and it comes straight from step 1. The script loops over small-c
 
 ## The whole script
 
-Here is `make_sc_drafts.py`:
+Here is `make_sc_drafts.py`. It writes out `box` and `set_width` at the top, so it runs by itself:
 
 ```python
 # Fills every empty one-letter small-cap glyph with a scaled copy of its
 # capital and scales the width to match. Drafts only: the stems come out thin.
-import halfmoon
+import fly.ap.core.history.glyphs as history
+import fly.ap.core.scripting as scripting
 from fly import fl
 from fly.pens import FlPen, RecordingPen, RoundingPen, Transform, TransformPen, layer_of
 from fly.pens.fontlab import draw
+from fly.tr.proxy.fl.objects.glyph import pGlyph
 
 MASTERS = ["Light", "Regular", "Bold"]
 SUFFIX = ".sc"
+
+
+def box(font, glyph, master="Regular"):
+    nodes = pGlyph(font, glyph).nodes(master)
+    if not nodes:
+        return None
+    xs = [node.x for node in nodes]
+    ys = [node.y for node in nodes]
+    return min(xs), min(ys), max(xs), max(ys)
+
+
+def set_width(glyph, layer, width, title="Set width"):
+    def change():
+        layer.advanceWidth = width
+
+    package = scripting.current_package()
+    facts = history.scan_auto_facts(package)
+    history.commit(title, [layer], [glyph.fl], change, operation="geometry", facts=facts)
 
 
 def source_name(name):
@@ -197,14 +217,14 @@ def source_name(name):
 
 
 def factor_for(font, master):
-    x_top = halfmoon.box(font, font["x"], master)[3]
-    cap_top = halfmoon.box(font, font["H"], master)[3]
+    x_top = box(font, font["x"], master)[3]
+    cap_top = box(font, font["H"], master)[3]
     return x_top / cap_top
 
 
 def draft(font, name, capital, master):
-    source = halfmoon.rich(font, font[capital])
-    target = halfmoon.rich(font, font[name])
+    source = pGlyph(font, font[capital])
+    target = pGlyph(font, font[name])
     factor = factor_for(font, master)
     recording = RecordingPen()
     source_layer = layer_of(source.fl, master)
@@ -213,7 +233,7 @@ def draft(font, name, capital, master):
     with FlPen(layer, notify="Small-cap draft") as pen:
         recording.replay(TransformPen(RoundingPen(pen), Transform().scale(factor)))
     width = round(source_layer.advanceWidth * factor)
-    halfmoon.set_width(target, layer, width, "Fit small cap")
+    set_width(target, layer, width, "Fit small cap")
     return width
 
 
@@ -225,7 +245,7 @@ def main():
         if capital is None or font[capital] is None:
             print(f"{name:<9}no capital to copy, skipped")
             continue
-        target = halfmoon.rich(font, font[name])
+        target = pGlyph(font, font[name])
         if any([target.contours(master) for master in MASTERS]):
             print(f"{name:<9}already has outlines, skipped")
             continue

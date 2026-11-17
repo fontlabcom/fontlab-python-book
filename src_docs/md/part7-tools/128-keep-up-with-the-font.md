@@ -10,7 +10,7 @@ A panel that shows the wrong glyph is worse than no panel, because sooner or lat
 
 ## What you need
 
-`Plum-practice` open with the Light showing, a Glyph window on `n`, Fly installed, `halfmoon.py` with `keep` in it, and `sidebearing_panel.py` from chapter 127. The panel reads and changes nothing.
+`Plum-practice` open with the Light showing, a Glyph window on `n`, Fly installed, and `sidebearing_panel.py` from chapter 127. The panel reads and changes nothing.
 
 I haven't run this chapter in FontLab 9. I ran the script against stand-in widgets and a stand-in timer that I could make tick as many times as I liked. The script follows an example in FontLab's collection of Python examples, `live_glyph_panel.py`, which watches the current glyph the same way.
 
@@ -93,14 +93,23 @@ The button and its slot are gone. Save this as `live_panel.py`:
 #FLM: Live Sidebearings
 # A panel at the side of FontLab that shows the sidebearings of the
 # current glyph and keeps up as you move about. Changes nothing.
-import halfmoon
+import sys
+
 import fly.ap.core.scripting as scripting
 from fly import ap, fl, qt
+from fly.tr.proxy.fl.objects.glyph import pGlyph
 
 core, gui = qt.QtCore, qt.QtGui
-KEY = "halfmoon.sidebearings"
+KEY = "tools.sidebearings"
 TITLE = "Sidebearings"
 EVERY = 200
+
+
+def keep(key, things):
+    kept = vars(sys).setdefault("kept_windows", {})
+    if key in kept:
+        kept[key][0].close()
+    kept[key] = things
 
 
 def glyph_text():
@@ -109,7 +118,7 @@ def glyph_text():
     if font is None or glyph is None:
         return "No glyph is showing."
     master = scripting.current_package().master
-    rich = halfmoon.rich(font, glyph)
+    rich = pGlyph(font, glyph)
     lines = [
         f"{rich.name} in {master}",
         f"Left {rich.getLSB(master)}",
@@ -159,13 +168,13 @@ def main():
         made.append(LivePanel(content))
 
     owner = ap.FontLab().create_panel(TITLE, build, area="right")
-    halfmoon.keep(KEY, [owner, made[0]])
+    keep(KEY, [owner, made[0]])
 
 
 main()
 ```
 
-`glyph_text` and `main` are chapter 127's, word for word, apart from the class name. The key is the same too, `halfmoon.sidebearings`, and that's on purpose: when you run this script, `halfmoon.keep` closes the panel with the button, if it's still open, and puts this one in its place.
+`keep`, `glyph_text` and `main` are chapter 127's, word for word, apart from the class name. The key is the same too, `tools.sidebearings`, and that's on purpose: `keep` finds the shelf that chapter 127's script made in `sys`, closes the panel with the button, if it's still open, and puts this one in its place.
 
 `EVERY` is a name for the 200. A number that decides how a tool feels belongs at the top, where you'll find it when you want to change the feel.
 

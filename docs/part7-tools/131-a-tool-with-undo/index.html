@@ -5311,7 +5311,7 @@
 <p>One: the window stays armed after a real change, so a second click does the change again. Two: she typed <code>n ncaron</code>, the label said <code>Didn't work.</code> and something about an auto layer, and she could not tell whether her <code>n</code> had moved. Three: she typed two names wrong, and the tool told her about the first one only.</p>
 <p>Mira answered from her mother's kitchen in four words: "She's right. Fix it." Today's script is the Shift tool from chapter 129, hardened. Every change it makes is still one step in <strong>Edit &gt; Undo</strong>. What's new is everything around that step: what the tool checks before it, what it says, and the state it leaves the window in.</p>
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
-<p><code>Plum-practice</code> open with the Font window in front, Fly installed, <code>halfmoon.py</code> with chapter 129's settings functions, and <code>shift_tool.py</code> from chapter 129.</p>
+<p><code>Plum-practice</code> open with the Font window in front, Fly installed, and <code>shift_tool.py</code> from chapter 129, with its settings functions.</p>
 <p>I haven't run this chapter in FontLab 9. The whole script ran against the stand-in widgets and the stand-in font from chapter 123, with a stand-in for Fly's commit that can be told to refuse or to fail half-way. The refusal texts are copied from Fly's source; the text of a write that failed half-way is built the way Fly's source builds it, around an error I made up.</p>
 <h2 id="step-1-ask-the-cheap-questions-first">Step 1: Ask the cheap questions first<a class="headerlink" href="#step-1-ask-the-cheap-questions-first" title="Permanent link">&para;</a></h2>
 <p>Read chapter 129's <code>shift</code> from the top and count how much work it does before it finds out that there's nothing to do. It measures every glyph and builds every line, and only then does the commit discover a problem. A careful tool turns that round. It asks the questions that cost nothing, in order, and leaves at the first bad answer:</p>
@@ -5368,7 +5368,7 @@ except Exception as problem:
 <h2 id="step-4-leave-the-window-safe">Step 4: Leave the window safe<a class="headerlink" href="#step-4-leave-the-window-safe" title="Permanent link">&para;</a></h2>
 <p>Complaint one, and the reason for the second value. After a real change, the slot ticks <strong>Only show what would happen</strong> again:</p>
 <div class="highlight"><pre><span></span><code>            <span class="k">if</span> <span class="n">changed</span><span class="p">:</span>
-                <span class="n">halfmoon</span><span class="o">.</span><span class="n">save_settings</span><span class="p">(</span><span class="n">KEY</span><span class="p">,</span> <span class="p">{</span><span class="s2">"left"</span><span class="p">:</span> <span class="n">left</span><span class="p">,</span> <span class="s2">"right"</span><span class="p">:</span> <span class="n">right</span><span class="p">})</span>
+                <span class="n">save_settings</span><span class="p">(</span><span class="n">KEY</span><span class="p">,</span> <span class="p">{</span><span class="s2">"left"</span><span class="p">:</span> <span class="n">left</span><span class="p">,</span> <span class="s2">"right"</span><span class="p">:</span> <span class="n">right</span><span class="p">})</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">runs</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">rehearse</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
                 <span class="n">text</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Change </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">runs</span><span class="si">}</span><span class="s2"> from this window. Edit &gt; Undo takes it back."</span>
@@ -5380,18 +5380,55 @@ except Exception as problem:
 <span class="c1"># Adds to the sidebearings of the glyphs you name, or of the ones</span>
 <span class="c1"># selected in the Font window, in the master that's showing.</span>
 <span class="c1"># One click is one Undo step, and the tick box comes back after it.</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.history.glyphs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">history</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.metrics.panel.model</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">metrics</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">ap</span><span class="p">,</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly.pens</span><span class="w"> </span><span class="kn">import</span> <span class="n">layer_of</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
 
 <span class="n">core</span><span class="p">,</span> <span class="n">gui</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtCore</span><span class="p">,</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span>
-<span class="n">KEY</span> <span class="o">=</span> <span class="s2">"halfmoon.shift"</span>
+<span class="n">KEY</span> <span class="o">=</span> <span class="s2">"tools.shift"</span>
 <span class="n">LIMIT</span> <span class="o">=</span> <span class="mi">200</span>
 <span class="n">SHOWN</span> <span class="o">=</span> <span class="mi">8</span>
 <span class="n">DEFAULTS</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"left"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"right"</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">settings_path</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">ap</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">paths</span><span class="o">.</span><span class="n">userDataFolder</span> <span class="o">/</span> <span class="s2">"tool-settings.json"</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">read_settings_file</span><span class="p">():</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">settings_path</span><span class="p">(),</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">stored</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{}</span>
+    <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stored</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{}</span>
+    <span class="k">return</span> <span class="n">stored</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">load_settings</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">defaults</span><span class="p">):</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">defaults</span><span class="p">)</span>
+    <span class="n">mine</span> <span class="o">=</span> <span class="n">read_settings_file</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mine</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">values</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">defaults</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">mine</span> <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span><span class="n">mine</span><span class="p">[</span><span class="n">name</span><span class="p">])</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(</span><span class="n">defaults</span><span class="p">[</span><span class="n">name</span><span class="p">]):</span>
+            <span class="n">values</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">mine</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">values</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">save_settings</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+    <span class="n">stored</span> <span class="o">=</span> <span class="n">read_settings_file</span><span class="p">()</span>
+    <span class="n">stored</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">values</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">settings_path</span><span class="p">(),</span> <span class="s2">"w"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">stored</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">UNTOUCHED</span> <span class="o">=</span> <span class="s2">"Nothing was changed."</span>
 
 
@@ -5411,7 +5448,7 @@ except Exception as problem:
 <span class="k">def</span><span class="w"> </span><span class="nf">plan_rows</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">master</span><span class="p">,</span> <span class="n">names</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">):</span>
     <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
-        <span class="n">rich</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+        <span class="n">rich</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
         <span class="n">old</span> <span class="o">=</span> <span class="p">(</span><span class="n">rich</span><span class="o">.</span><span class="n">getLSB</span><span class="p">(</span><span class="n">master</span><span class="p">),</span> <span class="n">rich</span><span class="o">.</span><span class="n">getAdvance</span><span class="p">(</span><span class="n">master</span><span class="p">),</span> <span class="n">rich</span><span class="o">.</span><span class="n">getRSB</span><span class="p">(</span><span class="n">master</span><span class="p">))</span>
         <span class="n">new</span> <span class="o">=</span> <span class="p">(</span><span class="n">old</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">left</span><span class="p">,</span> <span class="n">old</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">left</span> <span class="o">+</span> <span class="n">right</span><span class="p">,</span> <span class="n">old</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">right</span><span class="p">)</span>
         <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">rich</span><span class="p">,</span> <span class="n">layer_of</span><span class="p">(</span><span class="n">rich</span><span class="o">.</span><span class="n">fl</span><span class="p">,</span> <span class="n">master</span><span class="p">),</span> <span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">))</span>
@@ -5476,7 +5513,7 @@ except Exception as problem:
         <span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">setRange</span><span class="p">(</span><span class="o">-</span><span class="n">LIMIT</span><span class="p">,</span> <span class="n">LIMIT</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">right</span> <span class="o">=</span> <span class="n">gui</span><span class="o">.</span><span class="n">QSpinBox</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">panel</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">right</span><span class="o">.</span><span class="n">setRange</span><span class="p">(</span><span class="o">-</span><span class="n">LIMIT</span><span class="p">,</span> <span class="n">LIMIT</span><span class="p">)</span>
-        <span class="n">saved</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">load_settings</span><span class="p">(</span><span class="n">KEY</span><span class="p">,</span> <span class="n">DEFAULTS</span><span class="p">)</span>
+        <span class="n">saved</span> <span class="o">=</span> <span class="n">load_settings</span><span class="p">(</span><span class="n">KEY</span><span class="p">,</span> <span class="n">DEFAULTS</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">saved</span><span class="p">[</span><span class="s2">"left"</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">right</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">saved</span><span class="p">[</span><span class="s2">"right"</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rehearse</span> <span class="o">=</span> <span class="n">gui</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">(</span><span class="s2">"Only show what would happen"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">panel</span><span class="p">)</span>
@@ -5513,7 +5550,7 @@ except Exception as problem:
             <span class="n">text</span><span class="p">,</span> <span class="n">changed</span> <span class="o">=</span> <span class="n">shift</span><span class="p">(</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">names</span><span class="p">,</span> <span class="s2">"text"</span><span class="p">),</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span>
                                   <span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rehearse</span><span class="p">,</span> <span class="s2">"checked"</span><span class="p">))</span>
             <span class="k">if</span> <span class="n">changed</span><span class="p">:</span>
-                <span class="n">halfmoon</span><span class="o">.</span><span class="n">save_settings</span><span class="p">(</span><span class="n">KEY</span><span class="p">,</span> <span class="p">{</span><span class="s2">"left"</span><span class="p">:</span> <span class="n">left</span><span class="p">,</span> <span class="s2">"right"</span><span class="p">:</span> <span class="n">right</span><span class="p">})</span>
+                <span class="n">save_settings</span><span class="p">(</span><span class="n">KEY</span><span class="p">,</span> <span class="p">{</span><span class="s2">"left"</span><span class="p">:</span> <span class="n">left</span><span class="p">,</span> <span class="s2">"right"</span><span class="p">:</span> <span class="n">right</span><span class="p">})</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">runs</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">rehearse</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
                 <span class="n">text</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Change </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">runs</span><span class="si">}</span><span class="s2"> from this window. Edit &gt; Undo takes it back."</span>

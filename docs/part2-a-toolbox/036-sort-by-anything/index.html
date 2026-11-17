@@ -5312,15 +5312,35 @@
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li>FontLab 9 with Fly installed, and <code>Plum-practice</code> open.</li>
-<li><code>halfmoon.py</code> with <code>metrics_rows</code> from <a href="../035-lists-of-lists/">chapter 35</a>.</li>
+<li><code>metrics_rows</code> and <code>glyphs_of</code> from <a href="../035-lists-of-lists/">chapter 35</a>. They're repeated below, so you don't need the old script.</li>
 <li>The same six glyphs selected: <code>H</code>, <code>O</code>, <code>A</code>, <code>n</code>, <code>o</code> and <code>v</code>.</li>
 </ul>
-<p>Start every listing in this chapter with these lines:</p>
+<p>Start every listing in this chapter with these lines. They are the two functions from chapter 35, copied in so that each listing runs by itself:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">glyphs_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">only_selected</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">font</span><span class="o">.</span><span class="n">glyphs</span>
+    <span class="n">glyphs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">scripting</span><span class="o">.</span><span class="n">names_selected_names</span><span class="p">():</span>
+        <span class="n">glyphs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">glyphs</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">metrics_rows</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">glyph</span> <span class="ow">in</span> <span class="n">glyphs_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="p">):</span>
+        <span class="n">measured</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">measured</span><span class="o">.</span><span class="n">isEmpty</span><span class="p">():</span>
+            <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">glyph</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">measured</span><span class="o">.</span><span class="n">getLSB</span><span class="p">(),</span> <span class="nb">int</span><span class="p">(</span><span class="n">glyph</span><span class="o">.</span><span class="n">width</span><span class="p">),</span> <span class="n">measured</span><span class="o">.</span><span class="n">getRSB</span><span class="p">()))</span>
+    <span class="k">return</span> <span class="n">rows</span>
+
 
 <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
-<span class="n">rows</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">metrics_rows</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">rows</span> <span class="o">=</span> <span class="n">metrics_rows</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="step-1-what-sorted-does-to-rows">Step 1: What sorted does to rows<a class="headerlink" href="#step-1-what-sorted-does-to-rows" title="Permanent link">&para;</a></h2>
 <p>Hand the table to <code>sorted</code> as it is:</p>
@@ -5382,7 +5402,7 @@ v         8   455    3
 </code></pre></div>
 <p><code>reverse=True</code> turns the order around. Its default is <code>False</code>, so you've been using this knob since chapter 10 without knowing it was there.</p>
 <p>If you only want the top few, slice the sorted list. The slice comes from chapter 10. To get the five widest glyphs in the whole font, leave <code>only_selected</code> out so that the rows cover every glyph with a shape:</p>
-<div class="highlight"><pre><span></span><code><span class="n">rows</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">metrics_rows</span><span class="p">(</span><span class="n">font</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="n">rows</span> <span class="o">=</span> <span class="n">metrics_rows</span><span class="p">(</span><span class="n">font</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">lsb</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">rsb</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">by_width</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)[:</span><span class="mi">5</span><span class="p">]:</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">:</span><span class="s2">&lt;12</span><span class="si">}{</span><span class="n">width</span><span class="si">:</span><span class="s2">&gt;5</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </code></pre></div>
@@ -5400,7 +5420,7 @@ Wcircumflex   859
     <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="n">lsb</span> <span class="o">-</span> <span class="n">rsb</span><span class="p">)</span>
 
 
-<span class="n">rows</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">metrics_rows</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">rows</span> <span class="o">=</span> <span class="n">metrics_rows</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">lopsided</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">lopsided</span><span class="p">(</span><span class="n">row</span><span class="p">))</span>
 </code></pre></div>
@@ -5428,7 +5448,28 @@ Wcircumflex   859
 <p><code>lower()</code> is new: it hands back the string in small letters. <code>sorted</code> compares <code>"a"</code>, <code>"h"</code>, <code>"n"</code>, <code>"o"</code>, <code>"o"</code> and <code>"v"</code>, and then hands back the real names with their capitals intact. <code>O</code> and <code>o</code> tie, so they stay in the order they came.</p>
 <h2 id="step-6-sort-the-tally-from-chapter-22">Step 6: Sort the tally from chapter 22<a class="headerlink" href="#step-6-sort-the-tally-from-chapter-22" title="Permanent link">&para;</a></h2>
 <p>In chapter 22 you counted glyphs by width and got a dictionary. Chapter 22 left the tally unsorted. In chapter 32 you got another, the tally of statuses. A dictionary can't be sorted where it stands, but <code>items()</code> hands you its pairs, and pairs are rows of two:</p>
-<div class="highlight"><pre><span></span><code><span class="n">tally</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">status_tally</span><span class="p">(</span><span class="n">font</span><span class="p">)</span>
+<p><code>status_tally</code> is the counter from chapter 33. Here it is again, with the colour numbers it needs, so that this listing runs after the starter lines:</p>
+<div class="highlight"><pre><span></span><code><span class="n">RED</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">YELLOW</span> <span class="o">=</span> <span class="mi">61</span>
+<span class="n">GREEN</span> <span class="o">=</span> <span class="mi">121</span>
+
+<span class="n">LEGEND</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mi">0</span><span class="p">:</span> <span class="s2">"untouched"</span><span class="p">,</span>
+    <span class="n">RED</span><span class="p">:</span> <span class="s2">"not-drawn"</span><span class="p">,</span>
+    <span class="n">YELLOW</span><span class="p">:</span> <span class="s2">"needs-work"</span><span class="p">,</span>
+    <span class="n">GREEN</span><span class="p">:</span> <span class="s2">"done"</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">status_tally</span><span class="p">(</span><span class="n">font</span><span class="p">):</span>
+    <span class="n">tally</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">glyph</span> <span class="ow">in</span> <span class="n">font</span><span class="o">.</span><span class="n">glyphs</span><span class="p">:</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="n">LEGEND</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span><span class="o">.</span><span class="n">mark</span><span class="p">,</span> <span class="s2">"unknown-color"</span><span class="p">)</span>
+        <span class="n">tally</span><span class="p">[</span><span class="n">status</span><span class="p">]</span> <span class="o">=</span> <span class="n">tally</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">tally</span>
+
+
+<span class="n">tally</span> <span class="o">=</span> <span class="n">status_tally</span><span class="p">(</span><span class="n">font</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">by_count</span><span class="p">(</span><span class="n">pair</span><span class="p">):</span>
@@ -5453,38 +5494,58 @@ unknown-color    1
 <p><code>lambda</code> makes a small function on the spot. The part before the colon is its slot and the part after is what it returns. It does what <code>by_width</code> does. I've used <code>def</code> in this chapter because a name like <code>by_width</code> tells you what the sort is for, and because you can test a named function by itself. Use whichever you find easier to read.</p>
 </details>
 <h2 id="the-whole-script">The whole script<a class="headerlink" href="#the-whole-script" title="Permanent link">&para;</a></h2>
-<p>Put the two key functions that other scripts will want into <code>halfmoon.py</code>:</p>
-<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">by_width</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+<p>Save this as <code>widest_first.py</code>. It carries its own copies of <code>glyphs_of</code> and <code>metrics_rows</code>, plus the two key functions, so it needs nothing but Fly:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">#FLM: Widest First</span>
+<span class="c1"># Prints the metrics of the selected glyphs, widest first,</span>
+<span class="c1"># and then the three most lopsided of them.</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
+
+<span class="n">HOW_MANY</span> <span class="o">=</span> <span class="mi">3</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">glyphs_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">only_selected</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">font</span><span class="o">.</span><span class="n">glyphs</span>
+    <span class="n">glyphs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">scripting</span><span class="o">.</span><span class="n">names_selected_names</span><span class="p">():</span>
+        <span class="n">glyphs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">glyphs</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">metrics_rows</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">glyph</span> <span class="ow">in</span> <span class="n">glyphs_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="p">):</span>
+        <span class="n">measured</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">measured</span><span class="o">.</span><span class="n">isEmpty</span><span class="p">():</span>
+            <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">glyph</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">measured</span><span class="o">.</span><span class="n">getLSB</span><span class="p">(),</span> <span class="nb">int</span><span class="p">(</span><span class="n">glyph</span><span class="o">.</span><span class="n">width</span><span class="p">),</span> <span class="n">measured</span><span class="o">.</span><span class="n">getRSB</span><span class="p">()))</span>
+    <span class="k">return</span> <span class="n">rows</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">by_width</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">lopsided</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
     <span class="n">name</span><span class="p">,</span> <span class="n">lsb</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">rsb</span> <span class="o">=</span> <span class="n">row</span>
     <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="n">lsb</span> <span class="o">-</span> <span class="n">rsb</span><span class="p">)</span>
-</code></pre></div>
-<p>And save this as <code>widest_first.py</code>:</p>
-<div class="highlight"><pre><span></span><code><span class="c1">#FLM: Widest First</span>
-<span class="c1"># Prints the metrics of the selected glyphs, widest first,</span>
-<span class="c1"># and then the three most lopsided of them.</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
 
-<span class="n">HOW_MANY</span> <span class="o">=</span> <span class="mi">3</span>
 
 <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
-<span class="n">rows</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">metrics_rows</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">rows</span> <span class="o">=</span> <span class="n">metrics_rows</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="k">if</span> <span class="ow">not</span> <span class="n">rows</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">"Select some glyphs with shapes in them first."</span><span class="p">)</span>
 <span class="k">else</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">'glyph'</span><span class="si">:</span><span class="s2">&lt;8</span><span class="si">}{</span><span class="s1">'LSB'</span><span class="si">:</span><span class="s2">&gt;5</span><span class="si">}{</span><span class="s1">'width'</span><span class="si">:</span><span class="s2">&gt;7</span><span class="si">}{</span><span class="s1">'RSB'</span><span class="si">:</span><span class="s2">&gt;5</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">lsb</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">rsb</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">halfmoon</span><span class="o">.</span><span class="n">by_width</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">lsb</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">rsb</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">by_width</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">:</span><span class="s2">&lt;8</span><span class="si">}{</span><span class="n">lsb</span><span class="si">:</span><span class="s2">&gt;5</span><span class="si">}{</span><span class="n">width</span><span class="si">:</span><span class="s2">&gt;7</span><span class="si">}{</span><span class="n">rsb</span><span class="si">:</span><span class="s2">&gt;5</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="nb">print</span><span class="p">()</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">"Most lopsided:"</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">halfmoon</span><span class="o">.</span><span class="n">lopsided</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)[:</span><span class="n">HOW_MANY</span><span class="p">]:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">&lt;6</span><span class="si">}{</span><span class="n">halfmoon</span><span class="o">.</span><span class="n">lopsided</span><span class="p">(</span><span class="n">row</span><span class="p">)</span><span class="si">:</span><span class="s2">&gt;3</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">lopsided</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)[:</span><span class="n">HOW_MANY</span><span class="p">]:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">&lt;6</span><span class="si">}{</span><span class="n">lopsided</span><span class="p">(</span><span class="n">row</span><span class="p">)</span><span class="si">:</span><span class="s2">&gt;3</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>glyph     LSB  width  RSB
 O          36    708   36
@@ -5499,7 +5560,7 @@ Most lopsided:
   v       5
   n       4
 </code></pre></div>
-<p><code>key=halfmoon.by_width</code> has a dot in it and still no parentheses. You're taking a function out of the module's drawer and handing it on unopened. And the bare <code>print()</code> in the middle, with nothing in its slot, prints an empty line.</p>
+<p><code>key=by_width</code> has no parentheses. You're handing the function on unopened, and <code>sorted</code> calls it for you. And the bare <code>print()</code> in the middle, with nothing in its slot, prints an empty line.</p>
 <p>Mira will want this one every time she spaces, so put it in the menu, as you did with the Friday report in chapter 18. The first line, <code>#FLM: Widest First</code>, is the name the menu will show. Save a copy as <code>Widest First.py</code> in the <code>Halfmoon</code> folder inside FontLab's <code>Scripts</code> folder, and choose <strong>Scripts &gt; Refresh Scripts</strong>. Select a few cells and pick it from the menu.</p>
 <p>One caution about "lopsided". The <code>n</code> is meant to be lopsided, because a stem and an arch need different amounts of white. The script can't tell which differences were intended. It puts them in order so that a person who knows can look at the top of the list first. That's the limit you met in chapter 31, where <code>ok</code> meant the font would accept a rename and not that the rename was wise.</p>
 <p>Ines looks at the list, says the <code>v</code> is fine and the <code>H</code> isn't, and Mira fixes the <code>H</code>.</p>

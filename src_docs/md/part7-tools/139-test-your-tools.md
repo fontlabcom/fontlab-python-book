@@ -6,13 +6,13 @@ this_file: src_docs/md/part7-tools/139-test-your-tools.md
 
 It's Monday 11 January. On Friday the build stopped at "Glyph proof" the first time through, and it took twenty minutes to find out why.
 
-The week before, Mira had tidied `halfmoon.py`. One of the things she tidied was `key`, the small function from chapter 112 that makes two spellings of a name comparable. She took out `.lower()`, because the names she was looking at were all in the same capitals anyway. They weren't, for one weight. Three scripts use `key` to find font files, and all three stopped finding one.
+The week before, Mira had tidied `proof_html.py`, chapter 115's glyph proof. One of the things she tidied was its copy of `key`, the small function from chapter 112 that makes two spellings of a name comparable. She took out `.lower()`, because the names she was looking at were all in the same capitals anyway. They weren't, for one weight. The proof uses `key` to find font files, and it stopped finding one.
 
-The change was one word, three scripts broke, and nobody knew for four days. Today you write down what your functions are supposed to do, in a form Python can check in a second, in the Terminal, with FontLab closed.
+The change was one word, the build broke, and nobody knew for four days. Today you write down what your functions are supposed to do, in a form Python can check in a second, in the Terminal, with FontLab closed.
 
 ## What you need
 
-`uv` from chapter 4 and the Terminal from chapter 137. The `halfmoon-tools` folder from chapter 133, and a copy of chapter 136's `plum_report.py` put inside it, next to `pyproject.toml`. No FontLab at all.
+`uv` from chapter 4 and the Terminal from chapter 137. The `spacing-tools` folder from chapter 133, with copies of chapter 115's `proof_html.py` and chapter 136's `plum_report.py` put inside it, next to `pyproject.toml`. No FontLab at all.
 
 This is the one chapter where I can say the opposite of what I usually say. I ran all of it. Every block of Terminal output below is copied from a real run on my machine, including the failures. Your version numbers and timings will differ.
 
@@ -48,7 +48,7 @@ Notice what the test doesn't say. It doesn't say how `key` works. It says what m
 
 You could call each test function yourself. There's a tool that does it for you, and it's the one nearly everybody uses: pytest. It looks in the folder for files whose names start with `test_`, runs every function in them whose name starts with `test_`, and reports.
 
-It isn't installed, and it doesn't need to be. In the Terminal, in the `halfmoon-tools` folder:
+It isn't installed, and it doesn't need to be. In the Terminal, in the `spacing-tools` folder:
 
 ```text
 uv run --no-project --with pytest --with fontParts pytest -q
@@ -58,53 +58,53 @@ The `-q` at the end asks pytest for its short report. This is chapter 137's `--w
 
 ## Step 3: A file you can't import
 
-Here is the natural first test file, and the mistake. Save it as `test_hm.py` in `halfmoon-tools`:
+Here is the natural first test file, and the mistake. Save it as `test_proof.py` in `spacing-tools`:
 
 ```python
-import halfmoon
+from proof_html import key
 
 
 def test_key_ignores_capitals_and_punctuation():
-    assert halfmoon.key("Plum-SemiBold") == halfmoon.key("plum semibold")
+    assert key("Plum-SemiBold") == key("plum semibold")
 ```
 
 Run pytest:
 
 ```text
-test_hm.py:1: in <module>
-    import halfmoon
-halfmoon/__init__.py:1: in <module>
-    from fly import fl
+test_proof.py:1: in <module>
+    from proof_html import key
+proof_html.py:7: in <module>
+    import fly.ap.core.scripting as scripting
 E   ModuleNotFoundError: No module named 'fly'
 ```
 
-The test never ran. `key` needs nothing from FontLab; it takes a string and returns a string. But it lives in a file whose first line needs FontLab, and importing one function means importing its whole file. The last line of pytest's report says `Interrupted: 1 error during collection`: it gave up before running any test in any file.
+The test never ran. `key` needs nothing from FontLab; it takes a string and returns a string. But it lives in a file whose imports need FontLab, and importing one function means importing its whole file. The last line of pytest's report says `Interrupted: 1 error during collection`: it gave up before running any test in any file.
 
-Delete `test_hm.py`. As long as it's in the folder, pytest stops there and runs nothing else.
+Delete `test_proof.py`. As long as it's in the folder, pytest stops there and runs nothing else.
 
-The cure is to sort your functions by what they need. Since chapter 133, `halfmoon` is a folder with an `__init__.py` in it. The plain functions can't go into that folder, because Python runs `__init__.py`, and its `from fly import fl`, before it lets you have anything else from there. They need a package of their own. In `halfmoon-tools`, make a folder `plain` beside the folder `halfmoon`, and in it a file `__init__.py`:
+The cure is to sort your functions by what they need. The plain functions can't stay in a script that starts by importing Fly, because Python runs those imports before it lets you have anything else from the file. They need a package of their own, of the kind chapter 133 made. In `spacing-tools`, make a folder `plain` beside the folder `spacing_tools`, and in it a file `__init__.py`:
 
 ```python
 # Small functions that need nothing from FontLab, so that tests can
-# import them anywhere. The halfmoon package borrows them from here.
+# import them anywhere. FontLab scripts borrow them from here.
 
 
 def key(text):
     return "".join([c for c in text.lower() if c.isalnum()])
 ```
 
-Then, in `halfmoon/__init__.py`, delete `key` and put this line with the other imports:
+Then, in `proof_html.py`, delete `def key` and its line, and put this line with the other imports:
 
 ```python
 from plain import key
 ```
 
-`halfmoon.key` still exists, so no script that uses it has to change. It's now a borrowed name, and the function itself lives where a test can reach it.
+The rest of `proof_html.py` still says `key(...)`, so nothing else in it has to change. `key` is now a borrowed name, and the function itself lives where a test can reach it. Copy the changed `proof_html.py` back over the one FontLab runs.
 
-FontLab has to be able to find `plain` too, or every script that imports `halfmoon` stops with `No module named 'plain'`. In `pyproject.toml`, the line chapter 133 wrote becomes:
+FontLab has to be able to find `plain` too, or the glyph proof stops with `No module named 'plain'`. In `pyproject.toml`, the line chapter 133 wrote becomes:
 
 ```text
-packages = ["halfmoon", "plain"]
+packages = ["spacing_tools", "plain"]
 ```
 
 When the tests pass, run chapter 133's Check Package, run `install.vfpy` again and restart FontLab. I haven't seen that second install run.
@@ -203,7 +203,7 @@ def test_lines_for_an_empty_font():
     ]
 ```
 
-Save it as `test_tools.py` in `halfmoon-tools`, beside the `plain` folder and `plum_report.py`.
+Save it as `test_tools.py` in `spacing-tools`, beside the `plain` folder and `plum_report.py`.
 
 `small_font` builds the font: `n` and `m` with a triangle drawn in each, a `space` with nothing drawn, an `n.alt` with no character and nothing drawn, and one kerning pair. The pen lines are chapter 46's. Every test that wants a font calls `small_font()` and gets a fresh one, so no test can spoil the font for the next.
 
@@ -257,7 +257,7 @@ out.append(empty.strip())
 7 passed in 0.06s
 ```
 
-It took six hundredths of a second. Send Tove the new file. And since you fixed the copy in `halfmoon-tools`, copy it over the `plum_report.py` that FontLab runs.
+It took six hundredths of a second. Send Tove the new file. And since you fixed the copy in `spacing-tools`, copy it over the `plum_report.py` that FontLab runs.
 
 ## Break it on purpose
 
@@ -287,7 +287,7 @@ Now be clear about what the seven dots mean. They mean that seven claims about t
 
 1. Write `test_key_of_an_empty_string`. Decide what `key("")` should give before you run it.
 2. Add a glyph to `small_font` that's wider than `m`. Run pytest and read which tests fail. Then decide for each whether the test or the font should change.
-3. Find one more function in the `halfmoon` package, or in any script from Part 6, that takes plain values and returns plain values. Move it to `plain/__init__.py`, leave a borrowed name behind, and write two tests for it.
+3. Find one more function in any script from Part 6 that takes plain values and returns plain values. Move it to `plain/__init__.py`, import it back into the script, and write two tests for it.
 
 ## Next
 

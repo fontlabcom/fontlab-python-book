@@ -5335,7 +5335,7 @@
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>Plum-practice</code> open in FontLab 9, with Fly installed.</li>
-<li><code>halfmoon.py</code>, <code>Add Glyphs From List.py</code> from chapter 40 and <code>list_features.py</code> from chapter 87.</li>
+<li><code>Add Glyphs From List.py</code> from chapter 40 and <code>list_features.py</code> from chapter 87. The script below defines <code>tell</code> and <code>ask</code> from <a href="../../part2-a-toolbox/039-ask-the-user/">chapter 39</a> again, so it runs by itself.</li>
 <li>The five features the font has after chapter 91.</li>
 </ul>
 <p>I couldn't run the code in FontLab 9. I ran the name building and the text building in plain Python on Plum's glyph names. I also played the typesetting program by hand, with a few lines of Python that apply the rules as I understand them, to get the glyph sequences this chapter quotes. No real layout program has seen this feature. Treat the <code>frac</code> text as a careful draft until chapter 93 and a compile have looked at it.</p>
@@ -5443,10 +5443,26 @@ three.numr fraction one.dnom six.dnom
 <span class="c1"># Does not compile: do that in the Features panel afterward.</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">unicodedata</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.features.code</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">fea_code</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span>
+
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Halfmoon"</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">ask</span><span class="p">(</span><span class="n">question</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">answer</span> <span class="o">=</span> <span class="n">run_standard_message_box</span><span class="p">(</span>
+        <span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">question</span><span class="p">,</span> <span class="s2">"Question"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Yes</span> <span class="o">|</span> <span class="n">box</span><span class="o">.</span><span class="n">No</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">answer</span> <span class="o">==</span> <span class="n">box</span><span class="o">.</span><span class="n">Yes</span>
+
 
 <span class="n">DRY_RUN</span> <span class="o">=</span> <span class="kc">True</span>
 
@@ -5487,7 +5503,7 @@ three.numr fraction one.dnom six.dnom
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">font</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="n">glyph</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">glyph</span> <span class="ow">in</span> <span class="n">font</span><span class="o">.</span><span class="n">glyphs</span><span class="p">]</span>
     <span class="n">figures</span> <span class="o">=</span> <span class="n">by_category</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="s2">"Nd"</span><span class="p">)</span>
@@ -5517,7 +5533,7 @@ three.numr fraction one.dnom six.dnom
         <span class="nb">print</span><span class="p">(</span><span class="n">made</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">"Dry run. Nothing written."</span><span class="p">)</span>
         <span class="k">return</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">ask</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Write </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">made</span><span class="p">)</span><span class="si">}</span><span class="s2"> features?"</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ask</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Write </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">made</span><span class="p">)</span><span class="si">}</span><span class="s2"> features?"</span><span class="p">):</span>
         <span class="k">return</span>
     <span class="n">updated</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"prefix"</span><span class="p">:</span> <span class="n">blocks</span><span class="p">[</span><span class="s2">"prefix"</span><span class="p">],</span> <span class="s2">"features"</span><span class="p">:</span> <span class="n">kept</span> <span class="o">+</span> <span class="n">made</span><span class="p">}</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">scripting</span><span class="o">.</span><span class="n">write_feature_blocks</span><span class="p">(</span>

@@ -17,7 +17,7 @@ Three dots are three circles, and you could call `circle` three times. Today you
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py` with `box`, `circle` and `rich`.
+- `box` from chapter 43 and `circle` from chapter 48. You'll write them out again here.
 - A new empty glyph called `leader`, made with **Add Glyphs From List** as in the last two chapters.
 
 The outputs below were computed from Plum's source file, not copied from FontLab's Output panel. The pen numbers come from running the pens in plain Python.
@@ -131,13 +131,14 @@ Two slashes: **floor division**. Seven halves is three and a bit, and the bit is
 
 Now hand those positions to the pen. The period in the Regular has a radius of 60 and its center is 50 units above the baseline, as chapter 48 found:
 
+Define `circle` from chapter 48 in this script first, then:
+
 ```python
-import halfmoon
 from fly.pens import RecordingPen
 
 pen = RecordingPen()
 for cx in range(STEP // 2, COUNT * STEP, STEP):
-    halfmoon.circle(pen, cx, 50, 60)
+    circle(pen, cx, 50, 60)
 print(len(pen.value))
 ```
 
@@ -173,16 +174,16 @@ The size of the dot and its height come from the period, as they did for the bul
 
 ```python
 font = fl.CurrentFont()
-glyph = halfmoon.rich(font, font["leader"])
+glyph = pGlyph(font, font["leader"])
 for master in MASTERS:
     step = STEPS[master]
-    left, bottom, right, top = halfmoon.box(font, font["period"], master)
+    left, bottom, right, top = box(font, font["period"], master)
     radius = round((right - left) / 2)
     cy = round((bottom + top) / 2)
     layer = layer_of(glyph.fl, master)
     with FlPen(layer, notify="Draw leader") as pen:
         for cx in range(step // 2, COUNT * step, step):
-            halfmoon.circle(pen, cx, cy, radius)
+            circle(pen, cx, cy, radius)
 ```
 
 This time the script finds `leader` by name, so it doesn't matter which glyph you're looking at. The loop over masters has the loop over positions inside it. That's the nesting from chapter 41, and the inner loop runs three times for each master. The `with` block sits between the two, so each master gets one pen, and all three dots of a master are one step in **Edit > Undo**.
@@ -191,7 +192,7 @@ This time the script finds `leader` by name, so it doesn't matter which glyph yo
 
 The dots are in, but the glyph is still 500 wide, the width chapter 40's script gave every new glyph. In the Regular the third dot ends at 635, well outside it.
 
-You changed a width once before, in chapter 29, and the pattern was: put the change in a small function, then hand that function to `history.commit` so that FontLab records one Undo step. You'll set widths often from here on, so the pattern goes into `halfmoon.py`:
+You changed a width once before, in chapter 29, and the pattern was: put the change in a small function, then hand that function to `history.commit` so that FontLab records one Undo step. You'll set widths often from here on, so make the pattern a function. Define it in this script:
 
 ```python
 def set_width(glyph, layer, width, title="Set width"):
@@ -205,7 +206,7 @@ def set_width(glyph, layer, width, title="Set width"):
 
 There's a function inside a function here, which is new. `change` is written inside `set_width`, and it can see the boxes of the function around it: `layer` and `width` aren't handed to it, yet it uses them. In chapter 29 `widen` did the same with boxes at the top of the script. A function looks for a name in its own boxes first and then in the place where it was written.
 
-`halfmoon.py` needs the two import lines from `safe_edit.py` at its top for this, if they aren't there yet:
+The script needs the two import lines from `safe_edit.py` at its top for this:
 
 ```python
 import fly.ap.core.history.glyphs as history
@@ -215,44 +216,77 @@ import fly.ap.core.scripting as scripting
 In the script it's one more line per master, after the `with` block:
 
 ```python
-    halfmoon.set_width(glyph, layer, COUNT * step, "Fit leader")
+    set_width(glyph, layer, COUNT * step, "Fit leader")
 ```
 
 Run the script with a Font window in front. FontLab keeps a separate Undo list for the Glyph window, and how this call behaves there is untested.
 
 ## The whole script
 
-Here is `dot_row.py`. `halfmoon.py` gains `set_width`.
+Here is `dot_row.py`. It writes out `box`, `circle` and `set_width` at the top, so it runs by itself.
 
 ```python
 # Draws a row of COUNT dots in every empty master of the glyph "leader"
 # and fits the width, so that rows of leaders keep an even beat.
-import halfmoon
+import fly.ap.core.history.glyphs as history
+import fly.ap.core.scripting as scripting
 from fly import fl
 from fly.pens import FlPen, layer_of
+from fly.tr.proxy.fl.objects.glyph import pGlyph
 
 MASTERS = ["Light", "Regular", "Bold"]
 STEPS = {"Light": 160, "Regular": 230, "Bold": 260}
 COUNT = 3
 
 
+def box(font, glyph, master="Regular"):
+    nodes = pGlyph(font, glyph).nodes(master)
+    if not nodes:
+        return None
+    xs = [node.x for node in nodes]
+    ys = [node.y for node in nodes]
+    return min(xs), min(ys), max(xs), max(ys)
+
+
+KAPPA = 0.5523  # handle length for a quarter circle, as a share of the radius
+
+
+def circle(pen, cx, cy, radius):
+    h = round(radius * KAPPA)
+    pen.moveTo((cx - radius, cy))
+    pen.curveTo((cx - radius, cy - h), (cx - h, cy - radius), (cx, cy - radius))
+    pen.curveTo((cx + h, cy - radius), (cx + radius, cy - h), (cx + radius, cy))
+    pen.curveTo((cx + radius, cy + h), (cx + h, cy + radius), (cx, cy + radius))
+    pen.curveTo((cx - h, cy + radius), (cx - radius, cy + h), (cx - radius, cy))
+    pen.closePath()
+
+
+def set_width(glyph, layer, width, title="Set width"):
+    def change():
+        layer.advanceWidth = width
+
+    package = scripting.current_package()
+    facts = history.scan_auto_facts(package)
+    history.commit(title, [layer], [glyph.fl], change, operation="geometry", facts=facts)
+
+
 def main():
     font = fl.CurrentFont()
-    glyph = halfmoon.rich(font, font["leader"])
+    glyph = pGlyph(font, font["leader"])
     for master in MASTERS:
         if glyph.contours(master):
             print(f"{master}: already has outlines, skipped")
             continue
         step = STEPS[master]
-        left, bottom, right, top = halfmoon.box(font, font["period"], master)
+        left, bottom, right, top = box(font, font["period"], master)
         radius = round((right - left) / 2)
         cy = round((bottom + top) / 2)
         layer = layer_of(glyph.fl, master)
         with FlPen(layer, notify="Draw leader") as pen:
             for cx in range(step // 2, COUNT * step, step):
-                halfmoon.circle(pen, cx, cy, radius)
+                circle(pen, cx, cy, radius)
         width = COUNT * step
-        halfmoon.set_width(glyph, layer, width, "Fit leader")
+        set_width(glyph, layer, width, "Fit leader")
         print(f"{master:<9}{COUNT} dots  step {step}  radius {radius}  width {width}")
 
 

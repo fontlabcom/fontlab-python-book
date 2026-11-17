@@ -168,7 +168,7 @@ import fly.ap.core.scripting as scripting
 from fly import fl, qt
 
 core, gui = qt.QtCore, qt.QtGui
-KEY = "halfmoon.suffixes"
+KEY = "tools.suffixes"
 
 
 def read(owner, name):

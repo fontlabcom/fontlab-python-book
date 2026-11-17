@@ -14,7 +14,7 @@ Today you'll open one. Double-click the `o` in the Font window, so that it fills
 
 - FontLab 9 with Fly installed, and `Plum-practice` open.
 - The `o` open in a Glyph window, with the Regular master showing.
-- Nothing from `halfmoon.py` today. The scripts in this chapter only read.
+- Nothing else. The scripts in this chapter only read.
 
 The outputs below were computed from Plum's source file, not copied from FontLab's Output panel. The calls come from the helpers' source.
 

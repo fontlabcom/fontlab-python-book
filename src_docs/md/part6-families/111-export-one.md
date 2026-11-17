@@ -13,7 +13,6 @@ This chapter exports one font. It's also the chapter where I have to tell you th
 ## What you need
 
 - `Plum-practice` open in FontLab 9 and saved, with Fly installed.
-- `halfmoon.py` with `tell`.
 - Chapter 26's `Path`, and chapter 97's version number.
 
 I couldn't run the code in FontLab 9. The script's file handling is plain Python, and I ran it on a folder of stand-in files. The steps in FontLab's export window come from the FontLab User Guide, and I haven't clicked them in version 9.
@@ -102,8 +101,17 @@ from datetime import date
 from pathlib import Path
 
 import fly.ap.core.scripting as scripting
-import halfmoon
-from fly import fl
+from fly import fl, qt
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
+
+
+# Chapter 39's tell, written out again so this script runs by itself.
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
 
 WANTED = [".otf"]
 
@@ -135,10 +143,10 @@ def instructions(folder, package):
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     if not font.path:
-        halfmoon.tell("Save the font first, so the export has a home.")
+        tell("Save the font first, so the export has a home.")
         return
     package = scripting.current_package()
     folder = export_folder(font, package)

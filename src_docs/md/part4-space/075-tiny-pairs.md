@@ -13,7 +13,7 @@ Fonts that have been kerned by eye, or by an automatic tool, can carry hundreds 
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py` with `ask` and `tell`.
+- The helpers `ask` and `tell` from chapter 39. The scripts below write them out again, so each one runs by itself.
 - The kerning as chapter 73 left it. Chapter 74 changed nothing.
 
 I couldn't run the code in FontLab 9. The lists below are worked out from Plum's source file.
@@ -121,15 +121,30 @@ All of them go to `write_kerning` in one batch, and so they make one Undo step.
 #FLM: Drop Tiny Pairs
 # Lists kerning pairs smaller than THRESHOLD. A pair is removed only if it is
 # small or missing in every master. With DRY_RUN = True it only prints.
-import halfmoon
 import fly.ap.core.scripting as scripting
 import fly.ap.kerning.batch as kerning_batch
 import fly.ap.kerning.edit.model as kerning_edit
-from fly import fl
+from fly import fl, qt
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
 
 MASTERS = ["Light", "Regular", "Bold"]
 THRESHOLD = 10
 DRY_RUN = True
+
+
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
+
+def ask(question):
+    box = qt.QtGui.QMessageBox
+    answer = run_standard_message_box(
+        qt, fl.MainWindow(), TITLE, question, "Question", box.Yes | box.No
+    )
+    return answer == box.Yes
 
 
 def is_small(value):
@@ -163,7 +178,7 @@ def plan(package):
 
 def main():
     if fl.CurrentFont() is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     package = scripting.current_package()
     drop, keep = plan(package)
@@ -174,7 +189,7 @@ def main():
     print(f"{len(keep) + len(drop)} small pairs found, {len(drop)} to remove.")
     if DRY_RUN or not drop:
         return
-    if not halfmoon.ask(f"Remove {len(drop)} kerning pairs?"):
+    if not ask(f"Remove {len(drop)} kerning pairs?"):
         return
 
     edits = {}

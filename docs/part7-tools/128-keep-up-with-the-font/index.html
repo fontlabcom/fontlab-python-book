@@ -5310,7 +5310,7 @@
 <p>Thursday, late in the afternoon. The Sidebearings panel sits at the right edge of FontLab and Ines has stopped losing it. She presses the key for the next glyph, the Glyph window shows <code>o</code>, and the panel still says <code>n in Light</code>. She clicks <strong>Look again</strong>. Next glyph, click. Next glyph, click. By the sixth glyph she has a name for the button, and it isn't printable.</p>
 <p>A panel that shows the wrong glyph is worse than no panel, because sooner or later somebody believes it. Today the button goes. The panel will go and look for itself, often enough that nobody can catch it out, and it will hold its tongue when there's nothing new to say.</p>
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
-<p><code>Plum-practice</code> open with the Light showing, a Glyph window on <code>n</code>, Fly installed, <code>halfmoon.py</code> with <code>keep</code> in it, and <code>sidebearing_panel.py</code> from chapter 127. The panel reads and changes nothing.</p>
+<p><code>Plum-practice</code> open with the Light showing, a Glyph window on <code>n</code>, Fly installed, and <code>sidebearing_panel.py</code> from chapter 127. The panel reads and changes nothing.</p>
 <p>I haven't run this chapter in FontLab 9. I ran the script against stand-in widgets and a stand-in timer that I could make tick as many times as I liked. The script follows an example in FontLab's collection of Python examples, <code>live_glyph_panel.py</code>, which watches the current glyph the same way.</p>
 <h2 id="step-1-be-told-or-go-and-look">Step 1: Be told, or go and look<a class="headerlink" href="#step-1-be-told-or-go-and-look" title="Permanent link">&para;</a></h2>
 <p>There are two ways to keep up with something that changes.</p>
@@ -5356,14 +5356,23 @@
 <div class="highlight"><pre><span></span><code><span class="c1">#FLM: Live Sidebearings</span>
 <span class="c1"># A panel at the side of FontLab that shows the sidebearings of the</span>
 <span class="c1"># current glyph and keeps up as you move about. Changes nothing.</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">ap</span><span class="p">,</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
 
 <span class="n">core</span><span class="p">,</span> <span class="n">gui</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtCore</span><span class="p">,</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span>
-<span class="n">KEY</span> <span class="o">=</span> <span class="s2">"halfmoon.sidebearings"</span>
+<span class="n">KEY</span> <span class="o">=</span> <span class="s2">"tools.sidebearings"</span>
 <span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Sidebearings"</span>
 <span class="n">EVERY</span> <span class="o">=</span> <span class="mi">200</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">keep</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">things</span><span class="p">):</span>
+    <span class="n">kept</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">sys</span><span class="p">)</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"kept_windows"</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">kept</span><span class="p">:</span>
+        <span class="n">kept</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">kept</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">things</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">glyph_text</span><span class="p">():</span>
@@ -5372,7 +5381,7 @@
     <span class="k">if</span> <span class="n">font</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">glyph</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="s2">"No glyph is showing."</span>
     <span class="n">master</span> <span class="o">=</span> <span class="n">scripting</span><span class="o">.</span><span class="n">current_package</span><span class="p">()</span><span class="o">.</span><span class="n">master</span>
-    <span class="n">rich</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span>
+    <span class="n">rich</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span>
     <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span>
         <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">rich</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> in </span><span class="si">{</span><span class="n">master</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
         <span class="sa">f</span><span class="s2">"Left </span><span class="si">{</span><span class="n">rich</span><span class="o">.</span><span class="n">getLSB</span><span class="p">(</span><span class="n">master</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
@@ -5422,12 +5431,12 @@
         <span class="n">made</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">LivePanel</span><span class="p">(</span><span class="n">content</span><span class="p">))</span>
 
     <span class="n">owner</span> <span class="o">=</span> <span class="n">ap</span><span class="o">.</span><span class="n">FontLab</span><span class="p">()</span><span class="o">.</span><span class="n">create_panel</span><span class="p">(</span><span class="n">TITLE</span><span class="p">,</span> <span class="n">build</span><span class="p">,</span> <span class="n">area</span><span class="o">=</span><span class="s2">"right"</span><span class="p">)</span>
-    <span class="n">halfmoon</span><span class="o">.</span><span class="n">keep</span><span class="p">(</span><span class="n">KEY</span><span class="p">,</span> <span class="p">[</span><span class="n">owner</span><span class="p">,</span> <span class="n">made</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+    <span class="n">keep</span><span class="p">(</span><span class="n">KEY</span><span class="p">,</span> <span class="p">[</span><span class="n">owner</span><span class="p">,</span> <span class="n">made</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
 
 
 <span class="n">main</span><span class="p">()</span>
 </code></pre></div>
-<p><code>glyph_text</code> and <code>main</code> are chapter 127's, word for word, apart from the class name. The key is the same too, <code>halfmoon.sidebearings</code>, and that's on purpose: when you run this script, <code>halfmoon.keep</code> closes the panel with the button, if it's still open, and puts this one in its place.</p>
+<p><code>keep</code>, <code>glyph_text</code> and <code>main</code> are chapter 127's, word for word, apart from the class name. The key is the same too, <code>tools.sidebearings</code>, and that's on purpose: <code>keep</code> finds the shelf that chapter 127's script made in <code>sys</code>, closes the panel with the button, if it's still open, and puts this one in its place.</p>
 <p><code>EVERY</code> is a name for the 200. A number that decides how a tool feels belongs at the top, where you'll find it when you want to change the feel.</p>
 <p>The last line of <code>__init__</code> calls <code>self.on_tick()</code> once by hand. Without it the panel would be empty for its first fifth of a second. A slot is a plain method, and you can call it yourself when that's useful.</p>
 <h2 id="run-it">Run it<a class="headerlink" href="#run-it" title="Permanent link">&para;</a></h2>

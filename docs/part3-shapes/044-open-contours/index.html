@@ -5269,7 +5269,7 @@
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>Plum-practice</code> open in FontLab 9, with Fly installed.</li>
-<li><code>halfmoon.py</code> with <code>box</code> from yesterday, and <code>anatomy.py</code> from chapter 41.</li>
+<li><code>anatomy.py</code> from chapter 41.</li>
 <li>The seven small-cap glyphs you added in chapter 40. They're still empty.</li>
 </ul>
 <p>Plum's source file has no open contours. So in Step 1 you'll plant one. The outputs below were computed from Plum's source file, not copied from FontLab's Output panel.</p>
@@ -5284,13 +5284,19 @@
 <p>If yours says <code>closed</code>, the pen closed the shape for you. Undo and try again, or draw the three points and stop after the third.</p>
 <p>Now there's one open contour in a font of 220 glyphs, in one master of three. Let's go and find it as if we didn't know where it was.</p>
 <h2 id="step-2-on-to-the-next">Step 2: On to the next<a class="headerlink" href="#step-2-on-to-the-next" title="Permanent link">&para;</a></h2>
-<p>First, a helper for the module. For two chapters we've asked for a layer's nodes. Today we need its contours, since <code>closed</code> belongs to a contour and not to a node:</p>
-<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">contours_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">master</span><span class="o">=</span><span class="s2">"Regular"</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span><span class="o">.</span><span class="n">contours</span><span class="p">(</span><span class="n">master</span><span class="p">)</span>
+<p>First, a helper. Define it in this script. For two chapters we've asked for a layer's nodes. Today we need its contours, since <code>closed</code> belongs to a contour and not to a node:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
+
+<span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">contours_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">master</span><span class="o">=</span><span class="s2">"Regular"</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span><span class="o">.</span><span class="n">contours</span><span class="p">(</span><span class="n">master</span><span class="p">)</span>
 </code></pre></div>
 <p>Now walk the font. Most glyphs will have nothing for us: the ones built from other glyphs and the empty ones have no contours at all. Yesterday we handled cases like that with an <code>if</code> and an <code>else</code>, and the real work ended up three levels deep, like a staircase. Here's another way to write it:</p>
 <div class="highlight"><pre><span></span><code><span class="k">for</span> <span class="n">glyph</span> <span class="ow">in</span> <span class="n">font</span><span class="o">.</span><span class="n">glyphs</span><span class="p">:</span>
-    <span class="n">contours</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">contours_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span>
+    <span class="n">contours</span> <span class="o">=</span> <span class="n">contours_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">contours</span><span class="p">:</span>
         <span class="k">continue</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">glyph</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">contours</span><span class="p">))</span>
@@ -5309,7 +5315,7 @@ SyntaxError: 'continue' not properly in loop
 <p>There's no loop there to continue. It's a <code>SyntaxError</code>, so Python found it while reading the script, before running a single line.</p>
 <h2 id="step-3-is-any-of-them-open">Step 3: Is any of them open?<a class="headerlink" href="#step-3-is-any-of-them-open" title="Permanent link">&para;</a></h2>
 <p>For each glyph that has contours, we want to know whether at least one of them is open. You can already write that, with a switch like <code>DRY_RUN</code> from chapter 31, only this one is flipped by the loop:</p>
-<div class="highlight"><pre><span></span><code><span class="n">contours</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">contours_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"d.sc"</span><span class="p">])</span>
+<div class="highlight"><pre><span></span><code><span class="n">contours</span> <span class="o">=</span> <span class="n">contours_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"d.sc"</span><span class="p">])</span>
 <span class="n">has_open</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="k">for</span> <span class="n">contour</span> <span class="ow">in</span> <span class="n">contours</span><span class="p">:</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">contour</span><span class="o">.</span><span class="n">closed</span><span class="p">:</span>
@@ -5346,7 +5352,7 @@ SyntaxError: 'continue' not properly in loop
 
 <span class="k">for</span> <span class="n">glyph</span> <span class="ow">in</span> <span class="n">font</span><span class="o">.</span><span class="n">glyphs</span><span class="p">:</span>
     <span class="k">for</span> <span class="n">master</span> <span class="ow">in</span> <span class="n">MASTERS</span><span class="p">:</span>
-        <span class="n">contours</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">contours_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">master</span><span class="p">)</span>
+        <span class="n">contours</span> <span class="o">=</span> <span class="n">contours_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">master</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="ow">not</span> <span class="n">contour</span><span class="o">.</span><span class="n">closed</span> <span class="k">for</span> <span class="n">contour</span> <span class="ow">in</span> <span class="n">contours</span><span class="p">]):</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">glyph</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">master</span><span class="p">)</span>
 </code></pre></div>
@@ -5360,13 +5366,17 @@ SyntaxError: 'continue' not properly in loop
 </code></pre></div>
 <p>If <code>loose</code> is empty, the layer is fine. If it isn't, its length is the count, and each contour in it can be asked for its nodes.</p>
 <h2 id="the-whole-script">The whole script<a class="headerlink" href="#the-whole-script" title="Permanent link">&para;</a></h2>
-<p>Here is <code>find_open.py</code>. <code>halfmoon.py</code> gains <code>contours_of</code> from Step 2.</p>
+<p>Here is <code>find_open.py</code>. It defines <code>contours_of</code> from Step 2 at the top, so it runs by itself.</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Lists every open contour in the font, in every master.</span>
 <span class="c1"># Reads only.</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
 
 <span class="n">MASTERS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Light"</span><span class="p">,</span> <span class="s2">"Regular"</span><span class="p">,</span> <span class="s2">"Bold"</span><span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">contours_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">master</span><span class="o">=</span><span class="s2">"Regular"</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span><span class="o">.</span><span class="n">contours</span><span class="p">(</span><span class="n">master</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
@@ -5378,7 +5388,7 @@ SyntaxError: 'continue' not properly in loop
     <span class="n">found</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">for</span> <span class="n">glyph</span> <span class="ow">in</span> <span class="n">font</span><span class="o">.</span><span class="n">glyphs</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">master</span> <span class="ow">in</span> <span class="n">MASTERS</span><span class="p">:</span>
-            <span class="n">contours</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">contours_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">master</span><span class="p">)</span>
+            <span class="n">contours</span> <span class="o">=</span> <span class="n">contours_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">master</span><span class="p">)</span>
             <span class="n">loose</span> <span class="o">=</span> <span class="p">[</span><span class="n">contour</span> <span class="k">for</span> <span class="n">contour</span> <span class="ow">in</span> <span class="n">contours</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">contour</span><span class="o">.</span><span class="n">closed</span><span class="p">]</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">loose</span><span class="p">:</span>
                 <span class="k">continue</span>

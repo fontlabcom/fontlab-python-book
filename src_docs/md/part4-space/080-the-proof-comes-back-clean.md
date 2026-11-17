@@ -13,7 +13,7 @@ The new idea: a function can be put in a list like any other value.
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py` with `rich` and `tell`.
+- The helper `tell` from chapter 39. The scripts below write it out again, so each one runs by itself.
 - The font as chapter 79 left it.
 
 I couldn't run the code in FontLab 9. The counts below were computed in plain Python from Plum's source file with this part's changes applied.
@@ -100,9 +100,12 @@ Two values looked at, one problem, and it's the one you planted. The function ne
 #FLM: Spacing Audit
 # Runs the spacing and kerning checks of Part 4 and prints one line for each.
 # Changes nothing.
-import halfmoon
 import fly.ap.core.scripting as scripting
-from fly import fl
+from fly import fl, qt
+from fly.ap.ui.dialogs import run_standard_message_box
+from fly.tr.proxy.fl.objects.glyph import pGlyph
+
+TITLE = "Halfmoon"
 
 MASTERS = ["Light", "Regular", "Bold"]
 WORD = "minimum"
@@ -112,8 +115,13 @@ SAME_WIDTH = ["zero", "one", "two", "three", "four", "five", "six", "seven",
 DEEPEST = -120
 
 
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
+
 def gap(font, first, second, master):
-    return halfmoon.rich(font, font[first]).getRSB(master) + halfmoon.rich(font, font[second]).getLSB(master)
+    return pGlyph(font, font[first]).getRSB(master) + pGlyph(font, font[second]).getLSB(master)
 
 
 def check_word(font, tables, classes):
@@ -131,7 +139,7 @@ def check_same_width(font, tables, classes):
     problems = []
     looked = 0
     for master in MASTERS:
-        widths = [halfmoon.rich(font, font[name]).getAdvance(master) for name in SAME_WIDTH]
+        widths = [pGlyph(font, font[name]).getAdvance(master) for name in SAME_WIDTH]
         looked = looked + len(widths)
         if len(set(widths)) != 1:
             problems.append(f"{master}: figure widths are {sorted(set(widths))}")
@@ -201,7 +209,7 @@ CHECKS = [
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     package = scripting.current_package()
     tables = {master: scripting.kerning_pairs(package, master) for master in MASTERS}

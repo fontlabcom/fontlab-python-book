@@ -13,7 +13,7 @@ Plum doesn't need a new drawing. The no-break space should look like the space, 
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed, and the three code points from chapter 83 mended.
-- `halfmoon.py` with `tell`.
+- The `tell` function from [chapter 39](../part2-a-toolbox/039-ask-the-user.md). The script below defines it again, so it runs by itself.
 - The Font window in front and no glyph open for editing, as in chapter 83.
 
 I couldn't run the code in FontLab 9. The list behavior in Steps 1 to 3 is plain Python and I ran it. The report and plan were computed from Plum's source file. I haven't seen FontLab accept a list of two code points from a script: Fly's own tools shorten such lists and never lengthen them, so the write in this chapter is one step past what I could read in source. Keep the dry run on until you've looked at the plan, and check the glyph afterward.
@@ -192,9 +192,17 @@ Then look with your own eyes. Select `space` in the Font window and open the Gly
 #FLM: Double Encoded
 # Reports glyphs with more than one code point and code points on two glyphs.
 # Then adds the extra code points in WANTED, each as a second code point.
-import halfmoon
-from fly import fl
+from fly import fl, qt
 import fly.ap.glyphs.names.model as names
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
+
+
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
 
 DRY_RUN = True
 WANTED = {"space": 0xA0, "hyphen": 0xAD}
@@ -251,7 +259,7 @@ def report(all_codes):
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     all_codes = {glyph.name: list(glyph.unicodes) for glyph in font.glyphs}
     report(all_codes)

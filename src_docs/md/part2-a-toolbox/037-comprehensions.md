@@ -19,7 +19,7 @@ Oskar's scripts are full of lines like that one, and so are the scripts you'll f
 ## What you need
 
 - FontLab 9 with Fly installed, and `Plum-practice` open.
-- `halfmoon.py` as [chapter 36](036-sort-by-anything.md) left it.
+- The functions from chapters 33 to 36: `is_empty`, `glyphs_of` and `wider_than`. Where a listing needs one, it's shown.
 
 Every listing in this chapter starts with the usual two lines:
 
@@ -45,7 +45,7 @@ print(names[:6])
 ['.notdef', 'A', 'Aacute', 'Abreve', 'Acircumflex', 'Adieresis']
 ```
 
-Make an empty list. Walk through something. Each time around, work out one value and append it. You've written those three lines in nearly every chapter since, and `halfmoon.py` has them three times over.
+Make an empty list. Walk through something. Each time around, work out one value and append it. You've written those three lines in nearly every chapter since, and your scripts from the last few chapters have them three times over.
 
 When people write the same three lines often enough, the language grows a shorter way to say them. This is it:
 
@@ -223,7 +223,7 @@ def metrics_rows(font, only_selected=False):
     rows = []
     for glyph in glyphs_of(font, only_selected):
         if not is_empty(font, glyph):
-            measured = rich(font, glyph)
+            measured = pGlyph(font, glyph)
             rows.append((glyph.name, measured.getLSB(), int(glyph.width), measured.getRSB()))
     return rows
 ```
@@ -232,10 +232,10 @@ And here it is as a comprehension:
 
 ```python
 def metrics_rows(font, only_selected=False):
-    return [(glyph.name, rich(font, glyph).getLSB(), int(glyph.width), rich(font, glyph).getRSB()) for glyph in glyphs_of(font, only_selected) if not is_empty(font, glyph)]
+    return [(glyph.name, pGlyph(font, glyph).getLSB(), int(glyph.width), pGlyph(font, glyph).getRSB()) for glyph in glyphs_of(font, only_selected) if not is_empty(font, glyph)]
 ```
 
-It works. It's also 170 characters long, you have to scroll sideways to find the `for`, and it makes the rich glyph twice for every row because there's nowhere to keep it. The loop had a box called `r` for that. Nobody will thank you for the second version, and that includes you, in a month.
+It works. It's also 170 characters long, you have to scroll sideways to find the `for`, and it makes the `pGlyph` twice for every row because there's nowhere to keep it. The loop had a box called `measured` for that. Nobody will thank you for the second version, and that includes you, in a month.
 
 My rule is this. Use a comprehension when you can say it in one breath: "the name of each glyph that's wider than 800". Use a loop when:
 
@@ -257,16 +257,21 @@ Five lines became one, and you can read it aloud. The short name `g` is fine in 
 
 ## The whole script
 
-This is `empty_glyphs.py` from chapter 8, rewritten with today's tool and the module:
+This is `empty_glyphs.py` from chapter 8, rewritten with today's tool and the `is_empty` function from chapter 33:
 
 ```python
 # Lists the glyphs that have no shapes in them.
 from fly import fl
-import halfmoon
+from fly.tr.proxy.fl.objects.glyph import pGlyph
+
+
+def is_empty(font, glyph):
+    return pGlyph(font, glyph).isEmpty()
+
 
 font = fl.CurrentFont()
 
-empty = [g.name for g in font.glyphs if halfmoon.is_empty(font, g)]
+empty = [g.name for g in font.glyphs if is_empty(font, g)]
 
 print(len(empty), "of", len(font), "glyphs are empty:")
 print(" ".join(empty))
@@ -279,9 +284,12 @@ space a.sc b.sc c.sc a.ss01 ampersand.ss01 g.ss01 y.ss01 zero.alt
 
 Yours will list whichever practice glyphs you've added and not yet drawn. In chapter 8 this script was a loop with a counter and a `print` inside it. Now it has three parts that each say one thing: find the font, build the list, report. The comprehension holds the question, and the lines after it decide what to do with the answer. Scripts tend to settle into that shape once comprehensions are available.
 
-And in `halfmoon.py`, two functions get shorter:
+And two functions from chapter 34 get shorter. Paste these over the old versions wherever you use them:
 
 ```python
+import fly.ap.core.scripting as scripting
+
+
 def glyphs_of(font, only_selected=False):
     if not only_selected:
         return font.glyphs
@@ -292,7 +300,7 @@ def wider_than(font, limit=700, only_selected=False):
     return [g.name for g in glyphs_of(font, only_selected) if g.width > limit]
 ```
 
-`metrics_rows` and `status_tally` stay as loops. Reload the module, run `widest_first.py` from last week, and check that its output hasn't changed by a character. That's the test from chapter 33 again: if you rewrote a function without changing what it does, its callers can't tell.
+`metrics_rows` and `status_tally` stay as loops. Put the new `glyphs_of` into `widest_first.py` from last week, run it, and check that its output hasn't changed by a character. That's the test from chapter 33 again: if you rewrote a function without changing what it does, its callers can't tell.
 
 Mira goes back to Oskar's kerning script. The third line reads like a sentence now. The fourth line has two `for`s in one pair of brackets. She unfolds it on paper, as he told her to, and gets through it.
 
@@ -309,8 +317,8 @@ A list comprehension folds the make-a-list loop into one line: what you want, th
     pairs = [(name, name + ".sc") for name in names if name + ".sc" not in font_names]
     ```
 
-3. `status_tally` in `halfmoon.py` builds a dictionary with a loop. Try to write it as a dictionary comprehension. You'll find that you can't, at least not with what you know. Say why. What does the loop do on each pass that a comprehension has no way to do?
+3. `status_tally` from chapter 33 builds a dictionary with a loop. Try to write it as a dictionary comprehension. You'll find that you can't, at least not with what you know. Say why. What does the loop do on each pass that a comprehension has no way to do?
 
 ## Next
 
-Mira's scripts now call the module, which calls Fly, which calls FontLab. When something breaks, the error message runs to eight lines and names two files. Chapter 38 reads one from end to end.
+Mira's scripts now call her own functions, which call Fly, which calls FontLab. When something breaks, the error message runs to eight lines and names more than one file. Chapter 38 reads one from end to end.

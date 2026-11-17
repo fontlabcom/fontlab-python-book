@@ -14,7 +14,7 @@ She takes a pencil and draws what she'd have made: the names field with its word
 
 ## What you need
 
-`Plum-practice` open with the Regular showing, Fly installed, `halfmoon.py`, and `shift_dialog.py` from chapter 123. The script does the same work as yesterday. Only the arrangement changes.
+`Plum-practice` open with the Regular showing, Fly installed, and `shift_dialog.py` from chapter 123. The script does the same work as yesterday. Only the arrangement changes.
 
 I haven't run this chapter in FontLab 9. I ran the script in plain Python with stand-in widgets and stand-in layouts that record what was put into what, and the trees printed below come from those records. I can't show you how the window looks, and I won't describe pixels I haven't seen. The two warning texts in this chapter are Qt's own, written from memory.
 
@@ -131,15 +131,15 @@ A panel has one layout. That one is the outermost box of the sketch, and it's th
 #FLM: Shift Dialog
 # Adds to the sidebearings of the glyphs you name, or of the ones
 # selected in the Font window, in the master that's showing.
-import halfmoon
 import fly.ap.core.history.glyphs as history
 import fly.ap.core.scripting as scripting
 import fly.ap.metrics.panel.model as metrics
 from fly import fl, qt
 from fly.pens import layer_of
+from fly.tr.proxy.fl.objects.glyph import pGlyph
 
 core, gui = qt.QtCore, qt.QtGui
-KEY = "halfmoon.shift"
+KEY = "tools.shift"
 LIMIT = 200
 SHOWN = 8
 
@@ -154,7 +154,7 @@ def plan_rows(font, master, names, left, right):
     for name in names:
         if font[name] is None:
             raise ValueError(f"No glyph called {name}.")
-        rich = halfmoon.rich(font, font[name])
+        rich = pGlyph(font, font[name])
         old = (rich.getLSB(master), rich.getAdvance(master), rich.getRSB(master))
         new = (old[0] + left, old[1] + left + right, old[2] + right)
         rows.append((rich, layer_of(rich.fl, master), old, new))

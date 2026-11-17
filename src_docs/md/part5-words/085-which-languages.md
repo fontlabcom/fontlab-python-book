@@ -13,7 +13,7 @@ In chapter 25 you answered this question for German with two sets and a minus si
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed. The font must be saved, because the script looks for its data file in the folder where the font lives.
-- `halfmoon.py` with `tell`.
+- The `tell` function from [chapter 39](../part2-a-toolbox/039-ask-the-user.md). The script below defines it again, so it runs by itself.
 - A plain text editor to make the data file.
 
 I couldn't run the code in FontLab 9. Reading the file, the sets and the report are plain Python, and I ran them against the code points in Plum's source file. The only FontLab parts are `font.path` and `glyph.unicodes`, which earlier chapters use the same way.
@@ -158,8 +158,16 @@ Polish and Czech are nearly there, which is Part 3's work showing. Polish lacks 
 # which of its characters the current font can't type.
 from pathlib import Path
 
-import halfmoon
-from fly import fl
+from fly import fl, qt
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
+
+
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
 
 BASIC = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 FILE_NAME = "languages.txt"
@@ -190,11 +198,11 @@ def report(languages, have):
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     path = Path(font.path).parent / FILE_NAME
     if not path.exists():
-        halfmoon.tell(f"I can't find {FILE_NAME} next to the font.")
+        tell(f"I can't find {FILE_NAME} next to the font.")
         return
     languages = read_languages(path)
     have = {chr(code) for glyph in font.glyphs for code in glyph.unicodes}

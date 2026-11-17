@@ -6,30 +6,30 @@ this_file: src_docs/md/part7-tools/129-remember-my-settings.md
 
 Monday of week twenty-five, 28 December. The studio is half empty and Ines has the Light to herself. She opens the Shift tool, types 12 into **Left**, types 12 into **Right**, names three glyphs and clicks. She closes it to look at a proof. She opens it again, and both boxes say 0. By eleven she has typed 12 twenty times, and she has typed 21 once and not noticed until the `H` looked wrong.
 
-A window forgets everything when it closes, and so does a script when it ends. Chapter 127 kept a panel alive in `halfmoon`, but that box empties when FontLab quits. The only thing that outlasts FontLab is a file. Today the Shift tool gets one: a few lines of JSON that it reads when it opens and writes when Ines clicks.
+A window forgets everything when it closes, and so does a script when it ends. Chapter 127 kept a panel alive in a drawer of `sys`, but that drawer empties when FontLab quits. The only thing that outlasts FontLab is a file. Today the Shift tool gets one: a few lines of JSON that it reads when it opens and writes when Ines clicks.
 
 ## What you need
 
-`Plum-practice` open with the Light showing, Fly installed, `halfmoon.py`, and `shift_tool.py` from chapter 126.
+`Plum-practice` open with the Light showing, Fly installed, and `shift_tool.py` from chapter 126.
 
 I haven't run this chapter in FontLab 9. The settings functions are plain Python, and I ran them as printed against a folder of my own, with good files and damaged ones. The whole script ran against the stand-in widgets and the stand-in font from chapter 123. The one line I couldn't check is the one that asks FontLab where its data folder is.
 
 ## Step 1: Where the file lives
 
-A settings file needs a home that isn't the font's folder (the settings belong to Ines, not to Plum) and isn't the Scripts folder (which chapter 133 will replace wholesale). FontLab keeps a folder of its own for each person who uses it, and Fly knows where it is. In `halfmoon.py`, make sure the top has `import json` and that `ap` is among the names on the `from fly import` line, and then add:
+A settings file needs a home that isn't the font's folder (the settings belong to Ines, not to Plum) and isn't the Scripts folder (which chapter 133 will replace wholesale). FontLab keeps a folder of its own for each person who uses it, and Fly knows where it is. In `shift_tool.py`, make sure the top has `import json` and that `ap` is among the names on the `from fly import` line, and then add:
 
 ```python
 def settings_path():
-    return ap.app.paths.userDataFolder / "halfmoon.json"
+    return ap.app.paths.userDataFolder / "tool-settings.json"
 ```
 
-`userDataFolder` is a `Path`, and the `/` joins a file name to it, as it did in chapter 112. On a Mac I'd expect `FontLab/FontLab 9` inside your own `Library/Application Support`, though a FontLab preference can put it elsewhere. Print `halfmoon.settings_path()` once in the Scripting panel so that you know where to look.
+`userDataFolder` is a `Path`, and the `/` joins a file name to it, as it did in chapter 112. On a Mac I'd expect `FontLab/FontLab 9` inside your own `Library/Application Support`, though a FontLab preference can put it elsewhere. Print `ap.app.paths.userDataFolder` once in the Scripting panel, after `from fly import ap`, so that you know where to look.
 
 One file will do for every tool you write. Inside, each tool has its own drawer, under the key it already has:
 
 ```text
 {
-    "halfmoon.shift": {
+    "tools.shift": {
         "left": 12,
         "right": 12
     }
@@ -51,7 +51,7 @@ def load_settings(key):
 Call it from the tool and the tool doesn't open at all. The Output panel says:
 
 ```text
-FileNotFoundError: [Errno 2] No such file or directory: '/Users/ines/Library/Application Support/FontLab/FontLab 9/halfmoon.json'
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/ines/Library/Application Support/FontLab/FontLab 9/tool-settings.json'
 ```
 
 There is no file yet. Nobody has clicked, so nothing has been saved, and a tool that can't open until it has been used can never be used. This is the mistake that every settings reader makes once: it treats the file as something the script owns. The script doesn't own it. The file can be missing, because this is the first run or a new computer. It can be half written, because the laptop lid closed at the wrong moment. A person can have opened it in a text editor and changed 12 to "12". It can be a perfectly good file with no drawer for this tool in it.
@@ -66,7 +66,7 @@ The way to keep that rule is to start from values the script trusts and let the 
 DEFAULTS = {"left": 0, "right": 0}
 ```
 
-And in `halfmoon.py`:
+And beside `settings_path`, in the same script:
 
 ```python
 def read_settings_file():
@@ -119,18 +119,55 @@ Two decisions go into the tool, and neither is about Python. When to save: after
 #FLM: Shift Tool
 # Adds to the sidebearings of the glyphs you name, or of the ones
 # selected in the Font window, in the master that's showing.
-import halfmoon
+import json
+
 import fly.ap.core.history.glyphs as history
 import fly.ap.core.scripting as scripting
 import fly.ap.metrics.panel.model as metrics
-from fly import fl, qt
+from fly import ap, fl, qt
 from fly.pens import layer_of
+from fly.tr.proxy.fl.objects.glyph import pGlyph
 
 core, gui = qt.QtCore, qt.QtGui
-KEY = "halfmoon.shift"
+KEY = "tools.shift"
 LIMIT = 200
 SHOWN = 8
 DEFAULTS = {"left": 0, "right": 0}
+
+
+def settings_path():
+    return ap.app.paths.userDataFolder / "tool-settings.json"
+
+
+def read_settings_file():
+    try:
+        with open(settings_path(), encoding="utf-8") as f:
+            stored = json.load(f)
+    except FileNotFoundError:
+        return {}
+    except json.JSONDecodeError:
+        return {}
+    if not isinstance(stored, dict):
+        return {}
+    return stored
+
+
+def load_settings(key, defaults):
+    values = dict(defaults)
+    mine = read_settings_file().get(key)
+    if not isinstance(mine, dict):
+        return values
+    for name in defaults:
+        if name in mine and type(mine[name]) == type(defaults[name]):
+            values[name] = mine[name]
+    return values
+
+
+def save_settings(key, values):
+    stored = read_settings_file()
+    stored[key] = values
+    with open(settings_path(), "w", encoding="utf-8") as f:
+        json.dump(stored, f, indent=4, ensure_ascii=False)
 
 
 def read(owner, name):
@@ -143,7 +180,7 @@ def plan_rows(font, master, names, left, right):
     for name in names:
         if font[name] is None:
             raise ValueError(f"No glyph called {name}.")
-        rich = halfmoon.rich(font, font[name])
+        rich = pGlyph(font, font[name])
         old = (rich.getLSB(master), rich.getAdvance(master), rich.getRSB(master))
         new = (old[0] + left, old[1] + left + right, old[2] + right)
         rows.append((rich, layer_of(rich.fl, master), old, new))
@@ -193,7 +230,7 @@ class ShiftTool:
         self.left.setRange(-LIMIT, LIMIT)
         self.right = gui.QSpinBox(self.panel)
         self.right.setRange(-LIMIT, LIMIT)
-        saved = halfmoon.load_settings(KEY, DEFAULTS)
+        saved = load_settings(KEY, DEFAULTS)
         self.left.setValue(saved["left"])
         self.right.setValue(saved["right"])
         self.rehearse = gui.QCheckBox("Only show what would happen", self.panel)
@@ -229,7 +266,7 @@ class ShiftTool:
             right = read(self.right, "value")
             text = shift(read(self.names, "text"), left, right,
                          read(self.rehearse, "checked"))
-            halfmoon.save_settings(KEY, {"left": left, "right": right})
+            save_settings(KEY, {"left": left, "right": right})
             self.runs += 1
             self.label.setText(f"{text}\nRun {self.runs} in this window.")
         except Exception as problem:
@@ -244,7 +281,7 @@ def build(parent):
 scripting.show_script_dialog(build, KEY)
 ```
 
-Save it over `shift_tool.py`. Next to chapter 126's version, three places changed. `DEFAULTS` is new. `__init__` asks `halfmoon.load_settings` for the saved values and puts them in the two boxes with `setValue`, after `setRange`, so that the box already knows its limits when the number arrives. And `on_go` reads the two numbers into names of their own, because it now needs them twice: once for `shift` and once for `save_settings`, which sits after `shift` and so is skipped when `shift` raises.
+Save it over `shift_tool.py`. Next to chapter 126's version, four places changed. `import json` is new, and `ap` joins the `from fly import` line. `DEFAULTS` is new, with the four settings functions from steps 1 to 4 under it. `__init__` asks `load_settings` for the saved values and puts them in the two boxes with `setValue`, after `setRange`, so that the box already knows its limits when the number arrives. And `on_go` reads the two numbers into names of their own, because it now needs them twice: once for `shift` and once for `save_settings`, which sits after `shift` and so is skipped when `shift` raises.
 
 ## Run it
 
@@ -258,7 +295,7 @@ Light: 3 would change.
 Run 1 in this window.
 ```
 
-That was a rehearsal, and it saved all the same: the numbers are what Ines chose, whether or not she has used them yet. Look in the folder from step 1. `halfmoon.json` is there, with the six lines shown above.
+That was a rehearsal, and it saved all the same: the numbers are what Ines chose, whether or not she has used them yet. Look in the folder from step 1. `tool-settings.json` is there, with the six lines shown above.
 
 Close the tool. Run the script again. Both boxes say 12, the tick box is ticked, the names field is empty. Quit FontLab, start it, open the font, run the script: 12 and 12.
 
@@ -273,11 +310,11 @@ Open the tool again and the box says 12. The 30 went nowhere, so it wasn't kept.
 
 ## Break it on purpose
 
-The file is yours to damage. Open `halfmoon.json` in a text editor and put quotation marks round the first number and a silly value in the second:
+The file is yours to damage. Open `tool-settings.json` in a text editor and put quotation marks round the first number and a silly value in the second:
 
 ```text
 {
-    "halfmoon.shift": {
+    "tools.shift": {
         "left": "12",
         "right": 5000
     }
@@ -295,7 +332,7 @@ A tool remembers across sessions by writing a small JSON file in FontLab's user 
 ## Try it yourself
 
 1. Add a **Forget** button that saves `DEFAULTS` and sets both boxes back to 0. Which of the functions you already have does all the work?
-2. Give the Sidebearings panel from chapter 128 a drawer of its own, `halfmoon.sidebearings`, holding the number of milliseconds between looks. Change it in the file by hand, run the panel, and check with `EVERY` printed that it took. What should the panel do with 0?
+2. Give the Sidebearings panel from chapter 128 a drawer of its own under its key, `tools.sidebearings`, holding the number of milliseconds between looks. Change it in the file by hand, run the panel, and check with `EVERY` printed that it took. What should the panel do with 0?
 3. Change the 12 in the file to `true` and run the tool. The box says 0. Now change the test in `load_settings` to `isinstance(mine[name], type(defaults[name]))` and run it again. What does the box say, and what does that tell you about `True` and whole numbers?
 
 ## Next

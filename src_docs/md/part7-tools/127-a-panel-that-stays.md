@@ -10,7 +10,7 @@ A thing you look at all day shouldn't float about. FontLab's own panels sit at t
 
 ## What you need
 
-`Plum-practice` open with the Light showing, a Glyph window on `n`, Fly installed, and `halfmoon.py`, which gets one small addition in step 4. The panel reads and changes nothing.
+`Plum-practice` open with the Light showing, a Glyph window on `n`, Fly installed. The panel reads and changes nothing.
 
 I haven't run this chapter in FontLab 9. I ran the script against stand-in widgets and a stand-in panel maker that keeps a list of what was opened and closed. No script I could read calls Fly's panel maker the way this chapter does, so treat every sentence about what the panel looks like as a claim to check.
 
@@ -70,27 +70,28 @@ That's better for as long as the script runs, which is no time at all. Every run
 
 ## Step 4: A place that outlasts the script
 
-You already own something that lasts longer than a script: `halfmoon.py`. Chapter 33 showed that Python loads a module once and then hands every later `import halfmoon` the same loaded module, which is why you needed `importlib.reload` after editing it. A dictionary inside that module lives until FontLab quits.
+Something in FontLab does last longer than a script: every module Python has loaded. Chapter 33 showed that Python loads a module once and then hands every later `import` of it the same loaded module. `sys` is one of those. Python loaded it before your first script ran, and every script that says `import sys` gets that same module until FontLab quits. A dictionary put in one of its drawers lives as long.
 
-Add these lines to `halfmoon.py`, after the functions that are there:
+Put these lines near the top of the script, after the imports:
 
 ```python
-KEPT = {}
+import sys
 
 
 def keep(key, things):
-    if key in KEPT:
-        KEPT[key][0].close()
-    KEPT[key] = things
+    kept = vars(sys).setdefault("kept_windows", {})
+    if key in kept:
+        kept[key][0].close()
+    kept[key] = things
 ```
 
-`KEPT` is the shelf. `keep` takes a key and a list of things to hold. If the shelf has that key already, the first thing in the old list is asked to close, and then the new list takes the place. The object `create_panel` hands back has a `close` method, so it goes first in the list.
+`vars(sys)` is the module's own dictionary of names, the one `sys.path` lives in. `setdefault` gives back the drawer `kept_windows` if it's there and puts an empty dictionary in it first if it isn't, so the first script to call `keep` makes the shelf and every later one finds it. `keep` takes a key and a list of things to hold. If the shelf has that key already, the first thing in the old list is asked to close, and then the new list takes the place. The object `create_panel` hands back has a `close` method, so it goes first in the list.
 
-Run `importlib.reload(halfmoon)` once in the Scripting panel, as in chapter 33, so that FontLab sees the new lines. Then the end of the script becomes:
+`kept_windows` is a name I chose. Python has no drawer by that name of its own, so nothing else will use it, and every script in this part that calls `keep` uses the same one. The end of the script becomes:
 
 ```python
 owner = ap.FontLab().create_panel("Sidebearings", build, area="right")
-halfmoon.keep("halfmoon.sidebearings", [owner])
+keep("tools.sidebearings", [owner])
 ```
 
 Run it twice, and the stand-in's list reads:
@@ -115,7 +116,7 @@ def main():
         made.append(SidebearingPanel(content))
 
     owner = ap.FontLab().create_panel(TITLE, build, area="right")
-    halfmoon.keep(KEY, [owner, made[0]])
+    keep(KEY, [owner, made[0]])
 ```
 
 `build` drops the new `SidebearingPanel` into `made`. After `create_panel` comes back, `made[0]` is that object, and it goes on the shelf beside the owner. Chapter 126 guessed that a tool survives because its button holds one of its methods. Now it doesn't matter whether the guess is right: the shelf holds the tool by name.
@@ -126,13 +127,22 @@ def main():
 #FLM: Sidebearing Panel
 # A panel at the side of FontLab that shows the sidebearings of the
 # current glyph in the master that's showing. Changes nothing.
-import halfmoon
+import sys
+
 import fly.ap.core.scripting as scripting
 from fly import ap, fl, qt
+from fly.tr.proxy.fl.objects.glyph import pGlyph
 
 gui = qt.QtGui
-KEY = "halfmoon.sidebearings"
+KEY = "tools.sidebearings"
 TITLE = "Sidebearings"
+
+
+def keep(key, things):
+    kept = vars(sys).setdefault("kept_windows", {})
+    if key in kept:
+        kept[key][0].close()
+    kept[key] = things
 
 
 def glyph_text():
@@ -141,7 +151,7 @@ def glyph_text():
     if font is None or glyph is None:
         return "No glyph is showing."
     master = scripting.current_package().master
-    rich = halfmoon.rich(font, glyph)
+    rich = pGlyph(font, glyph)
     lines = [
         f"{rich.name} in {master}",
         f"Left {rich.getLSB(master)}",
@@ -178,7 +188,7 @@ def main():
         made.append(SidebearingPanel(content))
 
     owner = ap.FontLab().create_panel(TITLE, build, area="right")
-    halfmoon.keep(KEY, [owner, made[0]])
+    keep(KEY, [owner, made[0]])
 
 
 main()
@@ -186,7 +196,7 @@ main()
 
 Save it as `sidebearing_panel.py`.
 
-`glyph_text` is plain work with no window in it. It asks FontLab for the current font and the current glyph, wraps the glyph in `halfmoon.rich` as chapter 33 did, and reads the three numbers in the master that's showing. The class is two drawers and two methods. `refresh` fills the label and catches whatever goes wrong, as every slot since chapter 122 has. `on_again` is the slot, and all it does is call `refresh`; the split lets `__init__` fill the label once without pretending to be a click.
+`glyph_text` is plain work with no window in it. It asks FontLab for the current font and the current glyph, wraps it in TypeRig's `pGlyph`, and reads the three numbers in the master that's showing. The class is two drawers and two methods. `refresh` fills the label and catches whatever goes wrong, as every slot since chapter 122 has. `on_again` is the slot, and all it does is call `refresh`; the split lets `__init__` fill the label once without pretending to be a click.
 
 ## Run it
 
@@ -236,11 +246,11 @@ TypeError: FontLab.create_panel() takes from 2 to 3 positional arguments but 4 w
 
 The count includes `self`, as it did in chapter 126: `self`, the title and `build` make three, and your `"right"` was a fourth with nowhere to go. A function can demand that an argument be named, and this one does. Put `area=` back.
 
-Last, in the Scripting panel, run `importlib.reload(halfmoon)` while the panel is open, and then run the script again. Two panels. The reload ran `KEPT = {}` again, which made a new, empty shelf, and the panel that the old shelf held is on nobody's list. Close it by hand. A shelf in a module is only as lasting as the module.
+Last, in the Scripting panel, run `import sys` and then `del sys.kept_windows` while the panel is open, and then run the script again. Two panels. The first `keep` after the `del` found no shelf, made a new, empty one, and the panel that the old shelf held is on nobody's list. Close it by hand. A shelf is only as lasting as the drawer it sits in.
 
 ## What you learned
 
-A modal window makes everything wait, a modeless one doesn't, and a panel is a modeless one with a place in FontLab's frame. An object lasts only while something refers to it, and a script's own names stop referring the moment the script ends. A dictionary in a module you import outlasts every script, so it can hold a panel's owner and close the old panel when a new one is asked for. A Python function can require an argument by name, which is a different matter from Qt's calls refusing names.
+A modal window makes everything wait, a modeless one doesn't, and a panel is a modeless one with a place in FontLab's frame. An object lasts only while something refers to it, and a script's own names stop referring the moment the script ends. A dictionary in a drawer of a loaded module such as `sys` outlasts every script, so it can hold a panel's owner and close the old panel when a new one is asked for. A Python function can require an argument by name, which is a different matter from Qt's calls refusing names.
 
 ## Try it yourself
 

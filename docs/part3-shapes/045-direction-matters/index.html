@@ -5269,7 +5269,7 @@
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>Plum-practice</code> open in FontLab 9, with Fly installed.</li>
-<li><code>halfmoon.py</code> with <code>box</code> and <code>contours_of</code>.</li>
+<li><code>box</code> and <code>contours_of</code> from the last two chapters. You'll write them out again here.</li>
 <li>The <code>o</code> open in a Glyph window, Regular master.</li>
 </ul>
 <p>The outputs below were computed from Plum's source file, not copied from FontLab's Output panel. The directions quoted for Plum were worked out the same way. The drawer that reports direction, <code>clockwise</code>, is taken from FontLab's list of names.</p>
@@ -5308,8 +5308,11 @@
 <p>Leave your <code>o</code> reversed for now. We'll use it to test the script.</p>
 <h2 id="step-4-which-one-is-the-outside">Step 4: Which one is the outside?<a class="headerlink" href="#step-4-which-one-is-the-outside" title="Permanent link">&para;</a></h2>
 <p>To check a glyph, a script has to know which contour is the outside one, and nothing in the contour says so. But there's a simple test that's right nearly always: the outside is the biggest. The contour whose bounding box covers the most ground is an outer contour, and it should run counter-clockwise.</p>
-<p>In chapter 43, <code>box</code> worked out the box of all the nodes in a layer. Now we need the box of the nodes in one contour. It's the same arithmetic on a different list, so split the function in two. In <code>halfmoon.py</code>, replace <code>box</code> with this pair:</p>
-<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">box_of</span><span class="p">(</span><span class="n">nodes</span><span class="p">):</span>
+<p>In chapter 43, <code>box</code> worked out the box of all the nodes in a layer. Now we need the box of the nodes in one contour. It's the same arithmetic on a different list, so split the function in two. Define this pair in this script, in place of the old <code>box</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">box_of</span><span class="p">(</span><span class="n">nodes</span><span class="p">):</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">nodes</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
     <span class="n">xs</span> <span class="o">=</span> <span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">x</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">]</span>
@@ -5318,42 +5321,64 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">box</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">master</span><span class="o">=</span><span class="s2">"Regular"</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">box_of</span><span class="p">(</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="n">master</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">box_of</span><span class="p">(</span><span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="n">master</span><span class="p">))</span>
 </code></pre></div>
-<p><code>box</code> still does what it did, and every script that calls it still works. All of its arithmetic has moved into <code>box_of</code>, which will take any list of nodes. This is how a module should grow. When you need half of a function somewhere else, cut that half out and give it a name, and let the old function call it. Don't copy the lines.</p>
+<p><code>box</code> still does what it did, and every call to it still works. All of its arithmetic has moved into <code>box_of</code>, which will take any list of nodes. This is how your code should grow. When you need half of a function somewhere else, cut that half out and give it a name, and let the old function call it. Don't copy the lines.</p>
 <p>Add one more, for the ground a contour covers:</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">box_area</span><span class="p">(</span><span class="n">contour</span><span class="p">):</span>
     <span class="n">left</span><span class="p">,</span> <span class="n">bottom</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">top</span> <span class="o">=</span> <span class="n">box_of</span><span class="p">(</span><span class="n">contour</span><span class="o">.</span><span class="n">nodes</span><span class="p">())</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">right</span> <span class="o">-</span> <span class="n">left</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">top</span> <span class="o">-</span> <span class="n">bottom</span><span class="p">)</span>
 </code></pre></div>
 <p>A width times a height. Try it on the <code>o</code>:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">contours_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">master</span><span class="o">=</span><span class="s2">"Regular"</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span><span class="o">.</span><span class="n">contours</span><span class="p">(</span><span class="n">master</span><span class="p">)</span>
+
 
 <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
-<span class="n">contours</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">contours_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"o"</span><span class="p">])</span>
+<span class="n">contours</span> <span class="o">=</span> <span class="n">contours_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"o"</span><span class="p">])</span>
 <span class="k">for</span> <span class="n">contour</span> <span class="ow">in</span> <span class="n">contours</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">halfmoon</span><span class="o">.</span><span class="n">box_area</span><span class="p">(</span><span class="n">contour</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">box_area</span><span class="p">(</span><span class="n">contour</span><span class="p">))</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>221112.0
 96624.0
 </code></pre></div>
 <p>The outer oval's box is 444 by 498, and the inner one's is 264 by 366. Now pick the biggest, with <code>max</code> and a key as in chapter 36:</p>
-<div class="highlight"><pre><span></span><code><span class="n">outer</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">contours</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">halfmoon</span><span class="o">.</span><span class="n">box_area</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="n">outer</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">contours</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">box_area</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">outer</span><span class="o">.</span><span class="n">clockwise</span><span class="p">)</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>True
 </code></pre></div>
 <p><code>max</code> hands back the contour itself, the one for which <code>box_area</code> gave the largest number. And since you left your <code>o</code> reversed, its outside runs clockwise. That's the check, in two lines.</p>
-<p>Notice <code>key=halfmoon.box_area</code>, with no parentheses. It's the "function is a value" idea, put to work this time: you're handing <code>max</code> the function, for it to call on each contour.</p>
+<p>Notice <code>key=box_area</code>, with no parentheses. It's the "function is a value" idea, put to work this time: you're handing <code>max</code> the function, for it to call on each contour.</p>
 <h2 id="the-whole-script">The whole script<a class="headerlink" href="#the-whole-script" title="Permanent link">&para;</a></h2>
-<p>Here is <code>check_direction.py</code>. <code>halfmoon.py</code> gains <code>box_of</code> and <code>box_area</code>, and its <code>box</code> gets shorter.</p>
+<p>Here is <code>check_direction.py</code>. It writes out <code>contours_of</code>, <code>box_of</code> and <code>box_area</code> at the top, so it runs by itself. It doesn't need <code>box</code>.</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Reports layers whose largest contour runs clockwise.</span>
 <span class="c1"># Reads only.</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
 
 <span class="n">MASTERS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Light"</span><span class="p">,</span> <span class="s2">"Regular"</span><span class="p">,</span> <span class="s2">"Bold"</span><span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">contours_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">master</span><span class="o">=</span><span class="s2">"Regular"</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span><span class="o">.</span><span class="n">contours</span><span class="p">(</span><span class="n">master</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">box_of</span><span class="p">(</span><span class="n">nodes</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">nodes</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">xs</span> <span class="o">=</span> <span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">x</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">]</span>
+    <span class="n">ys</span> <span class="o">=</span> <span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">y</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">]</span>
+    <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">xs</span><span class="p">),</span> <span class="nb">min</span><span class="p">(</span><span class="n">ys</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">xs</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">ys</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">box_area</span><span class="p">(</span><span class="n">contour</span><span class="p">):</span>
+    <span class="n">left</span><span class="p">,</span> <span class="n">bottom</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">top</span> <span class="o">=</span> <span class="n">box_of</span><span class="p">(</span><span class="n">contour</span><span class="o">.</span><span class="n">nodes</span><span class="p">())</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">right</span> <span class="o">-</span> <span class="n">left</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">top</span> <span class="o">-</span> <span class="n">bottom</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
@@ -5366,11 +5391,11 @@
     <span class="n">wrong</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">for</span> <span class="n">glyph</span> <span class="ow">in</span> <span class="n">font</span><span class="o">.</span><span class="n">glyphs</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">master</span> <span class="ow">in</span> <span class="n">MASTERS</span><span class="p">:</span>
-            <span class="n">contours</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">contours_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">master</span><span class="p">)</span>
+            <span class="n">contours</span> <span class="o">=</span> <span class="n">contours_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">master</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">contours</span><span class="p">:</span>
                 <span class="k">continue</span>
             <span class="n">checked</span> <span class="o">=</span> <span class="n">checked</span> <span class="o">+</span> <span class="mi">1</span>
-            <span class="n">outer</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">contours</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">halfmoon</span><span class="o">.</span><span class="n">box_area</span><span class="p">)</span>
+            <span class="n">outer</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">contours</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">box_area</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">outer</span><span class="o">.</span><span class="n">clockwise</span><span class="p">:</span>
                 <span class="n">wrong</span> <span class="o">=</span> <span class="n">wrong</span> <span class="o">+</span> <span class="mi">1</span>
                 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">glyph</span><span class="o">.</span><span class="n">name</span><span class="si">:</span><span class="s2">&lt;12</span><span class="si">}{</span><span class="n">master</span><span class="si">:</span><span class="s2">&lt;9</span><span class="si">}</span><span class="s2">outside runs clockwise"</span><span class="p">)</span>

@@ -12,7 +12,7 @@ Today you read a script written for another program, ask a tool what it needs be
 
 ## What you need
 
-`Plum-practice` open, Fly installed, and `halfmoon.py`. Type the friend's script from step 1 and save it as `Find Stray Points.py` in your Downloads folder. That's where a file somebody sends you lands.
+`Plum-practice` open and Fly installed. Type the friend's script from step 1 and save it as `Find Stray Points.py` in your Downloads folder. That's where a file somebody sends you lands.
 
 I haven't run this chapter in FontLab 9. The part that reads the friend's script without running it works outside FontLab, and I ran it as printed: the reports below are what it said. I also ran the friend's script, unchanged, through the same translating layer on the small test font that layer ships with, which has one glyph. What I haven't seen is that script walking Plum inside FontLab.
 
@@ -133,11 +133,24 @@ It's chapter 93 again. There, "the features compile" didn't mean "the features a
 # through Glyport if you agree. What the other script does is its business.
 from pathlib import Path
 
-import halfmoon
+from fly import fl, qt
+from fly.ap.ui.dialogs import run_standard_message_box
 from fly.gp import inspect_source, run_script
 
 SCRIPT = Path.home() / "Downloads" / "Find Stray Points.py"
 KNOWN = ["glyphs:model"]
+TITLE = "Try A Glyphs Script"
+
+
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
+
+def ask(question):
+    box = qt.QtGui.QMessageBox
+    answer = run_standard_message_box(qt, fl.MainWindow(), TITLE, question, "Question", box.Yes | box.No)
+    return answer == box.Yes
 
 
 def findings(report):
@@ -160,7 +173,7 @@ def stops(report):
 
 def main():
     if not SCRIPT.is_file():
-        halfmoon.tell(f"There's no file at {SCRIPT}.")
+        tell(f"There's no file at {SCRIPT}.")
         return
     report = inspect_source(str(SCRIPT))
     print(SCRIPT.name)
@@ -175,7 +188,7 @@ def main():
     if extra:
         print(f"Needs something this script doesn't know: {', '.join(extra)}. Not run.")
         return
-    if not halfmoon.ask(f"Run {SCRIPT.name} on the current font?"):
+    if not ask(f"Run {SCRIPT.name} on the current font?"):
         return
     handle = run_script(str(SCRIPT))
     print("Ran.")
@@ -189,7 +202,7 @@ Save it as `try_script.py`.
 
 Three small functions read the report and `main` decides. `findings` turns imports and any note above "info" into lines for the Output panel. `unknown` lists what the script needs beyond `KNOWN`, the short list of things you have decided you trust the adapter with. `stops` collects the messages of errors, which mean Python couldn't read the file at all.
 
-`main` has four ways to stop before running anything: no file, a file Python can't read, a need outside `KNOWN`, and you saying no. Only then does it call `run_script`, which runs the friend's file through the adapter as she wrote it, character for character. `run_script` runs the file and gives back a handle, an object that stands for that one run. `close()` tells Glyport you're done with it, so that whatever the other script held is let go. Glyport's own introduction shows the handle in a `with` block. The code doesn't support that, so the script calls `close()` itself.
+`tell` and `ask` are chapter 39's message boxes, here again so that the script runs by itself. `main` has four ways to stop before running anything: no file, a file Python can't read, a need outside `KNOWN`, and you saying no. Only then does it call `run_script`, which runs the friend's file through the adapter as she wrote it, character for character. `run_script` runs the file and gives back a handle, an object that stands for that one run. `close()` tells Glyport you're done with it, so that whatever the other script held is let go. Glyport's own introduction shows the handle in a `with` block. The code doesn't support that, so the script calls `close()` itself.
 
 The question in the prompt is plain on purpose. You've read this script and know it only reads. The next one somebody sends may not, and `try_script.py` can't tell the difference. The person who reads the script decides.
 

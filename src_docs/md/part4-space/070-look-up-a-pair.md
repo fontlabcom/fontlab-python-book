@@ -13,7 +13,7 @@ Today's script takes two glyph names and says what the font does with them, in e
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py` with `ask_text` and `tell`.
+- The helpers `ask_text` and `tell` from chapter 39. The scripts below write them out again, so each one runs by itself.
 
 Nothing is changed today. I couldn't run the code in FontLab 9. The values come from Plum's source file, with the classes worked out by hand, so today's outputs lean on one assumption: that FontLab looks a pair up the way step 2 describes: the two glyphs first, then their classes.
 
@@ -146,11 +146,22 @@ With more than two names you get a chain: each glyph with the one after it. Chap
 ```python
 #FLM: Pair Value
 # Says what kerning applies between the glyphs you name, in every master.
-import halfmoon
 import fly.ap.core.scripting as scripting
-from fly import fl
+from fly import fl, qt
+from fly.ap.ui.dialogs import run_standard_message_box, run_text_dialog
+
+TITLE = "Halfmoon"
 
 MASTERS = ["Light", "Regular", "Bold"]
+
+
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
+
+def ask_text(label, start=""):
+    return run_text_dialog(qt.QtGui, label, start, TITLE)
 
 
 def source(written, applies):
@@ -172,18 +183,18 @@ def look(package, master, first, second):
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
-    text = halfmoon.ask_text("Glyph names, with spaces between:", "T o")
+    text = ask_text("Glyph names, with spaces between:", "T o")
     if text is None:
         return
     names = text.split()
     unknown = [name for name in names if font[name] is None]
     if unknown:
-        halfmoon.tell(f"No glyph named {', '.join(unknown)}. Use glyph names, as in oacute.")
+        tell(f"No glyph named {', '.join(unknown)}. Use glyph names, as in oacute.")
         return
     if len(names) < 2:
-        halfmoon.tell("I need at least two glyph names.")
+        tell("I need at least two glyph names.")
         return
 
     package = scripting.current_package()

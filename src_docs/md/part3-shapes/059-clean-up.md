@@ -15,7 +15,7 @@ Today's script looks for three such faults and writes them into one list. To fin
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py` with `contours_of` from chapter 44.
+- `contours_of` from chapter 44. The scripts below write it out again.
 
 The script reads the font. One step at the end marks glyphs, and it asks first. The outputs below were computed from Plum's source file, not copied from FontLab's Output panel.
 
@@ -26,11 +26,16 @@ Chapter 42 walked along a contour node by node. A fault of the kind we're after 
 A `for node in nodes` loop gives you one. To reach the neighbor, loop over positions instead. `range(len(nodes))` counts 0, 1, 2 and so on up to the last position:
 
 ```python
-import halfmoon
 from fly import fl
+from fly.tr.proxy.fl.objects.glyph import pGlyph
+
+
+def contours_of(font, glyph, master="Regular"):
+    return pGlyph(font, glyph).contours(master)
+
 
 font = fl.CurrentFont()
-contour = halfmoon.contours_of(font, font["Q"], "Regular")[0]
+contour = contours_of(font, font["Q"], "Regular")[0]
 nodes = contour.nodes()
 for i in range(len(nodes)):
     before = nodes[i - 1]
@@ -118,12 +123,12 @@ Plum has no open contours, unless the one you planted in chapter 44 is still the
 I had a fourth check in mind. In chapter 49, the third dot of the Bold ellipsis sat outside the glyph's width. So why not list every glyph whose outline reaches left of 0 or right of its advance width?
 
 ```python
-box = halfmoon.box(font, glyph, master)
-if box is not None and (box[0] < 0 or box[2] > width):
+edges = box(font, glyph, master)
+if edges is not None and (edges[0] < 0 or edges[2] > width):
     print(glyph.name)
 ```
 
-The parentheses matter. Without them, Python would read `box is not None and box[0] < 0` as one group and `box[2] > width` as another, because `and` binds tighter than `or`, and a glyph with no box would crash on `box[2]`.
+The parentheses matter. Without them, Python would read `edges is not None and edges[0] < 0` as one group and `edges[2] > width` as another, because `and` binds tighter than `or`, and a glyph with no box would crash on `edges[2]`.
 
 In the Regular the check names 10 glyphs: `J`, `K`, `T`, `Y`, `f`, `j`, `backslash`, `comma`, `slash` and `dieresis`. In the Bold it names 44.
 
@@ -153,13 +158,32 @@ Each finding is a tuple of glyph name, master and a sentence, kept in a list as 
 # Looks for stacked nodes, short segments and glyphs that mix their
 # own outlines with components. Prints a list. Marks the glyphs if asked.
 import fly.ap.components.writer as parts
-import halfmoon
-from fly import fl
+from fly import fl, qt
+from fly.ap.ui.dialogs import run_standard_message_box
 from fly.pens import layer_of
+from fly.tr.proxy.fl.objects.glyph import pGlyph
 
 MASTERS = ["Light", "Regular", "Bold"]
 SHORT = 3
 VIOLET = 270
+TITLE = "Halfmoon"
+
+
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
+
+def ask(question):
+    box = qt.QtGui.QMessageBox
+    answer = run_standard_message_box(
+        qt, fl.MainWindow(), TITLE, question, "Question", box.Yes | box.No
+    )
+    return answer == box.Yes
+
+
+def contours_of(font, glyph, master="Regular"):
+    return pGlyph(font, glyph).contours(master)
 
 
 def reach(a, b):
@@ -184,8 +208,8 @@ def pair_faults(contour):
 
 def glyph_faults(font, glyph, master):
     found = []
-    contours = halfmoon.contours_of(font, glyph, master)
-    layer = layer_of(halfmoon.rich(font, glyph).fl, master)
+    contours = contours_of(font, glyph, master)
+    layer = layer_of(fl.flGlyph(glyph, font), master)
     if contours and parts.components(layer):
         found.append("own outline and a component")
     for number, contour in enumerate(contours, 1):
@@ -197,7 +221,7 @@ def glyph_faults(font, glyph, master):
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     findings = []
     for glyph in font.glyphs:
@@ -215,10 +239,10 @@ def main():
 
     if not names:
         return
-    if not halfmoon.ask(f"Mark these {len(names)} glyphs violet?"):
+    if not ask(f"Mark these {len(names)} glyphs violet?"):
         return
     for name in names:
-        halfmoon.rich(font, font[name]).mark = VIOLET
+        pGlyph(font, font[name]).mark = VIOLET
 
 
 main()

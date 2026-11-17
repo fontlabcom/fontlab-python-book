@@ -32,4 +32,4 @@ Seven are open, and this part does the first two and the fourth of them:
 - Put the right family name and version number into every weight.
 - Export the whole family to a dated folder every Friday.
 
-You need the toolbox from Part 2: `halfmoon.py`, the practice copy of Plum, and Fly installed in FontLab 9.
+You need the practice copy of Plum and Fly installed in FontLab 9. Each script in this part runs by itself: any helper it needs is written out in the chapter, even when you met it earlier.

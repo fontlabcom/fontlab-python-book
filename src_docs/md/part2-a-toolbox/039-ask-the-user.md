@@ -13,7 +13,8 @@ Today's script asks three things: which suffix, what to change it to, and "Renam
 ## What you need
 
 - FontLab 9 with Fly installed, and `Plum-practice` open.
-- `halfmoon.py` as chapter 38 left it, and `rename_suffix.py` from [chapter 31](031-dry-run.md).
+- `rename_suffix.py` from [chapter 31](031-dry-run.md).
+- An empty window in the Scripting panel for Steps 3 to 5. Save it as `questions.py`. Each step adds functions to the top and a test to the bottom.
 - The four glyphs that chapter 30 renamed: `a.ss01`, `g.ss01`, `y.ss01` and `ampersand.ss01`. Today the publisher wants them to end in `.ss02`. When the finished script asks, type `.ss01` over the first suggestion and `.ss02` over the second, and the count in the last question will be 4. `zero.alt` is still in the font from chapter 31, and the script goes on leaving it alone.
 
 I couldn't run these windows on FontLab 9 while writing this chapter. The calls are taken from the helper's own source and from scripts that use it, so I describe what the windows should look like, and I show no pictures of them.
@@ -89,19 +90,13 @@ Notice also what the `else` covers. It runs for No, and it also runs for anythin
 
 ## Step 3: Wrap it once
 
-Nobody wants to type six slots every time they ask a question. You know what to do about that. Open `halfmoon.py`. Add two import lines at the top, so that the block reads:
+Nobody wants to type six slots every time they ask a question. You know what to do about that: a function. Start `questions.py` with these lines:
 
 ```python
-import fly.ap.core.scripting as scripting
 from fly import fl, qt
 from fly.ap.ui.dialogs import run_standard_message_box, run_text_dialog
-from fly.tr.proxy.fl.objects.glyph import pGlyph
-```
 
-Then add two functions:
-
-```python
-TITLE = "Halfmoon"
+TITLE = "Halfmoon Type"
 
 
 def tell(text):
@@ -117,25 +112,20 @@ def ask(question):
     return answer == box.Yes
 ```
 
-Look at the last line of `ask`. The comparison `answer == box.Yes` is itself a value, `True` or `False`, as chapter 13 said, so the function can hand it straight back. All the business with button codes stays inside the module. From outside, `ask` takes a question and returns a yes or a no. Any script can now say:
+Look at the last line of `ask`. The comparison `answer == box.Yes` is itself a value, `True` or `False`, as chapter 13 said, so the function can hand it straight back. All the business with button codes stays inside the function. From outside, `ask` takes a question and returns a yes or a no. Below the functions, the script can now say:
 
 ```python
-import importlib
-import halfmoon
-
-importlib.reload(halfmoon)
-
-if halfmoon.ask("Rename 4 glyphs?"):
+if ask("Rename 4 glyphs?"):
     print("Renaming.")
 ```
 
 That reads almost like the note on Mira's keyboard, and now `if` on the answer is safe, because `ask` really does return `True` or `False`. The trap from Step 2 is dealt with in one place, and no script that uses `ask` can fall into it.
 
-This is the best use of a module that I know. You find something awkward, you get it right once with care, and you give it a plain name. After that, you and everyone else in the studio use the plain name.
+This is the best use of a function that I know. You find something awkward, you get it right once with care, and you give it a plain name. After that you use the plain name, and when a script needs it you paste the same few lines in. Chapter 40 keeps a clean copy of them for exactly that.
 
 ## Step 4: Ask for a word
 
-A yes or a no won't tell the script which suffix. For that you need a window with a text field. Add this to `halfmoon.py`:
+A yes or a no won't tell the script which suffix. For that you need a window with a text field. Add this below `ask`:
 
 ```python
 def ask_text(label, start=""):
@@ -145,7 +135,7 @@ def ask_text(label, start=""):
 `run_text_dialog` takes the kit, the label beside the field, the text that's in the field to begin with, and the window's title. It returns what the person typed. Try it:
 
 ```python
-old = halfmoon.ask_text("Suffix to replace:", ".alt")
+old = ask_text("Suffix to replace:", ".alt")
 print(old)
 ```
 
@@ -157,17 +147,17 @@ A window should appear with a field that already contains `.alt`. Click OK and y
 
 Giving the field a sensible starting value is a kindness. Most of the time Ines will only have to press ++return++.
 
-Now tidy up what comes back, because people type spaces by accident. Chapter 27 has the tool for that:
+Now tidy up what comes back, because people type spaces by accident. Chapter 27 has the tool for that. Replace the test lines at the bottom of `questions.py` with this one:
 
 ```python
-old = halfmoon.ask_text("Suffix to replace:", ".alt").strip()
+old = ask_text("Suffix to replace:", ".alt").strip()
 ```
 
 Run it, and this time click Cancel.
 
 ```text
 Traceback (most recent call last):
-  File "<string>", line 6, in <module>
+  File "<string>", line 24, in <module>
 AttributeError: 'NoneType' object has no attribute 'strip'
 ```
 
@@ -176,7 +166,7 @@ Read it as chapter 38 taught you, last line first. Something was `None`, and the
 That's how the helper reports a Cancel. When the person clicks OK, it returns the text, and an empty field gives an empty string `""`. When the person clicks Cancel, there's no text to return, so it returns `None`. It's the same signal `font["Nope"]` gave you in chapter 19, and it needs the same care: check for `None` before you do anything with the answer.
 
 ```python
-old = halfmoon.ask_text("Suffix to replace:", ".alt")
+old = ask_text("Suffix to replace:", ".alt")
 if old is None:
     print("Cancelled.")
 else:
@@ -190,7 +180,7 @@ A person who clicks Cancel is telling you something clear, and the script should
 
 The third kind of question is "which file?" Every program you use asks it the same way, with the system's own file window, and your scripts can too. In chapter 27 the glyph list had to be called `smallcaps.txt` and sit next to the font. Now Ines can pick any list from anywhere.
 
-Add one more import and one more function to `halfmoon.py`:
+Add one more import and two more functions. The import goes at the top with the others, the functions below `ask_text`:
 
 ```python
 from fly.ap.ui.dialogs import run_file_dialog
@@ -216,7 +206,7 @@ from pathlib import Path
 
 font = fl.CurrentFont()
 folder = str(Path(font.path).parent)
-path = halfmoon.choose_text_file("Choose a glyph list", folder)
+path = choose_text_file("Choose a glyph list", folder)
 if path is not None:
     print(Path(path).name)
 ```
@@ -248,7 +238,7 @@ def choose_save_file(caption, folder=""):
 
 Now that you know how to put up a window, you'll want to put up a lot of them. Hold back.
 
-A script that asks five questions in a row is worse than one with five lines to edit. Ask only what changes from one run to the next, and give each field a good starting value. Things that never change belong in the module as constants.
+A script that asks five questions in a row is worse than one with five lines to edit. Ask only what changes from one run to the next, and give each field a good starting value. Things that never change belong at the top of the script as constants.
 
 Never ask inside a loop. "Rename `a.alt`? Rename `g.alt`? Rename `y.alt`?" is how you train a person to click Yes without reading. Show the whole plan and ask once.
 
@@ -258,7 +248,7 @@ And these windows stop everything else. While one is open, Ines can't click on t
 
 ## The whole script
 
-Here is `ask_first.py`. It's `rename_suffix.py` from chapter 31 with the two suffixes and the dry-run switch replaced by three questions:
+Here is `ask_first.py`. It's `rename_suffix.py` from chapter 31 with the two suffixes and the dry-run switch replaced by three questions. It carries its own `tell`, `ask` and `ask_text`, copied from Steps 3 and 4, so it runs by itself:
 
 ```python
 #FLM: Rename Suffix
@@ -269,27 +259,45 @@ from fly.ap.glyphs.identity_tools.glyph_identity.batch_rename import (
     plan_renames,
     apply_renames,
 )
-import halfmoon
+from fly.ap.ui.dialogs import run_standard_message_box, run_text_dialog
 
+TITLE = "Halfmoon Type"
 SKIP = {"zero.alt"}
+
+
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
+
+def ask(question):
+    box = qt.QtGui.QMessageBox
+    answer = run_standard_message_box(
+        qt, fl.MainWindow(), TITLE, question, "Question", box.Yes | box.No
+    )
+    return answer == box.Yes
+
+
+def ask_text(label, start=""):
+    return run_text_dialog(qt.QtGui, label, start, TITLE)
 
 
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
 
-    old = halfmoon.ask_text("Suffix to replace:", ".alt")
+    old = ask_text("Suffix to replace:", ".alt")
     if old is None:
         return
-    new = halfmoon.ask_text("Replace it with:", ".ss01")
+    new = ask_text("Replace it with:", ".ss01")
     if new is None:
         return
     old = old.strip()
     new = new.strip()
     if not old:
-        halfmoon.tell("Type the suffix to replace.")
+        tell("Type the suffix to replace.")
         return
 
     pairs = []
@@ -298,7 +306,7 @@ def main():
             pairs.append([glyph.name, glyph.name.removesuffix(old) + new])
 
     if not pairs:
-        halfmoon.tell(f"No glyph name ends in {old}.")
+        tell(f"No glyph name ends in {old}.")
         return
 
     facts = names.scan()
@@ -309,14 +317,14 @@ def main():
             problems += 1
 
     if problems > 0:
-        halfmoon.tell(f"{problems} of {len(pairs)} renames can't be done. The list is in the Output panel.")
+        tell(f"{problems} of {len(pairs)} renames can't be done. The list is in the Output panel.")
         return
 
-    if not halfmoon.ask(f"Rename {len(pairs)} glyphs from {old} to {new}?"):
+    if not ask(f"Rename {len(pairs)} glyphs from {old} to {new}?"):
         return
 
     done = apply_renames(None, qt.QtCore, facts.package_id, pairs)
-    halfmoon.tell(f"Renamed {len(done)} glyphs. Edit > Undo takes it back in one step.")
+    tell(f"Renamed {len(done)} glyphs. Edit > Undo takes it back in one step.")
 
 
 main()
@@ -336,13 +344,13 @@ Save it as `Rename Suffix.py` in the `Halfmoon` folder inside `Scripts`, and cho
 
 ## What you learned
 
-A message box tells or asks in a small window, and its answer is a button code that you compare with the button you mean. A text dialog returns what was typed, a file dialog returns a list of paths, and both return `None` for Cancel, which you check before anything else. The awkward calls go in the module once, behind plain names like `ask`, `tell` and `ask_text`. Ask once, right before the change, and let anything but Yes leave the font alone.
+A message box tells or asks in a small window, and its answer is a button code that you compare with the button you mean. A text dialog returns what was typed, a file dialog returns a list of paths, and both return `None` for Cancel, which you check before anything else. The awkward calls go in a function once, behind plain names like `ask`, `tell` and `ask_text`, and the script carries the functions it uses. Ask once, right before the change, and let anything but Yes leave the font alone.
 
 ## Try it yourself
 
-1. Add `warn(text)` to `halfmoon.py`. It's `tell` with `"Warning"` in the picture slot. Use it in `ask_first.py` for the message about renames that can't be done.
-2. Write `ask_number(label, start)` in `halfmoon.py`. It calls `ask_text`, hands a `None` straight back, and otherwise returns `int(...)` of the text. Then type `fifteen` into its window and read the traceback. Chapter 19 showed you `try` and `except` in one simple form. Use it so that a word in place of a number makes `ask_number` return `None` as well. Then put it to work in `safe_edit.py` from chapter 29, so that Ines can type her own amount.
-3. Change `read_glyph_list.py` from chapter 27 so that it calls `choose_text_file` in place of the fixed name. What should the script do if the answer is `None`? What if the chosen file turns out to be empty?
+1. Add `warn(text)` to `ask_first.py`. It's `tell` with `"Warning"` in the picture slot. Use it in `ask_first.py` for the message about renames that can't be done.
+2. Write `ask_number(label, start)` in `questions.py`. It calls `ask_text`, hands a `None` straight back, and otherwise returns `int(...)` of the text. Then type `fifteen` into its window and read the traceback. Chapter 19 showed you `try` and `except` in one simple form. Use it so that a word in place of a number makes `ask_number` return `None` as well. Then paste it, with `ask_text`, into `safe_edit.py` from chapter 29, so that Ines can type her own amount.
+3. Change `read_glyph_list.py` from chapter 27 so that it calls `choose_text_file` in place of the fixed name. Paste in `text_files_only` and `choose_text_file` from Step 5, with the imports they need. What should the script do if the answer is `None`? What if the chosen file turns out to be empty?
 
 ## Next
 

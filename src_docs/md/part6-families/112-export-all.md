@@ -13,7 +13,6 @@ Nine files had arrived, and nobody had counted them, because nine files in a fol
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py` with `tell`.
 - Chapter 111's dated folder, and chapter 108's five instances if you want to do the export for real.
 
 I couldn't run the code in FontLab 9. The script reads a folder and never asks FontLab to export, so I ran it in plain Python on stand-in files with names I made up. What FontLab calls its exported files, I haven't seen.
@@ -107,8 +106,17 @@ from datetime import date
 from pathlib import Path
 
 import fly.ap.core.scripting as scripting
-import halfmoon
-from fly import fl
+from fly import fl, qt
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
+
+
+# Chapter 39's tell, written out again so this script runs by itself.
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
 
 STYLES = ["Light", "Regular", "Medium", "SemiBold", "Bold"]
 FORMATS = [".otf", ".ttf"]
@@ -143,12 +151,12 @@ def found(folder):
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     package = scripting.current_package()
     folder = export_folder(font, package)
     if not folder.exists():
-        halfmoon.tell(f"No folder {folder.name} yet. Run export_current.py.")
+        tell(f"No folder {folder.name} yet. Run export_current.py.")
         return
     want = expected(package.info.familyName)
     have = found(folder)

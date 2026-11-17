@@ -5290,18 +5290,30 @@
 <p>The build finished. That says the machine's part was done. A release is a claim made to a person, and it has parts no script can do. So the last script of Part 6 does no work on the font at all. It writes down what was asked for, what's in the folder, and what a person still owes, and it refuses to say "released" while anything is open.</p>
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>Plum-practice</code> open in FontLab 9, with Fly installed, and <code>halfmoon.py</code> with chapter 116's functions.</li>
+<li><code>Plum-practice</code> open in FontLab 9, with Fly installed.</li>
 <li>Friday's export folder from chapter 119, with the build's log beside it.</li>
 </ul>
 <p>I couldn't run the code in FontLab 9. I ran the script in plain Python on a folder laid out like the one chapter 119's build leaves behind. Nothing here asks FontLab for more than the path of the open font, so this chapter leans on FontLab less than any other in the part.</p>
 <h2 id="step-1-which-folder">Step 1: Which folder?<a class="headerlink" href="#step-1-which-folder" title="Permanent link">&para;</a></h2>
-<p>The script needs the folder that was shipped. You have a function for that, from chapter 116:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
+<p>The script needs the folder that was shipped. You have a function for that, <code>latest_export</code> from chapters 115 and 116. Here it is again, so these lines run by themselves:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
 
+
+<span class="k">def</span><span class="w"> </span><span class="nf">latest_export</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">package</span><span class="p">):</span>
+    <span class="n">info</span> <span class="o">=</span> <span class="n">package</span><span class="o">.</span><span class="n">info</span>
+    <span class="n">ending</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"-v</span><span class="si">{</span><span class="n">info</span><span class="o">.</span><span class="n">versionMajor</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">info</span><span class="o">.</span><span class="n">versionMinor</span><span class="si">:</span><span class="s2">03d</span><span class="si">}</span><span class="s2">"</span>
+    <span class="n">exports</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">font</span><span class="o">.</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">"exports"</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">exports</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">folders</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">exports</span><span class="o">.</span><span class="n">iterdir</span><span class="p">())</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">ending</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="n">folders</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">folders</span> <span class="k">else</span> <span class="kc">None</span>
+
+
 <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">halfmoon</span><span class="o">.</span><span class="n">latest_export</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">scripting</span><span class="o">.</span><span class="n">current_package</span><span class="p">()))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">latest_export</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">scripting</span><span class="o">.</span><span class="n">current_package</span><span class="p">()))</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>None
 </code></pre></div>
@@ -5345,8 +5357,22 @@
 <span class="c1"># has to do. Changes nothing in the font.</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span>
+
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Halfmoon"</span>
+
+
+<span class="c1"># Chapter 39's tell, written out again so this script runs by itself.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+
+
+<span class="c1"># Chapter 112's key, written out again so this script runs by itself.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">key</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">isalnum</span><span class="p">()])</span>
+
 
 <span class="n">FAMILY</span> <span class="o">=</span> <span class="s2">"GG Plum"</span>
 <span class="n">FORMATS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">".otf"</span><span class="p">,</span> <span class="s2">".ttf"</span><span class="p">]</span>
@@ -5378,10 +5404,10 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">weight_lines</span><span class="p">(</span><span class="n">folder</span><span class="p">):</span>
-    <span class="n">stems</span> <span class="o">=</span> <span class="p">{(</span><span class="n">halfmoon</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">stem</span><span class="p">),</span> <span class="n">p</span><span class="o">.</span><span class="n">suffix</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">folder</span><span class="o">.</span><span class="n">rglob</span><span class="p">(</span><span class="s2">"*"</span><span class="p">)}</span>
+    <span class="n">stems</span> <span class="o">=</span> <span class="p">{(</span><span class="n">key</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">stem</span><span class="p">),</span> <span class="n">p</span><span class="o">.</span><span class="n">suffix</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">folder</span><span class="o">.</span><span class="n">rglob</span><span class="p">(</span><span class="s2">"*"</span><span class="p">)}</span>
     <span class="n">lines</span><span class="p">,</span> <span class="n">shipped</span><span class="p">,</span> <span class="n">open_items</span> <span class="o">=</span> <span class="p">[],</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
     <span class="k">for</span> <span class="n">style</span> <span class="ow">in</span> <span class="n">WANTED</span><span class="p">:</span>
-        <span class="n">there</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">FORMATS</span> <span class="k">if</span> <span class="p">(</span><span class="n">halfmoon</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="n">FAMILY</span> <span class="o">+</span> <span class="n">style</span><span class="p">),</span> <span class="n">s</span><span class="p">)</span> <span class="ow">in</span> <span class="n">stems</span><span class="p">]</span>
+        <span class="n">there</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">FORMATS</span> <span class="k">if</span> <span class="p">(</span><span class="n">key</span><span class="p">(</span><span class="n">FAMILY</span> <span class="o">+</span> <span class="n">style</span><span class="p">),</span> <span class="n">s</span><span class="p">)</span> <span class="ow">in</span> <span class="n">stems</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">there</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">FORMATS</span><span class="p">):</span>
             <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  shipped   </span><span class="si">{</span><span class="n">style</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
             <span class="n">shipped</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -5434,11 +5460,11 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">font</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">font</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"Open a saved font first."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"Open a saved font first."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">folder</span> <span class="o">=</span> <span class="n">shipped_folder</span><span class="p">(</span><span class="n">font</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">folder</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"No export folder holds fonts yet. Run the Friday build."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"No export folder holds fonts yet. Run the Friday build."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">weights</span><span class="p">,</span> <span class="n">shipped</span><span class="p">,</span> <span class="n">open_weights</span> <span class="o">=</span> <span class="n">weight_lines</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
     <span class="n">papers</span><span class="p">,</span> <span class="n">open_papers</span> <span class="o">=</span> <span class="n">paper_lines</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">font</span><span class="p">)</span>
@@ -5482,7 +5508,7 @@ Not released: 2 open.
 </code></pre></div>
 <p>The same 21 lines are now in <code>RELEASE.txt</code> inside the export folder, where anyone who opens the folder finds them.</p>
 <p>Notes on the listing.</p>
-<p>Almost nothing in it is new, which is the point of a last chapter. Tuples in a list are chapter 36's. The pairs of name and suffix in <code>weight_lines</code> are chapter 112's way of matching file names, with <code>halfmoon.key</code> so that <code>GGPlum-SemiBold</code> and "GG Plum SemiBold" count as the same. <code>' '.join(there) or 'no files'</code> is chapter 91's <code>or</code> between values. <code>lines += [...]</code> is chapter 115's. Reading the log is chapter 27's <code>with open</code> and chapter 87's <code>splitlines</code>.</p>
+<p>Almost nothing in it is new, which is the point of a last chapter. Tuples in a list are chapter 36's. The pairs of name and suffix in <code>weight_lines</code> are chapter 112's way of matching file names, with <code>key</code> so that <code>GGPlum-SemiBold</code> and "GG Plum SemiBold" count as the same. <code>' '.join(there) or 'no files'</code> is chapter 91's <code>or</code> between values. <code>lines += [...]</code> is chapter 115's. Reading the log is chapter 27's <code>with open</code> and chapter 87's <code>splitlines</code>.</p>
 <p>Three functions return two or three things at once: the lines to print and a count of open items. <code>weights, shipped, open_weights = weight_lines(folder)</code> unpacks them, the way chapter 100 unpacked what each check returned. Each section counts its own open lines and <code>main</code> only adds them up. To add a section, write one more function of that shape.</p>
 <p><code>weight_lines</code> has three branches, one for each state. A weight is shipped when it has every format in <code>FORMATS</code>. It's "not yet" when it has a reason in <code>NOT_YET</code> and no files at all. Everything else is open, and that last branch catches two cases with one test: a wanted weight with a file missing, and a weight that's supposed to be absent turning up with a file.</p>
 <p><code>build_finished</code> reads the log as a story. It walks the lines and remembers, in <code>ours</code>, whether the last "half" line it passed was the second half for this folder. A <code>Build finished.</code> line counts only while <code>ours</code> is true. The log holds every build there ever was, and a finish that belongs to another folder says nothing about this one.</p>

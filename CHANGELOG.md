@@ -18,6 +18,7 @@ this_file: CHANGELOG.md
 - Continuity: Oskar returns from leave in chapter 93; stated there and in the Part 5 opener.
 - Media: seven pencil illustrations on the part openers and two SVG diagrams (chapters 41 and 119), each with alt text and a caption; how they were made is in `src_docs/md/assets/PROVENANCE.md`. The site leaves that file out.
 - Continuity pass over the whole book: back-references to named functions checked (fixed in 007 and 082), calendar read end to end (fixed in 060), unparseable blocks confirmed deliberate.
+- Examples no longer import a shared `halfmoon` module. Every script calls Fly, TypeRig and FontLab directly and writes out the small helpers it uses, so each one runs by itself after chapter 4's install. Chapter 33 teaches modules with real ones; the packaging chapters build `spacing_tools` with all of its source on the page.
 - All 140 chapters are in the nav; about 243,000 words of prose outside code listings.
 - No sample has been run in FontLab 9 yet.
 

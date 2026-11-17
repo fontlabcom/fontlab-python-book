@@ -5313,7 +5313,8 @@
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li>FontLab 9 with Fly installed, and <code>Plum-practice</code> open.</li>
-<li><code>halfmoon.py</code> as chapter 38 left it, and <code>rename_suffix.py</code> from <a href="../031-dry-run/">chapter 31</a>.</li>
+<li><code>rename_suffix.py</code> from <a href="../031-dry-run/">chapter 31</a>.</li>
+<li>An empty window in the Scripting panel for Steps 3 to 5. Save it as <code>questions.py</code>. Each step adds functions to the top and a test to the bottom.</li>
 <li>The four glyphs that chapter 30 renamed: <code>a.ss01</code>, <code>g.ss01</code>, <code>y.ss01</code> and <code>ampersand.ss01</code>. Today the publisher wants them to end in <code>.ss02</code>. When the finished script asks, type <code>.ss01</code> over the first suggestion and <code>.ss02</code> over the second, and the count in the last question will be 4. <code>zero.alt</code> is still in the font from chapter 31, and the script goes on leaving it alone.</li>
 </ul>
 <p>I couldn't run these windows on FontLab 9 while writing this chapter. The calls are taken from the helper's own source and from scripts that use it, so I describe what the windows should look like, and I show no pictures of them.</p>
@@ -5359,14 +5360,11 @@
 <p>Chapter 31 taught you that <code>if</code> accepts anything and treats empty things and zero as false. But the answer isn't <code>True</code> or <code>False</code>. It's a code for a button, and the code for No isn't zero either. So <code>if answer:</code> is true whichever button was clicked, and the script would rename the glyphs when Ines said No. Always compare the answer with the button you mean.</p>
 <p>Notice also what the <code>else</code> covers. It runs for No, and it also runs for anything else that might come back, such as the window being closed with the <span class="keys"><kbd class="key-escape">Esc</kbd></span> key. That's deliberate. Only an explicit Yes changes the font, and everything else leaves it alone. Write your questions so that the safe thing happens by default. It's the idea behind <code>DRY_RUN</code> again.</p>
 <h2 id="step-3-wrap-it-once">Step 3: Wrap it once<a class="headerlink" href="#step-3-wrap-it-once" title="Permanent link">&para;</a></h2>
-<p>Nobody wants to type six slots every time they ask a question. You know what to do about that. Open <code>halfmoon.py</code>. Add two import lines at the top, so that the block reads:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
+<p>Nobody wants to type six slots every time they ask a question. You know what to do about that: a function. Start <code>questions.py</code> with these lines:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span><span class="p">,</span> <span class="n">run_text_dialog</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
-</code></pre></div>
-<p>Then add two functions:</p>
-<div class="highlight"><pre><span></span><code><span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Halfmoon"</span>
+
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Halfmoon Type"</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
@@ -5381,41 +5379,36 @@
     <span class="p">)</span>
     <span class="k">return</span> <span class="n">answer</span> <span class="o">==</span> <span class="n">box</span><span class="o">.</span><span class="n">Yes</span>
 </code></pre></div>
-<p>Look at the last line of <code>ask</code>. The comparison <code>answer == box.Yes</code> is itself a value, <code>True</code> or <code>False</code>, as chapter 13 said, so the function can hand it straight back. All the business with button codes stays inside the module. From outside, <code>ask</code> takes a question and returns a yes or a no. Any script can now say:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
-
-<span class="n">importlib</span><span class="o">.</span><span class="n">reload</span><span class="p">(</span><span class="n">halfmoon</span><span class="p">)</span>
-
-<span class="k">if</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">ask</span><span class="p">(</span><span class="s2">"Rename 4 glyphs?"</span><span class="p">):</span>
+<p>Look at the last line of <code>ask</code>. The comparison <code>answer == box.Yes</code> is itself a value, <code>True</code> or <code>False</code>, as chapter 13 said, so the function can hand it straight back. All the business with button codes stays inside the function. From outside, <code>ask</code> takes a question and returns a yes or a no. Below the functions, the script can now say:</p>
+<div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="n">ask</span><span class="p">(</span><span class="s2">"Rename 4 glyphs?"</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">"Renaming."</span><span class="p">)</span>
 </code></pre></div>
 <p>That reads almost like the note on Mira's keyboard, and now <code>if</code> on the answer is safe, because <code>ask</code> really does return <code>True</code> or <code>False</code>. The trap from Step 2 is dealt with in one place, and no script that uses <code>ask</code> can fall into it.</p>
-<p>This is the best use of a module that I know. You find something awkward, you get it right once with care, and you give it a plain name. After that, you and everyone else in the studio use the plain name.</p>
+<p>This is the best use of a function that I know. You find something awkward, you get it right once with care, and you give it a plain name. After that you use the plain name, and when a script needs it you paste the same few lines in. Chapter 40 keeps a clean copy of them for exactly that.</p>
 <h2 id="step-4-ask-for-a-word">Step 4: Ask for a word<a class="headerlink" href="#step-4-ask-for-a-word" title="Permanent link">&para;</a></h2>
-<p>A yes or a no won't tell the script which suffix. For that you need a window with a text field. Add this to <code>halfmoon.py</code>:</p>
+<p>A yes or a no won't tell the script which suffix. For that you need a window with a text field. Add this below <code>ask</code>:</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">ask_text</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="s2">""</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">run_text_dialog</span><span class="p">(</span><span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">TITLE</span><span class="p">)</span>
 </code></pre></div>
 <p><code>run_text_dialog</code> takes the kit, the label beside the field, the text that's in the field to begin with, and the window's title. It returns what the person typed. Try it:</p>
-<div class="highlight"><pre><span></span><code><span class="n">old</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">ask_text</span><span class="p">(</span><span class="s2">"Suffix to replace:"</span><span class="p">,</span> <span class="s2">".alt"</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="n">old</span> <span class="o">=</span> <span class="n">ask_text</span><span class="p">(</span><span class="s2">"Suffix to replace:"</span><span class="p">,</span> <span class="s2">".alt"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">old</span><span class="p">)</span>
 </code></pre></div>
 <p>A window should appear with a field that already contains <code>.alt</code>. Click OK and you get:</p>
 <div class="highlight"><pre><span></span><code>.alt
 </code></pre></div>
 <p>Giving the field a sensible starting value is a kindness. Most of the time Ines will only have to press <span class="keys"><kbd class="key-enter">Enter</kbd></span>.</p>
-<p>Now tidy up what comes back, because people type spaces by accident. Chapter 27 has the tool for that:</p>
-<div class="highlight"><pre><span></span><code><span class="n">old</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">ask_text</span><span class="p">(</span><span class="s2">"Suffix to replace:"</span><span class="p">,</span> <span class="s2">".alt"</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+<p>Now tidy up what comes back, because people type spaces by accident. Chapter 27 has the tool for that. Replace the test lines at the bottom of <code>questions.py</code> with this one:</p>
+<div class="highlight"><pre><span></span><code><span class="n">old</span> <span class="o">=</span> <span class="n">ask_text</span><span class="p">(</span><span class="s2">"Suffix to replace:"</span><span class="p">,</span> <span class="s2">".alt"</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
 </code></pre></div>
 <p>Run it, and this time click Cancel.</p>
 <div class="highlight"><pre><span></span><code>Traceback (most recent call last):
-  File "&lt;string&gt;", line 6, in &lt;module&gt;
+  File "&lt;string&gt;", line 24, in &lt;module&gt;
 AttributeError: 'NoneType' object has no attribute 'strip'
 </code></pre></div>
 <p>Read it as chapter 38 taught you, last line first. Something was <code>None</code>, and the script asked it to <code>strip</code>. The trail has one step, and it's in your script. So what on that line could be <code>None</code>? It can only be whatever <code>ask_text</code> handed back.</p>
 <p>That's how the helper reports a Cancel. When the person clicks OK, it returns the text, and an empty field gives an empty string <code>""</code>. When the person clicks Cancel, there's no text to return, so it returns <code>None</code>. It's the same signal <code>font["Nope"]</code> gave you in chapter 19, and it needs the same care: check for <code>None</code> before you do anything with the answer.</p>
-<div class="highlight"><pre><span></span><code><span class="n">old</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">ask_text</span><span class="p">(</span><span class="s2">"Suffix to replace:"</span><span class="p">,</span> <span class="s2">".alt"</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="n">old</span> <span class="o">=</span> <span class="n">ask_text</span><span class="p">(</span><span class="s2">"Suffix to replace:"</span><span class="p">,</span> <span class="s2">".alt"</span><span class="p">)</span>
 <span class="k">if</span> <span class="n">old</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">"Cancelled."</span><span class="p">)</span>
 <span class="k">else</span><span class="p">:</span>
@@ -5425,7 +5418,7 @@ AttributeError: 'NoneType' object has no attribute 'strip'
 <p>A person who clicks Cancel is telling you something clear, and the script should stop and change nothing. If it shows a traceback at that point, or carries on with a guess, it has got that wrong.</p>
 <h2 id="step-5-choose-a-file">Step 5: Choose a file<a class="headerlink" href="#step-5-choose-a-file" title="Permanent link">&para;</a></h2>
 <p>The third kind of question is "which file?" Every program you use asks it the same way, with the system's own file window, and your scripts can too. In chapter 27 the glyph list had to be called <code>smallcaps.txt</code> and sit next to the font. Now Ines can pick any list from anywhere.</p>
-<p>Add one more import and one more function to <code>halfmoon.py</code>:</p>
+<p>Add one more import and two more functions. The import goes at the top with the others, the functions below <code>ask_text</code>:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_file_dialog</span>
 
 
@@ -5445,7 +5438,7 @@ AttributeError: 'NoneType' object has no attribute 'strip'
 
 <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
 <span class="n">folder</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">font</span><span class="o">.</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span>
-<span class="n">path</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">choose_text_file</span><span class="p">(</span><span class="s2">"Choose a glyph list"</span><span class="p">,</span> <span class="n">folder</span><span class="p">)</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">choose_text_file</span><span class="p">(</span><span class="s2">"Choose a glyph list"</span><span class="p">,</span> <span class="n">folder</span><span class="p">)</span>
 <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 </code></pre></div>
@@ -5467,12 +5460,12 @@ AttributeError: 'NoneType' object has no attribute 'strip'
 <p><code>setAcceptMode(kind.AcceptSave)</code> turns the window into a Save window, with a field for typing a new name. Choosing a path doesn't write anything. It only gives your script a path, and the <code>with open(...)</code> lines from chapter 26 do the writing.</p>
 <h2 id="when-not-to-ask">When not to ask<a class="headerlink" href="#when-not-to-ask" title="Permanent link">&para;</a></h2>
 <p>Now that you know how to put up a window, you'll want to put up a lot of them. Hold back.</p>
-<p>A script that asks five questions in a row is worse than one with five lines to edit. Ask only what changes from one run to the next, and give each field a good starting value. Things that never change belong in the module as constants.</p>
+<p>A script that asks five questions in a row is worse than one with five lines to edit. Ask only what changes from one run to the next, and give each field a good starting value. Things that never change belong at the top of the script as constants.</p>
 <p>Never ask inside a loop. "Rename <code>a.alt</code>? Rename <code>g.alt</code>? Rename <code>y.alt</code>?" is how you train a person to click Yes without reading. Show the whole plan and ask once.</p>
 <p>Don't confirm things that are harmless. A report needs no "Are you sure?" Keep the question for the moment before a script changes the font or writes over a file.</p>
 <p>And these windows stop everything else. While one is open, Ines can't click on the font to check something. For a quick question that's right. For a tool that someone keeps open and uses all afternoon, you want a small panel that sits beside the font and stays out of the way. That's a larger piece of building, and Part 7 is where we do it.</p>
 <h2 id="the-whole-script">The whole script<a class="headerlink" href="#the-whole-script" title="Permanent link">&para;</a></h2>
-<p>Here is <code>ask_first.py</code>. It's <code>rename_suffix.py</code> from chapter 31 with the two suffixes and the dry-run switch replaced by three questions:</p>
+<p>Here is <code>ask_first.py</code>. It's <code>rename_suffix.py</code> from chapter 31 with the two suffixes and the dry-run switch replaced by three questions. It carries its own <code>tell</code>, <code>ask</code> and <code>ask_text</code>, copied from Steps 3 and 4, so it runs by itself:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">#FLM: Rename Suffix</span>
 <span class="c1"># Renames glyphs from one suffix to another, after asking.</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
@@ -5481,27 +5474,45 @@ AttributeError: 'NoneType' object has no attribute 'strip'
     <span class="n">plan_renames</span><span class="p">,</span>
     <span class="n">apply_renames</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span><span class="p">,</span> <span class="n">run_text_dialog</span>
 
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Halfmoon Type"</span>
 <span class="n">SKIP</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"zero.alt"</span><span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">ask</span><span class="p">(</span><span class="n">question</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">answer</span> <span class="o">=</span> <span class="n">run_standard_message_box</span><span class="p">(</span>
+        <span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">question</span><span class="p">,</span> <span class="s2">"Question"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Yes</span> <span class="o">|</span> <span class="n">box</span><span class="o">.</span><span class="n">No</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">answer</span> <span class="o">==</span> <span class="n">box</span><span class="o">.</span><span class="n">Yes</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">ask_text</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="s2">""</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">run_text_dialog</span><span class="p">(</span><span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">TITLE</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">font</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
         <span class="k">return</span>
 
-    <span class="n">old</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">ask_text</span><span class="p">(</span><span class="s2">"Suffix to replace:"</span><span class="p">,</span> <span class="s2">".alt"</span><span class="p">)</span>
+    <span class="n">old</span> <span class="o">=</span> <span class="n">ask_text</span><span class="p">(</span><span class="s2">"Suffix to replace:"</span><span class="p">,</span> <span class="s2">".alt"</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">old</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span>
-    <span class="n">new</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">ask_text</span><span class="p">(</span><span class="s2">"Replace it with:"</span><span class="p">,</span> <span class="s2">".ss01"</span><span class="p">)</span>
+    <span class="n">new</span> <span class="o">=</span> <span class="n">ask_text</span><span class="p">(</span><span class="s2">"Replace it with:"</span><span class="p">,</span> <span class="s2">".ss01"</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">new</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span>
     <span class="n">old</span> <span class="o">=</span> <span class="n">old</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
     <span class="n">new</span> <span class="o">=</span> <span class="n">new</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">old</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"Type the suffix to replace."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"Type the suffix to replace."</span><span class="p">)</span>
         <span class="k">return</span>
 
     <span class="n">pairs</span> <span class="o">=</span> <span class="p">[]</span>
@@ -5510,7 +5521,7 @@ AttributeError: 'NoneType' object has no attribute 'strip'
             <span class="n">pairs</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">glyph</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">glyph</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">removesuffix</span><span class="p">(</span><span class="n">old</span><span class="p">)</span> <span class="o">+</span> <span class="n">new</span><span class="p">])</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">pairs</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="sa">f</span><span class="s2">"No glyph name ends in </span><span class="si">{</span><span class="n">old</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="sa">f</span><span class="s2">"No glyph name ends in </span><span class="si">{</span><span class="n">old</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
         <span class="k">return</span>
 
     <span class="n">facts</span> <span class="o">=</span> <span class="n">names</span><span class="o">.</span><span class="n">scan</span><span class="p">()</span>
@@ -5521,14 +5532,14 @@ AttributeError: 'NoneType' object has no attribute 'strip'
             <span class="n">problems</span> <span class="o">+=</span> <span class="mi">1</span>
 
     <span class="k">if</span> <span class="n">problems</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">problems</span><span class="si">}</span><span class="s2"> of </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">pairs</span><span class="p">)</span><span class="si">}</span><span class="s2"> renames can't be done. The list is in the Output panel."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">problems</span><span class="si">}</span><span class="s2"> of </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">pairs</span><span class="p">)</span><span class="si">}</span><span class="s2"> renames can't be done. The list is in the Output panel."</span><span class="p">)</span>
         <span class="k">return</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">ask</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Rename </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">pairs</span><span class="p">)</span><span class="si">}</span><span class="s2"> glyphs from </span><span class="si">{</span><span class="n">old</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">new</span><span class="si">}</span><span class="s2">?"</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ask</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Rename </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">pairs</span><span class="p">)</span><span class="si">}</span><span class="s2"> glyphs from </span><span class="si">{</span><span class="n">old</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">new</span><span class="si">}</span><span class="s2">?"</span><span class="p">):</span>
         <span class="k">return</span>
 
     <span class="n">done</span> <span class="o">=</span> <span class="n">apply_renames</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtCore</span><span class="p">,</span> <span class="n">facts</span><span class="o">.</span><span class="n">package_id</span><span class="p">,</span> <span class="n">pairs</span><span class="p">)</span>
-    <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Renamed </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">done</span><span class="p">)</span><span class="si">}</span><span class="s2"> glyphs. Edit &gt; Undo takes it back in one step."</span><span class="p">)</span>
+    <span class="n">tell</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Renamed </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">done</span><span class="p">)</span><span class="si">}</span><span class="s2"> glyphs. Edit &gt; Undo takes it back in one step."</span><span class="p">)</span>
 
 
 <span class="n">main</span><span class="p">()</span>
@@ -5540,12 +5551,12 @@ AttributeError: 'NoneType' object has no attribute 'strip'
 <p>Look at the guard after the two <code>strip</code> lines. Every name ends with the empty string, so an empty answer would have asked to rename the whole font. <code>SKIP</code> stays at the top, because it never changes from one run to the next.</p>
 <p>Save it as <code>Rename Suffix.py</code> in the <code>Halfmoon</code> folder inside <code>Scripts</code>, and choose <strong>Scripts &gt; Refresh Scripts</strong>. Its first line gives it its name in the menu. Ines runs it that afternoon without opening anything.</p>
 <h2 id="what-you-learned">What you learned<a class="headerlink" href="#what-you-learned" title="Permanent link">&para;</a></h2>
-<p>A message box tells or asks in a small window, and its answer is a button code that you compare with the button you mean. A text dialog returns what was typed, a file dialog returns a list of paths, and both return <code>None</code> for Cancel, which you check before anything else. The awkward calls go in the module once, behind plain names like <code>ask</code>, <code>tell</code> and <code>ask_text</code>. Ask once, right before the change, and let anything but Yes leave the font alone.</p>
+<p>A message box tells or asks in a small window, and its answer is a button code that you compare with the button you mean. A text dialog returns what was typed, a file dialog returns a list of paths, and both return <code>None</code> for Cancel, which you check before anything else. The awkward calls go in a function once, behind plain names like <code>ask</code>, <code>tell</code> and <code>ask_text</code>, and the script carries the functions it uses. Ask once, right before the change, and let anything but Yes leave the font alone.</p>
 <h2 id="try-it-yourself">Try it yourself<a class="headerlink" href="#try-it-yourself" title="Permanent link">&para;</a></h2>
 <ol>
-<li>Add <code>warn(text)</code> to <code>halfmoon.py</code>. It's <code>tell</code> with <code>"Warning"</code> in the picture slot. Use it in <code>ask_first.py</code> for the message about renames that can't be done.</li>
-<li>Write <code>ask_number(label, start)</code> in <code>halfmoon.py</code>. It calls <code>ask_text</code>, hands a <code>None</code> straight back, and otherwise returns <code>int(...)</code> of the text. Then type <code>fifteen</code> into its window and read the traceback. Chapter 19 showed you <code>try</code> and <code>except</code> in one simple form. Use it so that a word in place of a number makes <code>ask_number</code> return <code>None</code> as well. Then put it to work in <code>safe_edit.py</code> from chapter 29, so that Ines can type her own amount.</li>
-<li>Change <code>read_glyph_list.py</code> from chapter 27 so that it calls <code>choose_text_file</code> in place of the fixed name. What should the script do if the answer is <code>None</code>? What if the chosen file turns out to be empty?</li>
+<li>Add <code>warn(text)</code> to <code>ask_first.py</code>. It's <code>tell</code> with <code>"Warning"</code> in the picture slot. Use it in <code>ask_first.py</code> for the message about renames that can't be done.</li>
+<li>Write <code>ask_number(label, start)</code> in <code>questions.py</code>. It calls <code>ask_text</code>, hands a <code>None</code> straight back, and otherwise returns <code>int(...)</code> of the text. Then type <code>fifteen</code> into its window and read the traceback. Chapter 19 showed you <code>try</code> and <code>except</code> in one simple form. Use it so that a word in place of a number makes <code>ask_number</code> return <code>None</code> as well. Then paste it, with <code>ask_text</code>, into <code>safe_edit.py</code> from chapter 29, so that Ines can type her own amount.</li>
+<li>Change <code>read_glyph_list.py</code> from chapter 27 so that it calls <code>choose_text_file</code> in place of the fixed name. Paste in <code>text_files_only</code> and <code>choose_text_file</code> from Step 5, with the imports they need. What should the script do if the answer is <code>None</code>? What if the chosen file turns out to be empty?</li>
 </ol>
 <h2 id="next">Next<a class="headerlink" href="#next" title="Permanent link">&para;</a></h2>
 <p>It's Friday again, and Ines wants to know what seven weeks of this have bought the studio. Chapter 40 puts the toolbox on the table and counts.</p>

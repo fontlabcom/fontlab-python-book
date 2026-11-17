@@ -172,11 +172,37 @@ import fly.ap.components.writer as parts
 import fly.ap.core.history.glyphs as history
 import fly.ap.core.scripting as scripting
 import fly.ap.glyphs.creation as creation
-import halfmoon
-from fly import fl
+from fly import fl, qt
+from fly.ap.ui.dialogs import run_file_dialog, run_standard_message_box
 from fly.pens import layer_of
+from fly.tr.proxy.fl.objects.glyph import pGlyph
 
 MASTERS = ["Light", "Regular", "Bold"]
+TITLE = "Halfmoon"
+
+
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
+
+def ask(question):
+    box = qt.QtGui.QMessageBox
+    answer = run_standard_message_box(
+        qt, fl.MainWindow(), TITLE, question, "Question", box.Yes | box.No
+    )
+    return answer == box.Yes
+
+
+def text_files_only(kind, dialog):
+    dialog.setNameFilters(["Text files (*.txt)"])
+
+
+def choose_text_file(caption, folder=""):
+    paths = run_file_dialog(qt.QtGui, text_files_only, caption, folder)
+    if paths is None:
+        return None
+    return paths[0]
 
 
 def read_recipes(path):
@@ -196,7 +222,7 @@ def read_recipes(path):
 
 
 def layer_for(font, name, master):
-    return layer_of(halfmoon.rich(font, font[name]).fl, master)
+    return layer_of(fl.flGlyph(font[name], font), master)
 
 
 def shift_for(font, base, mark, master):
@@ -239,7 +265,7 @@ def new_glyph(font, character, name, base, mark, shifts):
 
 
 def moves_for(font, name, shifts):
-    rich = halfmoon.rich(font, font[name])
+    rich = pGlyph(font, font[name])
     rows = []
     for master in MASTERS:
         layer = layer_of(rich.fl, master)
@@ -271,17 +297,17 @@ def report(problems, to_draw):
 
 
 def is_auto(font, name):
-    rich = halfmoon.rich(font, font[name])
+    rich = pGlyph(font, font[name])
     return any([layer_of(rich.fl, master).autoLayer for master in MASTERS])
 
 
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     folder = Path(font.path).parent if font.path else ""
-    path = halfmoon.choose_text_file("Choose a recipe file", folder)
+    path = choose_text_file("Choose a recipe file", folder)
     if path is None:
         return
 
@@ -331,7 +357,7 @@ def main():
 
     if not specs and not work:
         return
-    if not halfmoon.ask(f"Build {len(specs)} glyphs and move the accents in {moved}?"):
+    if not ask(f"Build {len(specs)} glyphs and move the accents in {moved}?"):
         return
 
     package = scripting.current_package()
@@ -342,7 +368,7 @@ def main():
     if specs:
         facts = history.scan_auto_facts(package)
         creation.create_glyphs(package, specs, "Build accented letters", facts)
-    halfmoon.tell(f"Built {len(specs)} glyphs. Moved the accents in {moved}.")
+    tell(f"Built {len(specs)} glyphs. Moved the accents in {moved}.")
 
 
 main()
@@ -422,7 +448,7 @@ When one item in a batch is in trouble, record it as a tuple of a line number an
 
 1. Fix the three lines. Correct `rr`. Put a `#` in front of the `ľ` line and write after it what's missing. Change the base in the `ĩ` line to `dotlessi`. Run the script. If you said yes to the `Racute` above, I get two glyphs to build, with shifts of -153, -139 and -124 for the `itilde`, and 20 recipes that need a look.
 2. Add the recipe `Ø Oslash O acute`, which is nonsense, since the `Ø` is a drawn letter that Plum has. Which of the five troubles does the script report, and from which function does the answer come? Remove the line afterwards.
-3. Mira wants to mail the list to Oskar. Add a step at the end of `report` that asks for a file with `halfmoon.choose_save_file` and writes the same lines into it, as chapter 26 wrote the glyph list. Keep the printing as well.
+3. Mira wants to mail the list to Oskar. Add a step at the end of `report` that asks where to save with `choose_save_file` from chapter 39, and writes the same lines into it, as chapter 26 wrote the glyph list. Keep the printing as well.
 
 ## Next
 

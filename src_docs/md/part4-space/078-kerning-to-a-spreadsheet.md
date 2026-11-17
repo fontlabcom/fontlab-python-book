@@ -11,7 +11,7 @@ Review often happens outside the font editor. Chapter 28 sent a metrics table ou
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py` with `ask` and `tell`.
+- The helpers `ask` and `tell` from chapter 39. The scripts below write them out again, so each one runs by itself.
 - The `reports` folder next to your font, from chapter 26.
 - A spreadsheet program, or a text editor and some patience.
 - The kerning as chapter 75 left it: 101, 104 and 102 pairs.
@@ -144,16 +144,31 @@ What if a cell holds `?` or `ask Mira`? `parse_cell` raises a `ValueError`, as `
 import csv
 from pathlib import Path
 
-import halfmoon
 import fly.ap.core.scripting as scripting
 import fly.ap.kerning.batch as kerning_batch
 import fly.ap.kerning.edit.model as kerning_edit
-from fly import fl
+from fly import fl, qt
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
 
 MASTERS = ["Light", "Regular", "Bold"]
 MODE = "out"
 OUT_NAME = "plum-kerning.csv"
 IN_NAME = "plum-kerning-tobias.csv"
+
+
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
+
+def ask(question):
+    box = qt.QtGui.QMessageBox
+    answer = run_standard_message_box(
+        qt, fl.MainWindow(), TITLE, question, "Question", box.Yes | box.No
+    )
+    return answer == box.Yes
 
 
 def cell(value):
@@ -199,7 +214,7 @@ def read_changes(tables, address):
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     package = scripting.current_package()
     tables = {master: scripting.kerning_pairs(package, master) for master in MASTERS}
@@ -218,7 +233,7 @@ def main():
         print(f"row {number}, {master}: can't read {text!r}")
     if problems or not changes:
         return
-    if not halfmoon.ask(f"Write {len(changes)} kerning values?"):
+    if not ask(f"Write {len(changes)} kerning values?"):
         return
 
     edits = {}

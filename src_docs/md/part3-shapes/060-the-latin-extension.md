@@ -13,7 +13,7 @@ There's no new font work in this chapter and very little new Python. You'll take
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed, and the Font window in front.
-- `halfmoon.py` with `box`, `box_of`, `contours_of` and `circle`.
+- `box`, `box_of`, `contours_of` and `circle` from chapters 43 to 48. The scripts below write them out again.
 - `build_accents.py` from chapter 57 and your `accents.txt`, with the three bad lines put right as in exercise 1 of that chapter: `rr` corrected to `r`, a `#` in front of the `ľ` line, and `dotlessi` as the base for `ĩ`. Run `build_accents.py` once more before you start, and say yes, so that it has nothing left to build.
 
 This chapter adds glyphs. Work on the practice copy. The outputs below were computed from Plum's source file, not copied from FontLab's Output panel. The pen results come from running the pens in plain Python.
@@ -40,13 +40,23 @@ Run it. It should behave as it did this morning: it asks for the recipe file, pr
 Chapter 50 flipped a hyphen left to right with `Transform().scale(-1, 1)`. To flip top to bottom, the minus goes to the second number. A bare `scale(1, -1)` would throw the accent below the baseline, since it turns every height into its negative. To flip the accent in place, add its bottom and its top and move up by that much:
 
 ```python
-import halfmoon
 from fly import fl
 from fly.pens import RecordingPen, Transform, TransformPen, layer_of
 from fly.pens.fontlab import draw
+from fly.tr.proxy.fl.objects.glyph import pGlyph
+
+
+def box(font, glyph, master="Regular"):
+    nodes = pGlyph(font, glyph).nodes(master)
+    if not nodes:
+        return None
+    xs = [node.x for node in nodes]
+    ys = [node.y for node in nodes]
+    return min(xs), min(ys), max(xs), max(ys)
+
 
 font = fl.CurrentFont()
-left, bottom, right, top = halfmoon.box(font, font["circumflex"], "Regular")
+left, bottom, right, top = box(font, font["circumflex"], "Regular")
 flip = Transform().translate(0, bottom + top).scale(1, -1)
 print(bottom, top, flip.transformPoint((250, 614)))
 ```
@@ -60,7 +70,7 @@ The circumflex in the Regular stands between 539 and 655. Its inner point, at 61
 Record the circumflex and replay it through the flip, as chapter 51 did with the small caps:
 
 ```python
-source = layer_of(halfmoon.rich(font, font["circumflex"]).fl, "Regular")
+source = layer_of(fl.flGlyph(font["circumflex"], font), "Regular")
 recording = RecordingPen()
 draw(source, recording)
 flipped = RecordingPen()
@@ -95,8 +105,20 @@ The same points, walked the other way. Read the pens from the outside in: the dr
 The dot accent, as on the `ż`, needs a dot of the right size at the right height. The dieresis has two. Take the box of one of them, with `box_of` from chapter 45:
 
 ```python
-dot = halfmoon.contours_of(font, font["dieresis"], "Regular")[0]
-left, bottom, right, top = halfmoon.box_of(dot.nodes())
+def contours_of(font, glyph, master="Regular"):
+    return pGlyph(font, glyph).contours(master)
+
+
+def box_of(nodes):
+    if not nodes:
+        return None
+    xs = [node.x for node in nodes]
+    ys = [node.y for node in nodes]
+    return min(xs), min(ys), max(xs), max(ys)
+
+
+dot = contours_of(font, font["dieresis"], "Regular")[0]
+left, bottom, right, top = box_of(dot.nodes())
 radius = round((right - left) / 2)
 height = round((bottom + top) / 2)
 print(radius, height)
@@ -106,7 +128,7 @@ print(radius, height)
 46 581
 ```
 
-A radius of 46, with its center 581 units up. `halfmoon.circle` from chapter 48 draws it, and the center goes to x 250, the middle of an accent glyph 500 units wide. In the Light the numbers are 27 and 592, in the Bold 63 and 592.
+A radius of 46, with its center 581 units up. `circle` from chapter 48 draws it, and the center goes to x 250, the middle of an accent glyph 500 units wide. In the Light the numbers are 27 and 592, in the Bold 63 and 592.
 
 ## Step 4: Loops for the new accents
 
@@ -134,20 +156,61 @@ import fly.ap.anchors.writer as anchors
 import fly.ap.core.history.glyphs as history
 import fly.ap.core.scripting as scripting
 import fly.ap.glyphs.creation as creation
-import halfmoon
-from fly import fl
+from fly import fl, qt
+from fly.ap.ui.dialogs import run_standard_message_box
 from fly.pens import FlPen, RecordingPen, ReverseContourPen, Transform, TransformPen
 from fly.pens.fontlab import draw
+from fly.tr.proxy.fl.objects.glyph import pGlyph
 
 MASTERS = ["Light", "Regular", "Bold"]
 WIDTH = 500
 MIDDLE = 250
 MODEL = "circumflex"
 STAND_INS = {"caron": 0x02C7, "dotaccent": 0x02D9}
+TITLE = "Halfmoon"
+
+
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
+
+def box(font, glyph, master="Regular"):
+    nodes = pGlyph(font, glyph).nodes(master)
+    if not nodes:
+        return None
+    xs = [node.x for node in nodes]
+    ys = [node.y for node in nodes]
+    return min(xs), min(ys), max(xs), max(ys)
+
+
+def box_of(nodes):
+    if not nodes:
+        return None
+    xs = [node.x for node in nodes]
+    ys = [node.y for node in nodes]
+    return min(xs), min(ys), max(xs), max(ys)
+
+
+def contours_of(font, glyph, master="Regular"):
+    return pGlyph(font, glyph).contours(master)
+
+
+KAPPA = 0.5523  # handle length for a quarter circle, as a share of the radius
+
+
+def circle(pen, cx, cy, radius):
+    h = round(radius * KAPPA)
+    pen.moveTo((cx - radius, cy))
+    pen.curveTo((cx - radius, cy - h), (cx - h, cy - radius), (cx, cy - radius))
+    pen.curveTo((cx + h, cy - radius), (cx + radius, cy - h), (cx + radius, cy))
+    pen.curveTo((cx + radius, cy + h), (cx + h, cy + radius), (cx, cy + radius))
+    pen.curveTo((cx - h, cy + radius), (cx - radius, cy + h), (cx - radius, cy))
+    pen.closePath()
 
 
 def draw_caron(font, master):
-    left, bottom, right, top = halfmoon.box(font, font[MODEL], master)
+    left, bottom, right, top = box(font, font[MODEL], master)
     flip = Transform().translate(0, bottom + top).scale(1, -1)
     recording = RecordingPen()
     draw(accentkit.layer_for(font, MODEL, master), recording)
@@ -157,19 +220,19 @@ def draw_caron(font, master):
 
 
 def draw_dot(font, master):
-    dot = halfmoon.contours_of(font, font["dieresis"], master)[0]
-    left, bottom, right, top = halfmoon.box_of(dot.nodes())
+    dot = contours_of(font, font["dieresis"], master)[0]
+    left, bottom, right, top = box_of(dot.nodes())
     radius = round((right - left) / 2)
     height = round((bottom + top) / 2)
     layer = accentkit.layer_for(font, "dotaccent", master)
     with FlPen(layer, notify="Draw stand-in dot") as pen:
-        halfmoon.circle(pen, MIDDLE, height, radius)
+        circle(pen, MIDDLE, height, radius)
 
 
 def loop_rows(font, names):
     rows = []
     for name in names:
-        rich = halfmoon.rich(font, font[name])
+        rich = pGlyph(font, font[name])
         for master in MASTERS:
             model = accentkit.layer_for(font, MODEL, master)
             place = anchors.anchor_points(model)["_top"]
@@ -193,7 +256,7 @@ def make_stand_ins(font, package):
 
     for name in missing:
         for master in MASTERS:
-            if halfmoon.contours_of(font, font[name], master):
+            if contours_of(font, font[name], master):
                 continue
             if name == "caron":
                 draw_caron(font, master)
@@ -210,10 +273,10 @@ def make_stand_ins(font, package):
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     if font[MODEL] is None or font["dieresis"] is None:
-        halfmoon.tell("This font has no circumflex or no dieresis to copy from.")
+        tell("This font has no circumflex or no dieresis to copy from.")
         return
     make_stand_ins(font, scripting.current_package())
     accentkit.main()
@@ -283,7 +346,7 @@ A script that has grown useful becomes a module: move its functions to a file th
 
 1. Run `check_direction.py` from chapter 45. It should have nothing to say about `caron` or `ccaron`. Then take `ReverseContourPen` out of `draw_caron`, delete the `caron` glyph and the fourteen letters that use it by hand, run `extend_latin.py` again, and run the check once more. What does it report? Put the pen back afterwards.
 2. Open `ccaron` and `ecircumflex` side by side in the Bold. The stand-in caron is as wide as the circumflex. A drawn caron is usually a little narrower and steeper. Write down two things you'd tell Mira to change, and notice that she can change them in one glyph.
-3. Add `"macron": 0x00AF` to `STAND_INS` and write `draw_macron`: a rectangle with `halfmoon.rect` from chapter 46, as wide as the circumflex's box and as thick as the hyphen. Add `Ā Amacron A macron` and `ā amacron a macron` to the recipe file. You'll have to change the `if` and `else` in `make_stand_ins` into a ladder with `elif`.
+3. Add `"macron": 0x00AF` to `STAND_INS` and write `draw_macron`: a rectangle with `rect` from chapter 46, copied in, as wide as the circumflex's box and as thick as the hyphen. Add `Ā Amacron A macron` and `ā amacron a macron` to the recipe file. You'll have to change the `if` and `else` in `make_stand_ins` into a ladder with `elif`.
 
 ## Next
 

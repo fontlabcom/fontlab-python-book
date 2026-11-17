@@ -5335,7 +5335,7 @@
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>Plum-practice</code> open in FontLab 9, with Fly installed. The font must be saved, because the script looks for its data file in the folder where the font lives.</li>
-<li><code>halfmoon.py</code> with <code>tell</code>.</li>
+<li>The <code>tell</code> function from <a href="../../part2-a-toolbox/039-ask-the-user/">chapter 39</a>. The script below defines it again, so it runs by itself.</li>
 <li>A plain text editor to make the data file.</li>
 </ul>
 <p>I couldn't run the code in FontLab 9. Reading the file, the sets and the report are plain Python, and I ran them against the code points in Plum's source file. The only FontLab parts are <code>font.path</code> and <code>glyph.unicodes</code>, which earlier chapters use the same way.</p>
@@ -5428,8 +5428,16 @@ Czech    lacks  2: ď ť
 <span class="c1"># which of its characters the current font can't type.</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span>
+
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Halfmoon"</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+
 
 <span class="n">BASIC</span> <span class="o">=</span> <span class="s2">"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"</span>
 <span class="n">FILE_NAME</span> <span class="o">=</span> <span class="s2">"languages.txt"</span>
@@ -5460,11 +5468,11 @@ Czech    lacks  2: ď ť
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">font</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">font</span><span class="o">.</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="n">FILE_NAME</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="sa">f</span><span class="s2">"I can't find </span><span class="si">{</span><span class="n">FILE_NAME</span><span class="si">}</span><span class="s2"> next to the font."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="sa">f</span><span class="s2">"I can't find </span><span class="si">{</span><span class="n">FILE_NAME</span><span class="si">}</span><span class="s2"> next to the font."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">languages</span> <span class="o">=</span> <span class="n">read_languages</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="n">have</span> <span class="o">=</span> <span class="p">{</span><span class="nb">chr</span><span class="p">(</span><span class="n">code</span><span class="p">)</span> <span class="k">for</span> <span class="n">glyph</span> <span class="ow">in</span> <span class="n">font</span><span class="o">.</span><span class="n">glyphs</span> <span class="k">for</span> <span class="n">code</span> <span class="ow">in</span> <span class="n">glyph</span><span class="o">.</span><span class="n">unicodes</span><span class="p">}</span>

@@ -12,22 +12,34 @@ The build finished. That says the machine's part was done. A release is a claim 
 
 ## What you need
 
-- `Plum-practice` open in FontLab 9, with Fly installed, and `halfmoon.py` with chapter 116's functions.
+- `Plum-practice` open in FontLab 9, with Fly installed.
 - Friday's export folder from chapter 119, with the build's log beside it.
 
 I couldn't run the code in FontLab 9. I ran the script in plain Python on a folder laid out like the one chapter 119's build leaves behind. Nothing here asks FontLab for more than the path of the open font, so this chapter leans on FontLab less than any other in the part.
 
 ## Step 1: Which folder?
 
-The script needs the folder that was shipped. You have a function for that, from chapter 116:
+The script needs the folder that was shipped. You have a function for that, `latest_export` from chapters 115 and 116. Here it is again, so these lines run by themselves:
 
 ```python
+from pathlib import Path
+
 import fly.ap.core.scripting as scripting
-import halfmoon
 from fly import fl
 
+
+def latest_export(font, package):
+    info = package.info
+    ending = f"-v{info.versionMajor}.{info.versionMinor:03d}"
+    exports = Path(font.path).parent / "exports"
+    if not exports.exists():
+        return None
+    folders = [f for f in sorted(exports.iterdir()) if f.name.endswith(ending)]
+    return folders[-1] if folders else None
+
+
 font = fl.CurrentFont()
-print(halfmoon.latest_export(font, scripting.current_package()))
+print(latest_export(font, scripting.current_package()))
 ```
 
 ```text
@@ -92,8 +104,22 @@ An empty name means open. To close a line, a person types who did it and when, i
 # has to do. Changes nothing in the font.
 from pathlib import Path
 
-import halfmoon
-from fly import fl
+from fly import fl, qt
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
+
+
+# Chapter 39's tell, written out again so this script runs by itself.
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
+
+# Chapter 112's key, written out again so this script runs by itself.
+def key(text):
+    return "".join([c for c in text.lower() if c.isalnum()])
+
 
 FAMILY = "GG Plum"
 FORMATS = [".otf", ".ttf"]
@@ -125,10 +151,10 @@ def shipped_folder(font):
 
 
 def weight_lines(folder):
-    stems = {(halfmoon.key(p.stem), p.suffix.lower()) for p in folder.rglob("*")}
+    stems = {(key(p.stem), p.suffix.lower()) for p in folder.rglob("*")}
     lines, shipped, open_items = [], 0, 0
     for style in WANTED:
-        there = [s for s in FORMATS if (halfmoon.key(FAMILY + style), s) in stems]
+        there = [s for s in FORMATS if (key(FAMILY + style), s) in stems]
         if len(there) == len(FORMATS):
             lines.append(f"  shipped   {style}")
             shipped += 1
@@ -181,11 +207,11 @@ def hand_lines():
 def main():
     font = fl.CurrentFont()
     if font is None or not font.path:
-        halfmoon.tell("Open a saved font first.")
+        tell("Open a saved font first.")
         return
     folder = shipped_folder(font)
     if folder is None:
-        halfmoon.tell("No export folder holds fonts yet. Run the Friday build.")
+        tell("No export folder holds fonts yet. Run the Friday build.")
         return
     weights, shipped, open_weights = weight_lines(folder)
     papers, open_papers = paper_lines(folder, font)
@@ -235,7 +261,7 @@ The same 21 lines are now in `RELEASE.txt` inside the export folder, where anyon
 
 Notes on the listing.
 
-Almost nothing in it is new, which is the point of a last chapter. Tuples in a list are chapter 36's. The pairs of name and suffix in `weight_lines` are chapter 112's way of matching file names, with `halfmoon.key` so that `GGPlum-SemiBold` and "GG Plum SemiBold" count as the same. `' '.join(there) or 'no files'` is chapter 91's `or` between values. `lines += [...]` is chapter 115's. Reading the log is chapter 27's `with open` and chapter 87's `splitlines`.
+Almost nothing in it is new, which is the point of a last chapter. Tuples in a list are chapter 36's. The pairs of name and suffix in `weight_lines` are chapter 112's way of matching file names, with `key` so that `GGPlum-SemiBold` and "GG Plum SemiBold" count as the same. `' '.join(there) or 'no files'` is chapter 91's `or` between values. `lines += [...]` is chapter 115's. Reading the log is chapter 27's `with open` and chapter 87's `splitlines`.
 
 Three functions return two or three things at once: the lines to print and a count of open items. `weights, shipped, open_weights = weight_lines(folder)` unpacks them, the way chapter 100 unpacked what each check returned. Each section counts its own open lines and `main` only adds them up. To add a section, write one more function of that shape.
 

@@ -5291,16 +5291,16 @@
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>Plum-practice</code> open in FontLab 9, with Fly installed.</li>
-<li><code>halfmoon.py</code>, with <code>node_counts</code> from the last chapter.</li>
+<li>The <code>node_counts</code> function from the last chapter, for the pattern it uses.</li>
 </ul>
 <p>The outputs below were computed from Plum's source file, not copied from FontLab's Output panel.</p>
 <h2 id="step-1-highest-and-lowest">Step 1: Highest and lowest<a class="headerlink" href="#step-1-highest-and-lowest" title="Permanent link">&para;</a></h2>
 <p>Start with the <code>H</code>. Collect the <code>y</code> of every node in the Regular master, and ask for the smallest and the largest:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
 
 <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
-<span class="n">nodes</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"H"</span><span class="p">])</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="s2">"Regular"</span><span class="p">)</span>
+<span class="n">nodes</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"H"</span><span class="p">])</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="s2">"Regular"</span><span class="p">)</span>
 <span class="n">ys</span> <span class="o">=</span> <span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">y</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">]</span>
 <span class="nb">print</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">ys</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">ys</span><span class="p">))</span>
 </code></pre></div>
@@ -5324,26 +5324,26 @@
 <p>Look at the first number, 76. In chapter 35 you asked the <code>H</code> for its left sidebearing and got 76. That's no coincidence. The left sidebearing is the distance from the left edge of the glyph's space, where <code>x</code> is 0, to the leftmost point of the outline. The right sidebearing is what's left over on the other side: the <code>H</code> is 672 wide, the outline ends at 602, and 672 − 602 is 70, the number chapter 35 gave you. So the sidebearings you've been reading since Part 2 are computed from the box and the width. There's nothing more to them.</p>
 <p>A word of caution about what goes into the box. We used every node, handles too. A handle can stick out beyond the outline it controls, and then this box would be a little too big. In a carefully drawn font each curve has a node on the line at its highest, lowest, leftmost and rightmost point, and then the handles never stick out. Plum is drawn that way. I checked every glyph, and the box of all nodes and the box of on-line nodes are the same.</p>
 <h2 id="step-3-when-theres-nothing-to-measure">Step 3: When there's nothing to measure<a class="headerlink" href="#step-3-when-theres-nothing-to-measure" title="Permanent link">&para;</a></h2>
-<p>Put it in the module, so that any script can ask for a glyph's box:</p>
+<p>Make it a function, so that a script can ask for any glyph's box. Define it in this script:</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">box</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">master</span><span class="o">=</span><span class="s2">"Regular"</span><span class="p">):</span>
-    <span class="n">nodes</span> <span class="o">=</span> <span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="n">master</span><span class="p">)</span>
+    <span class="n">nodes</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="n">master</span><span class="p">)</span>
     <span class="n">xs</span> <span class="o">=</span> <span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">x</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">]</span>
     <span class="n">ys</span> <span class="o">=</span> <span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">y</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">]</span>
     <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">xs</span><span class="p">),</span> <span class="nb">min</span><span class="p">(</span><span class="n">ys</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">xs</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">ys</span><span class="p">)</span>
 </code></pre></div>
-<p>Reload the module as in the last chapter and try it on a glyph that's built from others:</p>
-<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="n">halfmoon</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"eacute"</span><span class="p">]))</span>
+<p>Run the definition and try it on a glyph that's built from others:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="n">box</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"eacute"</span><span class="p">]))</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>Traceback (most recent call last):
   File "&lt;string&gt;", line 1, in &lt;module&gt;
-  File ".../site-packages/halfmoon.py", line 104, in box
+  File "&lt;string&gt;", line 5, in box
     return min(xs), min(ys), max(xs), max(ys)
 ValueError: min() arg is an empty sequence
 </code></pre></div>
 <p>Read it from the bottom, as chapter 3 taught you. <code>min</code> was given an empty list. The <code>é</code> has no nodes of its own, so <code>xs</code> is empty, and there's no smallest number among none. It's the same kind of trouble as dividing by zero yesterday: a question that has no answer when the count is zero.</p>
 <p>What should <code>box</code> do with such a glyph? It can't invent four numbers. Zeros would be a lie, because a glyph with a box at 0, 0, 0, 0 is not the same as a glyph with no box. Python has a value for "there isn't one", and you've used it since chapter 6: <code>None</code>.</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">box</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">master</span><span class="o">=</span><span class="s2">"Regular"</span><span class="p">):</span>
-    <span class="n">nodes</span> <span class="o">=</span> <span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="n">master</span><span class="p">)</span>
+    <span class="n">nodes</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="n">master</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">nodes</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
     <span class="n">xs</span> <span class="o">=</span> <span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">x</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">]</span>
@@ -5351,7 +5351,7 @@ ValueError: min() arg is an empty sequence
     <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">xs</span><span class="p">),</span> <span class="nb">min</span><span class="p">(</span><span class="n">ys</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">xs</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">ys</span><span class="p">)</span>
 </code></pre></div>
 <p>Now the function gives either a tuple of four numbers or <code>None</code>, and every caller has to be ready for both. Chapter 39 made the same bargain when a dialog could be cancelled. The caller checks before it unpacks:</p>
-<div class="highlight"><pre><span></span><code><span class="n">found</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"eacute"</span><span class="p">])</span>
+<div class="highlight"><pre><span></span><code><span class="n">found</span> <span class="o">=</span> <span class="n">box</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"eacute"</span><span class="p">])</span>
 <span class="k">if</span> <span class="n">found</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">"no outline"</span><span class="p">)</span>
 <span class="k">else</span><span class="p">:</span>
@@ -5380,7 +5380,7 @@ ValueError: min() arg is an empty sequence
 <p>These questions have a side effect, which I read in TypeRig's source. Asking with a master's name makes that master the current one in FontLab, and it stays the current one afterwards. We ask about the Regular only, so if you were looking at the Bold, the Font window may show the Regular when the script has finished. Nothing in the font has changed. Switch back to the master you were working in.</p>
 <p>The cap height is 688, and the <code>H</code> reaches 688. Good. The x-height is 478. Try the lowercase <code>x</code> with the first listing and you'll get a top of 478, and <code>o</code> gives 488: ten units over again.</p>
 <p>Now you can say what overshoot is in numbers. It's the top of a glyph minus the height it's measured against:</p>
-<div class="highlight"><pre><span></span><code><span class="n">left</span><span class="p">,</span> <span class="n">bottom</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">top</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"O"</span><span class="p">])</span>
+<div class="highlight"><pre><span></span><code><span class="n">left</span><span class="p">,</span> <span class="n">bottom</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">top</span> <span class="o">=</span> <span class="n">box</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"O"</span><span class="p">])</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">top</span> <span class="o">-</span> <span class="n">metrics</span><span class="o">.</span><span class="n">getCapsHeight</span><span class="p">(</span><span class="s2">"Regular"</span><span class="p">))</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>10.0
@@ -5401,7 +5401,7 @@ C
 <span class="n">cap_height</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">getCapsHeight</span><span class="p">(</span><span class="s2">"Regular"</span><span class="p">)</span>
 <span class="n">groups</span> <span class="o">=</span> <span class="p">{}</span>
 <span class="k">for</span> <span class="n">letter</span> <span class="ow">in</span> <span class="n">CAPITALS</span><span class="p">:</span>
-    <span class="n">found</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">letter</span><span class="p">])</span>
+    <span class="n">found</span> <span class="o">=</span> <span class="n">box</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">letter</span><span class="p">])</span>
     <span class="k">if</span> <span class="n">found</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">letter</span><span class="p">,</span> <span class="s2">"has no outline"</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -5425,16 +5425,25 @@ C
 <p>Is that a mistake? The script can't say. It can only say that four letters differ from the rest, and that they have something in common. Some designers do lower a long flat top by a hair, because a wide bar at full height can look heavier than a stem end. It could also be an accident that got copied from the <code>E</code> to its relatives. Mira sends Oskar a message. The answer comes after lunch: "No idea. It was like that when I got it. Proof it before you touch it."</p>
 <p>You'll see this again and again. A script finds what's different, and a person has to decide whether different is wrong.</p>
 <h2 id="the-whole-script">The whole script<a class="headerlink" href="#the-whole-script" title="Permanent link">&para;</a></h2>
-<p><code>bounds.py</code> puts the pieces together and does the same for the lowercase against the x-height. <code>halfmoon.py</code> gains <code>box</code> from Step 3.</p>
+<p><code>bounds.py</code> puts the pieces together and does the same for the lowercase against the x-height. It defines <code>box</code> from Step 3 near the top, so it runs by itself.</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Groups letters by how far their tops end above or below a font height.</span>
 <span class="c1"># Reads only.</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.font</span><span class="w"> </span><span class="kn">import</span> <span class="n">pFont</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
 
 <span class="n">MASTER</span> <span class="o">=</span> <span class="s2">"Regular"</span>
 <span class="n">CAPITALS</span> <span class="o">=</span> <span class="s2">"ABCDEFGHIJKLMNOPQRSTUVWXYZ"</span>
 <span class="n">SMALL</span> <span class="o">=</span> <span class="s2">"acemnorsuvwxz"</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">box</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">master</span><span class="o">=</span><span class="s2">"Regular"</span><span class="p">):</span>
+    <span class="n">nodes</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="n">master</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">nodes</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">xs</span> <span class="o">=</span> <span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">x</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">]</span>
+    <span class="n">ys</span> <span class="o">=</span> <span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">y</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">]</span>
+    <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">xs</span><span class="p">),</span> <span class="nb">min</span><span class="p">(</span><span class="n">ys</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">xs</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">ys</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">groups_by_top</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">letters</span><span class="p">,</span> <span class="n">height</span><span class="p">):</span>
@@ -5444,7 +5453,7 @@ C
         <span class="k">if</span> <span class="n">glyph</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">letter</span><span class="si">}</span><span class="s2"> is not in the font"</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">found</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">MASTER</span><span class="p">)</span>
+            <span class="n">found</span> <span class="o">=</span> <span class="n">box</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">MASTER</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">found</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">letter</span><span class="si">}</span><span class="s2"> has no outline"</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>

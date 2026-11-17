@@ -13,7 +13,7 @@ Today you read those numbers in every master, measure the tallest and lowest gly
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py`.
+- The `tell` function from [chapter 39](../part2-a-toolbox/039-ask-the-user.md). The script below defines it again, so it runs by itself.
 
 I couldn't run the code in FontLab 9. The Font Info values are the ones in Plum's source file. The glyph heights I computed from the same file, adding each component's shift to the outline it borrows. If you built accented capitals in Part 3, one of yours may tie with `Aring` for the tallest. The way the script asks a layer for its box is the way Fly's metrics panel asks.
 
@@ -171,9 +171,17 @@ print(typo, hhea)
 #FLM: Vertical Metrics
 # For each master: the tallest and lowest glyph against the clip lines,
 # and the line height by two systems. Changes nothing.
-import halfmoon
-from fly import fl
+from fly import fl, qt
 import fly.ap.core.scripting as scripting
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
+
+
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
 
 FIELDS = {
     "openTypeOS2TypoAscender": "typo ascender",
@@ -242,7 +250,7 @@ def report(master, n, low, high):
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     package = scripting.current_package()
     numbers = read_numbers(package)

@@ -17,7 +17,7 @@ Today you read the list. You change nothing.
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py` with `rich` and `tell`.
+- The helper `tell` from chapter 39. The scripts below write it out again, so each one runs by itself.
 
 I couldn't run today's code in FontLab 9. The pairs and values come from Plum's source file, and your font should print the same. The practice font's kerning hasn't been touched by any chapter so far.
 
@@ -26,12 +26,12 @@ I couldn't run today's code in FontLab 9. The pairs and values come from Plum's 
 Start with the hole. The gap between two letters is the right side of the first plus the left side of the second, as in chapter 61:
 
 ```python
-import halfmoon
 from fly import fl
+from fly.tr.proxy.fl.objects.glyph import pGlyph
 
 def gap(font, first, second, master):
-    one = halfmoon.rich(font, font[first])
-    two = halfmoon.rich(font, font[second])
+    one = pGlyph(font, font[first])
+    two = pGlyph(font, font[second])
     return one.getRSB(master) + two.getLSB(master)
 
 
@@ -173,11 +173,19 @@ The tightest pair in the Regular is `LT`, at 113 units. Think of the shapes: the
 ```python
 #FLM: List Kerning
 # Reports the kerning pairs of one master: how many, the tightest, the loosened.
-import halfmoon
 import fly.ap.core.scripting as scripting
+from fly import fl, qt
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
 
 MASTER = "Regular"
 HOW_MANY = 8
+
+
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
 
 
 def by_value(item):
@@ -200,7 +208,7 @@ def busiest(pairs):
 def main():
     package = scripting.current_package()
     if package is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     pairs = scripting.kerning_pairs(package, MASTER)
     if not pairs:

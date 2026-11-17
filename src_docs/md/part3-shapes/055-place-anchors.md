@@ -13,7 +13,7 @@ She could click three anchors into three masters. That's nine clicks, each one p
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py` with `rich` and `box`.
+- `box` from chapter 43. The scripts below write it out again.
 - `list_anchors.py` from chapter 54, for the check at the end.
 
 The outputs below were computed from Plum's source file, not copied from FontLab's Output panel. What the writing tool hands back is read from its code.
@@ -22,15 +22,25 @@ The outputs below were computed from Plum's source file, not copied from FontLab
 
 Look at a neighbor first. The `n` has its `top` at 262 across and 478 up. The outline of the Regular `n` runs from 70 to 457, so its middle is 263.5. The peg sits near the middle of the letter, on the x-height. That's the rule to copy.
 
-For the sideways position, `halfmoon.box` gives you the edges:
+For the sideways position, `box` from chapter 43 gives you the edges:
 
 ```python
-import halfmoon
 from fly import fl
+from fly.tr.proxy.fl.objects.glyph import pGlyph
+
+
+def box(font, glyph, master="Regular"):
+    nodes = pGlyph(font, glyph).nodes(master)
+    if not nodes:
+        return None
+    xs = [node.x for node in nodes]
+    ys = [node.y for node in nodes]
+    return min(xs), min(ys), max(xs), max(ys)
+
 
 font = fl.CurrentFont()
 for master in ["Light", "Regular", "Bold"]:
-    left, bottom, right, top = halfmoon.box(font, font["dotlessi"], master)
+    left, bottom, right, top = box(font, font["dotlessi"], master)
     print(master, (left + right) / 2, top)
 ```
 
@@ -64,7 +74,7 @@ So the place has two sources. Across comes from the letter's own outline, becaus
 
 ```python
 def top_place(font, name, master):
-    left, bottom, right, top = halfmoon.box(font, font[name], master)
+    left, bottom, right, top = box(font, font[name], master)
     return round((left + right) / 2), metrics.getXHeight(master)
 
 
@@ -84,11 +94,12 @@ Yesterday the shift was the peg minus the loop. Turn that around: the peg is the
 ```python
 import fly.ap.anchors.writer as anchors
 import fly.ap.components.writer as parts
+from fly import fl
 from fly.pens import layer_of
 
 
 def layer_for(font, name, master):
-    return layer_of(halfmoon.rich(font, font[name]).fl, master)
+    return layer_of(fl.flGlyph(font[name], font), master)
 
 
 def peg_in(font, composite, family, master):
@@ -131,7 +142,7 @@ edit = ("set", "top", (111, 478))
 Edits belong to a layer, and a layer belongs to a glyph. So one row of work is another tuple of three: the glyph, the layer, and a list of edits for that layer.
 
 ```python
-rich = halfmoon.rich(font, font["dotlessi"])
+rich = pGlyph(font, font["dotlessi"])
 layer = layer_of(rich.fl, "Regular")
 work = [(rich.fl, layer, [edit])]
 ```
@@ -215,10 +226,10 @@ import fly.ap.anchors.writer as anchors
 import fly.ap.components.writer as parts
 import fly.ap.core.history.glyphs as history
 import fly.ap.core.scripting as scripting
-import halfmoon
 from fly import fl
 from fly.pens import layer_of
 from fly.tr.proxy.fl.objects.font import pFont
+from fly.tr.proxy.fl.objects.glyph import pGlyph
 
 MASTERS = ["Light", "Regular", "Bold"]
 TARGET = "dotlessi"
@@ -226,11 +237,20 @@ BY_HAND = {"acute": "iacute", "grave": "igrave"}
 
 
 def layer_for(font, name, master):
-    return layer_of(halfmoon.rich(font, font[name]).fl, master)
+    return layer_of(fl.flGlyph(font[name], font), master)
+
+
+def box(font, glyph, master="Regular"):
+    nodes = pGlyph(font, glyph).nodes(master)
+    if not nodes:
+        return None
+    xs = [node.x for node in nodes]
+    ys = [node.y for node in nodes]
+    return min(xs), min(ys), max(xs), max(ys)
 
 
 def top_place(font, name, master, height):
-    left, bottom, right, top = halfmoon.box(font, font[name], master)
+    left, bottom, right, top = box(font, font[name], master)
     return round((left + right) / 2), height
 
 
@@ -245,7 +265,7 @@ def peg_in(font, composite, family, master):
 def main():
     font = fl.CurrentFont()
     metrics = pFont().fontMetrics()
-    rich = halfmoon.rich(font, font[TARGET])
+    rich = pGlyph(font, font[TARGET])
 
     work = []
     for master in MASTERS:

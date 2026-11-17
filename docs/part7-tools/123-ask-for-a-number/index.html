@@ -5313,7 +5313,7 @@
 <p>"I don't know yet. Ten? Show me ten."</p>
 <p>In Part 4 Mira would have opened <code>set_sidebearings.py</code>, changed two numbers at the top, and run it. Ines won't do that, and from tomorrow Mira isn't here. So the numbers have to move out of the script and into the window: a field for the glyph names, a field for each side, a tick box that says "don't change anything yet", and a button.</p>
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
-<p><code>Plum-practice</code> open with the Font window in front and the Regular master showing, Fly installed, <code>halfmoon.py</code>, and <code>button_report.py</code> from chapter 122 to copy from. This chapter changes sidebearings, so save the font first.</p>
+<p><code>Plum-practice</code> open with the Font window in front and the Regular master showing, Fly installed, and <code>button_report.py</code> from chapter 122 to copy from. This chapter changes sidebearings, so save the font first.</p>
 <p>I haven't run this chapter in FontLab 9. I ran the script in plain Python with stand-in widgets whose fields I could fill from code, and a stand-in font that holds Plum's sidebearings. The numbers below are Plum's Regular as it shipped. If Part 4 left yours different, your first three numbers on each line will differ and the sums will still hold.</p>
 <h2 id="step-1-a-field-and-whats-in-it">Step 1: A field, and what's in it<a class="headerlink" href="#step-1-a-field-and-whats-in-it" title="Permanent link">&para;</a></h2>
 <p>A field you can type in is a widget called <code>QLineEdit</code>. Take chapter 122's <code>build</code>, cut it down to one field, one button and one label, and make the button show what the field holds:</p>
@@ -5382,15 +5382,15 @@
 <div class="highlight"><pre><span></span><code><span class="c1">#FLM: Shift Dialog</span>
 <span class="c1"># Adds to the sidebearings of the glyphs you name, or of the ones</span>
 <span class="c1"># selected in the Font window, in the master that's showing.</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.history.glyphs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">history</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.metrics.panel.model</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">metrics</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly.pens</span><span class="w"> </span><span class="kn">import</span> <span class="n">layer_of</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
 
 <span class="n">core</span><span class="p">,</span> <span class="n">gui</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtCore</span><span class="p">,</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span>
-<span class="n">KEY</span> <span class="o">=</span> <span class="s2">"halfmoon.shift"</span>
+<span class="n">KEY</span> <span class="o">=</span> <span class="s2">"tools.shift"</span>
 <span class="n">LIMIT</span> <span class="o">=</span> <span class="mi">200</span>
 <span class="n">SHOWN</span> <span class="o">=</span> <span class="mi">8</span>
 
@@ -5405,7 +5405,7 @@
     <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"No glyph called </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
-        <span class="n">rich</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+        <span class="n">rich</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
         <span class="n">old</span> <span class="o">=</span> <span class="p">(</span><span class="n">rich</span><span class="o">.</span><span class="n">getLSB</span><span class="p">(</span><span class="n">master</span><span class="p">),</span> <span class="n">rich</span><span class="o">.</span><span class="n">getAdvance</span><span class="p">(</span><span class="n">master</span><span class="p">),</span> <span class="n">rich</span><span class="o">.</span><span class="n">getRSB</span><span class="p">(</span><span class="n">master</span><span class="p">))</span>
         <span class="n">new</span> <span class="o">=</span> <span class="p">(</span><span class="n">old</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">left</span><span class="p">,</span> <span class="n">old</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">left</span> <span class="o">+</span> <span class="n">right</span><span class="p">,</span> <span class="n">old</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">right</span><span class="p">)</span>
         <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">rich</span><span class="p">,</span> <span class="n">layer_of</span><span class="p">(</span><span class="n">rich</span><span class="o">.</span><span class="n">fl</span><span class="p">,</span> <span class="n">master</span><span class="p">),</span> <span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">))</span>

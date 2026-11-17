@@ -5332,7 +5332,7 @@
 <p>Thursday afternoon. Mira is on a train and Ines is alone with the Light. She has the Shift window from chapter 126, and she has lost it twice: once behind the Glyph window, once behind FontLab itself. What she wants today is smaller than Shift and more constant. She wants to see a glyph's sidebearings while she looks at the glyph, without asking.</p>
 <p>A thing you look at all day shouldn't float about. FontLab's own panels sit at the edge of its frame, and a script can ask for a place there. Getting the place takes one line. Keeping it is the lesson of this chapter: a script ends a moment after it starts, and anything the script made has to be held by something that lasts longer.</p>
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
-<p><code>Plum-practice</code> open with the Light showing, a Glyph window on <code>n</code>, Fly installed, and <code>halfmoon.py</code>, which gets one small addition in step 4. The panel reads and changes nothing.</p>
+<p><code>Plum-practice</code> open with the Light showing, a Glyph window on <code>n</code>, Fly installed. The panel reads and changes nothing.</p>
 <p>I haven't run this chapter in FontLab 9. I ran the script against stand-in widgets and a stand-in panel maker that keeps a list of what was opened and closed. No script I could read calls Fly's panel maker the way this chapter does, so treat every sentence about what the panel looks like as a claim to check.</p>
 <h2 id="step-1-three-kinds-of-window">Step 1: Three kinds of window<a class="headerlink" href="#step-1-three-kinds-of-window" title="Permanent link">&para;</a></h2>
 <p>You've met two kinds already. Chapter 39's message box is the first kind: while it's up, nothing else in FontLab answers. You can't click a glyph, you can't open a menu, and the script itself waits on the line that showed the box. That kind is called <em>modal</em>. It's right for a question that must be answered before anything else happens.</p>
@@ -5370,20 +5370,21 @@ panel 2 "Sidebearings" docked right
 <p>Every object in Python lasts while something refers to it: a name, a list it sits in, another object's drawer. When the last reference goes, the object goes. A script's names all go when the script ends. That's the whole of the problem.</p>
 </div>
 <h2 id="step-4-a-place-that-outlasts-the-script">Step 4: A place that outlasts the script<a class="headerlink" href="#step-4-a-place-that-outlasts-the-script" title="Permanent link">&para;</a></h2>
-<p>You already own something that lasts longer than a script: <code>halfmoon.py</code>. Chapter 33 showed that Python loads a module once and then hands every later <code>import halfmoon</code> the same loaded module, which is why you needed <code>importlib.reload</code> after editing it. A dictionary inside that module lives until FontLab quits.</p>
-<p>Add these lines to <code>halfmoon.py</code>, after the functions that are there:</p>
-<div class="highlight"><pre><span></span><code><span class="n">KEPT</span> <span class="o">=</span> <span class="p">{}</span>
+<p>Something in FontLab does last longer than a script: every module Python has loaded. Chapter 33 showed that Python loads a module once and then hands every later <code>import</code> of it the same loaded module. <code>sys</code> is one of those. Python loaded it before your first script ran, and every script that says <code>import sys</code> gets that same module until FontLab quits. A dictionary put in one of its drawers lives as long.</p>
+<p>Put these lines near the top of the script, after the imports:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">keep</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">things</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">KEPT</span><span class="p">:</span>
-        <span class="n">KEPT</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-    <span class="n">KEPT</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">things</span>
+    <span class="n">kept</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">sys</span><span class="p">)</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"kept_windows"</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">kept</span><span class="p">:</span>
+        <span class="n">kept</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">kept</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">things</span>
 </code></pre></div>
-<p><code>KEPT</code> is the shelf. <code>keep</code> takes a key and a list of things to hold. If the shelf has that key already, the first thing in the old list is asked to close, and then the new list takes the place. The object <code>create_panel</code> hands back has a <code>close</code> method, so it goes first in the list.</p>
-<p>Run <code>importlib.reload(halfmoon)</code> once in the Scripting panel, as in chapter 33, so that FontLab sees the new lines. Then the end of the script becomes:</p>
+<p><code>vars(sys)</code> is the module's own dictionary of names, the one <code>sys.path</code> lives in. <code>setdefault</code> gives back the drawer <code>kept_windows</code> if it's there and puts an empty dictionary in it first if it isn't, so the first script to call <code>keep</code> makes the shelf and every later one finds it. <code>keep</code> takes a key and a list of things to hold. If the shelf has that key already, the first thing in the old list is asked to close, and then the new list takes the place. The object <code>create_panel</code> hands back has a <code>close</code> method, so it goes first in the list.</p>
+<p><code>kept_windows</code> is a name I chose. Python has no drawer by that name of its own, so nothing else will use it, and every script in this part that calls <code>keep</code> uses the same one. The end of the script becomes:</p>
 <div class="highlight"><pre><span></span><code><span class="n">owner</span> <span class="o">=</span> <span class="n">ap</span><span class="o">.</span><span class="n">FontLab</span><span class="p">()</span><span class="o">.</span><span class="n">create_panel</span><span class="p">(</span><span class="s2">"Sidebearings"</span><span class="p">,</span> <span class="n">build</span><span class="p">,</span> <span class="n">area</span><span class="o">=</span><span class="s2">"right"</span><span class="p">)</span>
-<span class="n">halfmoon</span><span class="o">.</span><span class="n">keep</span><span class="p">(</span><span class="s2">"halfmoon.sidebearings"</span><span class="p">,</span> <span class="p">[</span><span class="n">owner</span><span class="p">])</span>
+<span class="n">keep</span><span class="p">(</span><span class="s2">"tools.sidebearings"</span><span class="p">,</span> <span class="p">[</span><span class="n">owner</span><span class="p">])</span>
 </code></pre></div>
 <p>Run it twice, and the stand-in's list reads:</p>
 <div class="highlight"><pre><span></span><code>panel 1 "Sidebearings" docked right
@@ -5400,20 +5401,29 @@ panel 1 closed
         <span class="n">made</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SidebearingPanel</span><span class="p">(</span><span class="n">content</span><span class="p">))</span>
 
     <span class="n">owner</span> <span class="o">=</span> <span class="n">ap</span><span class="o">.</span><span class="n">FontLab</span><span class="p">()</span><span class="o">.</span><span class="n">create_panel</span><span class="p">(</span><span class="n">TITLE</span><span class="p">,</span> <span class="n">build</span><span class="p">,</span> <span class="n">area</span><span class="o">=</span><span class="s2">"right"</span><span class="p">)</span>
-    <span class="n">halfmoon</span><span class="o">.</span><span class="n">keep</span><span class="p">(</span><span class="n">KEY</span><span class="p">,</span> <span class="p">[</span><span class="n">owner</span><span class="p">,</span> <span class="n">made</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+    <span class="n">keep</span><span class="p">(</span><span class="n">KEY</span><span class="p">,</span> <span class="p">[</span><span class="n">owner</span><span class="p">,</span> <span class="n">made</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
 </code></pre></div>
 <p><code>build</code> drops the new <code>SidebearingPanel</code> into <code>made</code>. After <code>create_panel</code> comes back, <code>made[0]</code> is that object, and it goes on the shelf beside the owner. Chapter 126 guessed that a tool survives because its button holds one of its methods. Now it doesn't matter whether the guess is right: the shelf holds the tool by name.</p>
 <h2 id="the-whole-script">The whole script<a class="headerlink" href="#the-whole-script" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><span class="c1">#FLM: Sidebearing Panel</span>
 <span class="c1"># A panel at the side of FontLab that shows the sidebearings of the</span>
 <span class="c1"># current glyph in the master that's showing. Changes nothing.</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">ap</span><span class="p">,</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
 
 <span class="n">gui</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span>
-<span class="n">KEY</span> <span class="o">=</span> <span class="s2">"halfmoon.sidebearings"</span>
+<span class="n">KEY</span> <span class="o">=</span> <span class="s2">"tools.sidebearings"</span>
 <span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Sidebearings"</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">keep</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">things</span><span class="p">):</span>
+    <span class="n">kept</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">sys</span><span class="p">)</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"kept_windows"</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">kept</span><span class="p">:</span>
+        <span class="n">kept</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">kept</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">things</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">glyph_text</span><span class="p">():</span>
@@ -5422,7 +5432,7 @@ panel 1 closed
     <span class="k">if</span> <span class="n">font</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">glyph</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="s2">"No glyph is showing."</span>
     <span class="n">master</span> <span class="o">=</span> <span class="n">scripting</span><span class="o">.</span><span class="n">current_package</span><span class="p">()</span><span class="o">.</span><span class="n">master</span>
-    <span class="n">rich</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span>
+    <span class="n">rich</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span>
     <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span>
         <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">rich</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> in </span><span class="si">{</span><span class="n">master</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
         <span class="sa">f</span><span class="s2">"Left </span><span class="si">{</span><span class="n">rich</span><span class="o">.</span><span class="n">getLSB</span><span class="p">(</span><span class="n">master</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
@@ -5459,13 +5469,13 @@ panel 1 closed
         <span class="n">made</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SidebearingPanel</span><span class="p">(</span><span class="n">content</span><span class="p">))</span>
 
     <span class="n">owner</span> <span class="o">=</span> <span class="n">ap</span><span class="o">.</span><span class="n">FontLab</span><span class="p">()</span><span class="o">.</span><span class="n">create_panel</span><span class="p">(</span><span class="n">TITLE</span><span class="p">,</span> <span class="n">build</span><span class="p">,</span> <span class="n">area</span><span class="o">=</span><span class="s2">"right"</span><span class="p">)</span>
-    <span class="n">halfmoon</span><span class="o">.</span><span class="n">keep</span><span class="p">(</span><span class="n">KEY</span><span class="p">,</span> <span class="p">[</span><span class="n">owner</span><span class="p">,</span> <span class="n">made</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+    <span class="n">keep</span><span class="p">(</span><span class="n">KEY</span><span class="p">,</span> <span class="p">[</span><span class="n">owner</span><span class="p">,</span> <span class="n">made</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
 
 
 <span class="n">main</span><span class="p">()</span>
 </code></pre></div>
 <p>Save it as <code>sidebearing_panel.py</code>.</p>
-<p><code>glyph_text</code> is plain work with no window in it. It asks FontLab for the current font and the current glyph, wraps the glyph in <code>halfmoon.rich</code> as chapter 33 did, and reads the three numbers in the master that's showing. The class is two drawers and two methods. <code>refresh</code> fills the label and catches whatever goes wrong, as every slot since chapter 122 has. <code>on_again</code> is the slot, and all it does is call <code>refresh</code>; the split lets <code>__init__</code> fill the label once without pretending to be a click.</p>
+<p><code>glyph_text</code> is plain work with no window in it. It asks FontLab for the current font and the current glyph, wraps it in TypeRig's <code>pGlyph</code>, and reads the three numbers in the master that's showing. The class is two drawers and two methods. <code>refresh</code> fills the label and catches whatever goes wrong, as every slot since chapter 122 has. <code>on_again</code> is the slot, and all it does is call <code>refresh</code>; the split lets <code>__init__</code> fill the label once without pretending to be a click.</p>
 <h2 id="run-it">Run it<a class="headerlink" href="#run-it" title="Permanent link">&para;</a></h2>
 <p>With <code>n</code> in the Glyph window and the Light showing, the panel reads:</p>
 <div class="highlight"><pre><span></span><code>n in Light
@@ -5493,9 +5503,9 @@ Right 50
 <div class="highlight"><pre><span></span><code>TypeError: FontLab.create_panel() takes from 2 to 3 positional arguments but 4 were given
 </code></pre></div>
 <p>The count includes <code>self</code>, as it did in chapter 126: <code>self</code>, the title and <code>build</code> make three, and your <code>"right"</code> was a fourth with nowhere to go. A function can demand that an argument be named, and this one does. Put <code>area=</code> back.</p>
-<p>Last, in the Scripting panel, run <code>importlib.reload(halfmoon)</code> while the panel is open, and then run the script again. Two panels. The reload ran <code>KEPT = {}</code> again, which made a new, empty shelf, and the panel that the old shelf held is on nobody's list. Close it by hand. A shelf in a module is only as lasting as the module.</p>
+<p>Last, in the Scripting panel, run <code>import sys</code> and then <code>del sys.kept_windows</code> while the panel is open, and then run the script again. Two panels. The first <code>keep</code> after the <code>del</code> found no shelf, made a new, empty one, and the panel that the old shelf held is on nobody's list. Close it by hand. A shelf is only as lasting as the drawer it sits in.</p>
 <h2 id="what-you-learned">What you learned<a class="headerlink" href="#what-you-learned" title="Permanent link">&para;</a></h2>
-<p>A modal window makes everything wait, a modeless one doesn't, and a panel is a modeless one with a place in FontLab's frame. An object lasts only while something refers to it, and a script's own names stop referring the moment the script ends. A dictionary in a module you import outlasts every script, so it can hold a panel's owner and close the old panel when a new one is asked for. A Python function can require an argument by name, which is a different matter from Qt's calls refusing names.</p>
+<p>A modal window makes everything wait, a modeless one doesn't, and a panel is a modeless one with a place in FontLab's frame. An object lasts only while something refers to it, and a script's own names stop referring the moment the script ends. A dictionary in a drawer of a loaded module such as <code>sys</code> outlasts every script, so it can hold a panel's owner and close the old panel when a new one is asked for. A Python function can require an argument by name, which is a different matter from Qt's calls refusing names.</p>
 <h2 id="try-it-yourself">Try it yourself<a class="headerlink" href="#try-it-yourself" title="Permanent link">&para;</a></h2>
 <ol>
 <li>Open the panel at the bottom. One line changes. Then decide which edge suits a panel of four short lines, and say why.</li>

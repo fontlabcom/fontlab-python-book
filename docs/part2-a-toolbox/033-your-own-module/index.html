@@ -1463,10 +1463,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#step-2-where-python-looks" class="md-nav__link">
+  <a href="#step-2-two-ways-to-borrow" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 2: Where Python looks
+        Step 2: Two ways to borrow
       
     </span>
   </a>
@@ -1474,10 +1474,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#step-3-write-the-module" class="md-nav__link">
+  <a href="#step-3-where-python-looks" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 3: Write the module
+        Step 3: Where Python looks
       
     </span>
   </a>
@@ -1485,10 +1485,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#step-4-borrow-from-it" class="md-nav__link">
+  <a href="#step-4-write-a-small-one" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 4: Borrow from it
+        Step 4: Write a small one
       
     </span>
   </a>
@@ -1507,21 +1507,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#step-6-thin-scripts" class="md-nav__link">
+  <a href="#step-6-what-a-module-of-your-own-costs" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 6: Thin scripts
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#the-whole-module" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        The whole module
+        Step 6: What a module of your own costs
       
     </span>
   </a>
@@ -5192,10 +5181,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#step-2-where-python-looks" class="md-nav__link">
+  <a href="#step-2-two-ways-to-borrow" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 2: Where Python looks
+        Step 2: Two ways to borrow
       
     </span>
   </a>
@@ -5203,10 +5192,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#step-3-write-the-module" class="md-nav__link">
+  <a href="#step-3-where-python-looks" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 3: Write the module
+        Step 3: Where Python looks
       
     </span>
   </a>
@@ -5214,10 +5203,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#step-4-borrow-from-it" class="md-nav__link">
+  <a href="#step-4-write-a-small-one" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 4: Borrow from it
+        Step 4: Write a small one
       
     </span>
   </a>
@@ -5236,21 +5225,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#step-6-thin-scripts" class="md-nav__link">
+  <a href="#step-6-what-a-module-of-your-own-costs" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 6: Thin scripts
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#the-whole-module" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        The whole module
+        Step 6: What a module of your own costs
       
     </span>
   </a>
@@ -5310,12 +5288,12 @@
 <p>Tuesday. Ines changes her mind about green. The approved glyphs are hard to tell from the yellow ones on her laptop, so from today "done" is a bluer green, number 151.</p>
 <p>Mira opens <code>status_marks.py</code> and changes one line, which is what constants are for. Then she remembers that <code>mark_empty.py</code> has a <code>GREEN</code> in it too, and so does the script from the exercise in chapter 14, and so does something she wrote on a Friday afternoon and called <code>test2.py</code>. She pasted the same three lines into each of them. Now she has four copies of one fact, and three of them are out of date.</p>
 <p>The same has happened to <code>widest_glyph</code> and <code>is_empty</code>. Every script that needs them carries its own copy, and the copies have started to differ.</p>
-<p>Functions cured copying inside one script. Today's cure is for copying between scripts: one file that holds the shared parts, which every other script borrows from.</p>
+<p>Python's answer to copying between scripts is the module: one file that holds the shared parts, which other scripts borrow from. You've used modules since chapter 4 without calling them that. Today you find out how they work, write a small one, and see what it costs.</p>
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li>FontLab 9 with Fly installed, and <code>Plum-practice</code> open.</li>
 <li><code>status_marks.py</code> from <a href="../032-tags-and-marks/">chapter 32</a>.</li>
-<li>Your <code>Friday Report.py</code> from <a href="../../part1-first-words/018-save-it-run-it-again/">chapter 18</a>.</li>
+<li>Your <code>Friday Report.py</code> from <a href="../../part1-first-words/018-save-it-run-it-again/">chapter 18</a>, for the first exercise.</li>
 </ul>
 <h2 id="step-1-youve-been-doing-this-since-chapter-4">Step 1: You've been doing this since chapter 4<a class="headerlink" href="#step-1-youve-been-doing-this-since-chapter-4" title="Permanent link">&para;</a></h2>
 <p>Look at the first line of nearly every script you've written:</p>
@@ -5323,8 +5301,29 @@
 </code></pre></div>
 <p>In chapter 4 I asked you to type this line on trust. Here's what it does. Somewhere on your disk there's a folder called <code>fly</code> with Python files in it. Somebody wrote functions and boxes in those files, exactly as you write them. <code>import</code> finds the files, runs them once and hands you what they define.</p>
 <p>A Python file that's meant to be borrowed from, and not run by itself, is called a <strong>module</strong>. <code>csv</code> is a module. So is <code>pathlib</code>. Neither is part of the language. They're files that came with Python, written by people, and you can open them and read them.</p>
-<p>So you can write one too. A module is a text file whose name ends in <code>.py</code>. The only question is where to put it.</p>
-<h2 id="step-2-where-python-looks">Step 2: Where Python looks<a class="headerlink" href="#step-2-where-python-looks" title="Permanent link">&para;</a></h2>
+<h2 id="step-2-two-ways-to-borrow">Step 2: Two ways to borrow<a class="headerlink" href="#step-2-two-ways-to-borrow" title="Permanent link">&para;</a></h2>
+<p>There are two shapes of import, and you've met both. Here they are side by side, with two modules that come with Python:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span><span class="s2">"done"</span><span class="p">:</span> <span class="mi">9</span><span class="p">}))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">())</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>{"done": 9}
+/Users/mira
+</code></pre></div>
+<p><code>import json</code> hands you the whole module under its own name. You reach inside it with a dot: <code>json.dumps</code> opens the drawer called <code>dumps</code> and calls what's in it. The dot is the same dot as always. A module is an object, and its drawers are the names its file defined.</p>
+<p><code>from pathlib import Path</code> reaches in once, takes out one name and puts it on your desk. After that you write <code>Path</code> and not <code>pathlib.Path</code>. That's the shape of <code>from fly import fl</code>, which you can now read in full: from the module <code>fly</code>, take the name <code>fl</code>.</p>
+<p>A module can hold other modules, the way a folder holds folders. The long line from chapter 8 is a path of that kind:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
+</code></pre></div>
+<p>Read it from the left. In <code>fly</code> there's <code>tr</code>, which is TypeRig. In TypeRig there's <code>proxy</code>, in that there's <code>fl</code>, then <code>objects</code>, and in that a file called <code>glyph.py</code>. From that file, take <code>pGlyph</code>. Every dot is one step into a folder, and the last step is a file.</p>
+<p>When the path is long and you want the whole module and not one name from it, you can give it a short name with <code>as</code>. Chapter 15 did this:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
+</code></pre></div>
+<p>That's the module <code>scripting</code>, four folders down inside FontLab's own app code, called <code>scripting</code> from here on.</p>
+<p>Which shape is better? Use the dot when the name alone wouldn't tell a reader where it came from. <code>json.dumps</code> says it's JSON's. A bare <code>dumps</code> in line 60 of a script would send you hunting. Use <code>from</code> when the name is clear by itself, like <code>Path</code> or <code>pGlyph</code>, or when the dotted path is too long to write twice.</p>
+<h2 id="step-3-where-python-looks">Step 3: Where Python looks<a class="headerlink" href="#step-3-where-python-looks" title="Permanent link">&para;</a></h2>
 <p>When you write <code>import csv</code>, Python doesn't search your whole disk. It has a short list of folders, and it looks in each one in turn. You can read the list:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 
@@ -5335,7 +5334,7 @@
 <div class="highlight"><pre><span></span><code>/Applications/FontLab 9.app/Contents/Resources/python3.11/lib/python3.11
 /Users/mira/Library/Application Support/FontLab/FontLab 9/python/3.11/site-packages
 </code></pre></div>
-<p>Find the line that ends in <code>site-packages</code> and sits inside your own user folder. That's where the installer put Fly in chapter 4. It's a folder that belongs to you, FontLab's Python looks in it, and a FontLab update shouldn't empty it. That's where your module goes.</p>
+<p>Find the line that ends in <code>site-packages</code> and sits inside your own user folder. That's where the installer put Fly in chapter 4. It's a folder that belongs to you, FontLab's Python looks in it, and a FontLab update shouldn't empty it.</p>
 <p>To open that folder without hunting for it, print it so you can copy it:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 
@@ -5344,10 +5343,41 @@
         <span class="nb">print</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
 </code></pre></div>
 <p>If that prints two lines, take the one with your name in it. On a Mac, copy the line, switch to the Finder, choose <strong>Go &gt; Go to Folder…</strong> and paste. On Windows, paste it into the address bar of an Explorer window.</p>
-<h2 id="step-3-write-the-module">Step 3: Write the module<a class="headerlink" href="#step-3-write-the-module" title="Permanent link">&para;</a></h2>
-<p>In the Scripting panel, start a new script and type this. It's everything that Mira's scripts share so far:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># Shared tools for Halfmoon Type scripts.</span>
-<span class="c1"># Borrow from it with: import halfmoon</span>
+<p>If Python goes through every folder on the list and finds nothing, you get this:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">jsno</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>ModuleNotFoundError: No module named 'jsno'
+</code></pre></div>
+<p>Read the name in quotes first. Nine times in ten it's a typing slip. The tenth time, the module really isn't in any folder on the list.</p>
+<h2 id="step-4-write-a-small-one">Step 4: Write a small one<a class="headerlink" href="#step-4-write-a-small-one" title="Permanent link">&para;</a></h2>
+<p>A module is a text file whose name ends in <code>.py</code>, in one of those folders. To see how that works from the inside, write a small one. In the Scripting panel, start a new script and type this:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Ines's status colors, for trying out modules.</span>
+<span class="n">RED</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">YELLOW</span> <span class="o">=</span> <span class="mi">61</span>
+<span class="n">GREEN</span> <span class="o">=</span> <span class="mi">151</span>
+
+<span class="n">LEGEND</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mi">0</span><span class="p">:</span> <span class="s2">"untouched"</span><span class="p">,</span>
+    <span class="n">RED</span><span class="p">:</span> <span class="s2">"not-drawn"</span><span class="p">,</span>
+    <span class="n">YELLOW</span><span class="p">:</span> <span class="s2">"needs-work"</span><span class="p">,</span>
+    <span class="n">GREEN</span><span class="p">:</span> <span class="s2">"done"</span><span class="p">,</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Save it with the name <code>studio_marks.py</code> in the <code>site-packages</code> folder from Step 3. The name matters: all lowercase, no spaces, no hyphen, and not a name Python already uses. Call it <code>csv.py</code> and <code>import csv</code> will go on giving you Python's own, because that folder comes first in the list. Yours would never be found.</p>
+<p>Now run it. Nothing is printed, and that's correct. The file defines three boxes and a dictionary, and then it ends. A module is a shelf, and running it only puts things on the shelf.</p>
+<p>Start another new script and borrow from it:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">studio_marks</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">studio_marks</span><span class="o">.</span><span class="n">GREEN</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">studio_marks</span><span class="o">.</span><span class="n">LEGEND</span><span class="p">[</span><span class="n">studio_marks</span><span class="o">.</span><span class="n">GREEN</span><span class="p">])</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>151
+done
+</code></pre></div>
+<p>That's all a module of your own is. Nothing about <code>studio_marks.py</code> is different from <code>json</code> or <code>fly</code>, apart from who wrote it.</p>
+<h2 id="step-5-the-edit-that-doesnt-take">Step 5: The edit that doesn't take<a class="headerlink" href="#step-5-the-edit-that-doesnt-take" title="Permanent link">&para;</a></h2>
+<p>Ines's question from yesterday was whether the Friday report could count statuses. That's the tally loop from chapter 32. Open <code>studio_marks.py</code>, add two lines at the top and a function at the bottom, so that the whole file reads:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Ines's status colors, for trying out modules.</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
 
 <span class="n">RED</span> <span class="o">=</span> <span class="mi">1</span>
@@ -5362,101 +5392,62 @@
 <span class="p">}</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span>
-
-
-<span class="k">def</span><span class="w"> </span><span class="nf">is_empty</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span><span class="o">.</span><span class="n">isEmpty</span><span class="p">()</span>
-
-
-<span class="k">def</span><span class="w"> </span><span class="nf">widest_glyph</span><span class="p">(</span><span class="n">font</span><span class="p">):</span>
-    <span class="n">widest</span> <span class="o">=</span> <span class="n">font</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="k">for</span> <span class="n">glyph</span> <span class="ow">in</span> <span class="n">font</span><span class="o">.</span><span class="n">glyphs</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">glyph</span><span class="o">.</span><span class="n">width</span> <span class="o">&gt;</span> <span class="n">widest</span><span class="o">.</span><span class="n">width</span><span class="p">:</span>
-            <span class="n">widest</span> <span class="o">=</span> <span class="n">glyph</span>
-    <span class="k">return</span> <span class="n">widest</span>
-</code></pre></div>
-<p>Save it with the name <code>halfmoon.py</code> in the <code>site-packages</code> folder from Step 2. The name matters: all lowercase, no spaces, no hyphen, and not a name Python already uses. Call it <code>csv.py</code> and <code>import csv</code> will go on giving you Python's own, because that folder comes first in the list. Yours would never be found.</p>
-<p>Now run it. Nothing is printed, and that's correct. The file defines three boxes, a dictionary and three functions, and then it ends. It never calls any of them. A module is a shelf of tools, and running it only puts the tools on the shelf.</p>
-<p>Notice the import at the top. A module does its own importing. <code>halfmoon.py</code> needs <code>pGlyph</code>, so it says so, and a script that borrows from <code>halfmoon</code> doesn't have to know that.</p>
-<p><code>rich</code> is the smallest function you've written: one line that calls something and returns what it gets. It earns its place anyway. <code>pGlyph(font, glyph)</code> was in several of Mira's scripts, along with that long import line. Now the long line lives in one file.</p>
-<h2 id="step-4-borrow-from-it">Step 4: Borrow from it<a class="headerlink" href="#step-4-borrow-from-it" title="Permanent link">&para;</a></h2>
-<p>Start another new script:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
-
-<span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">halfmoon</span><span class="o">.</span><span class="n">GREEN</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">halfmoon</span><span class="o">.</span><span class="n">widest_glyph</span><span class="p">(</span><span class="n">font</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">halfmoon</span><span class="o">.</span><span class="n">is_empty</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"a.sc"</span><span class="p">]))</span>
-</code></pre></div>
-<div class="highlight"><pre><span></span><code>151
-emdash
-True
-</code></pre></div>
-<p>The dot is the same dot as always. <code>halfmoon</code> is an object, with drawers, and its drawers are the names the file defined. <code>halfmoon.GREEN</code> opens the drawer called <code>GREEN</code>. <code>halfmoon.widest_glyph(font)</code> takes the function out of its drawer and calls it.</p>
-<p>You can also take one name out and keep it on your own desk:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">halfmoon</span><span class="w"> </span><span class="kn">import</span> <span class="n">GREEN</span><span class="p">,</span> <span class="n">widest_glyph</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="n">GREEN</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">widest_glyph</span><span class="p">(</span><span class="n">font</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-</code></pre></div>
-<p>That's the shape of <code>from fly import fl</code>, which you now can read in full: from the module <code>fly</code>, take the name <code>fl</code>.</p>
-<p>Which of the two is better? For your own module, I'd use <code>import halfmoon</code> and write the dots. <code>halfmoon.GREEN</code> says where the green comes from. Six months from now a bare <code>GREEN</code> in line 60 of a script will send you looking for its definition, and it won't be in that file.</p>
-<p>If the import fails, you'll see this:</p>
-<div class="highlight"><pre><span></span><code>ModuleNotFoundError: No module named 'halfmoon'
-</code></pre></div>
-<p>Python went through every folder in <code>sys.path</code> and found no <code>halfmoon.py</code>. Either the file is in a folder that isn't on the list, or its name isn't what you think it is. Look for a capital <code>H</code>, or for <code>halfmoon.py.txt</code>.</p>
-<h2 id="step-5-the-edit-that-doesnt-take">Step 5: The edit that doesn't take<a class="headerlink" href="#step-5-the-edit-that-doesnt-take" title="Permanent link">&para;</a></h2>
-<p>Ines's question from yesterday was whether the Friday report could count statuses. That's the tally loop from chapter 32, and it belongs in the module. Open <code>halfmoon.py</code> and add a function at the bottom:</p>
-<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">status_tally</span><span class="p">(</span><span class="n">font</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">status_tally</span><span class="p">(</span><span class="n">font</span><span class="p">):</span>
     <span class="n">tally</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">glyph</span> <span class="ow">in</span> <span class="n">font</span><span class="o">.</span><span class="n">glyphs</span><span class="p">:</span>
-        <span class="n">status</span> <span class="o">=</span> <span class="n">LEGEND</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span><span class="o">.</span><span class="n">mark</span><span class="p">,</span> <span class="s2">"unknown-color"</span><span class="p">)</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="n">LEGEND</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span><span class="o">.</span><span class="n">mark</span><span class="p">,</span> <span class="s2">"unknown-color"</span><span class="p">)</span>
         <span class="n">tally</span><span class="p">[</span><span class="n">status</span><span class="p">]</span> <span class="o">=</span> <span class="n">tally</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
     <span class="k">return</span> <span class="n">tally</span>
 </code></pre></div>
-<p>Save it. Go back to the other script and use it:</p>
+<p>Notice the import at the top. A module does its own importing. <code>status_tally</code> needs <code>pGlyph</code>, so the module says so, and a script that borrows from it doesn't have to know.</p>
+<p>Save it. Go back to the other script and use the new function:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">studio_marks</span>
 
 <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">halfmoon</span><span class="o">.</span><span class="n">status_tally</span><span class="p">(</span><span class="n">font</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">studio_marks</span><span class="o">.</span><span class="n">status_tally</span><span class="p">(</span><span class="n">font</span><span class="p">))</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>AttributeError: module 'halfmoon' has no attribute 'status_tally'
+<div class="highlight"><pre><span></span><code>AttributeError: module 'studio_marks' has no attribute 'status_tally'
 </code></pre></div>
 <p>The function is in the file. You can see it. You saved. And Python says it isn't there.</p>
-<p>Everybody who writes a module walks into this in the first hour. I said in Step 1 that <code>import</code> runs the file once. It means once. The first <code>import halfmoon</code> read the file and built the module. Every later <code>import halfmoon</code>, in this script or any other, gets the module that's already built. Python doesn't look at the file again. It does this for speed, and it's a sound rule for <code>csv</code>, which doesn't change while you work. For a module you're in the middle of writing, it means FontLab is still holding yesterday's copy.</p>
+<p>Everybody who writes a module walks into this in the first hour. I said in Step 1 that <code>import</code> runs the file once. It means once. The first <code>import studio_marks</code> read the file and built the module. Every later <code>import studio_marks</code>, in this script or any other, gets the module that's already built. Python doesn't look at the file again. It does this for speed, and it's a sound rule for <code>json</code>, which doesn't change while you work. For a module you're in the middle of writing, it means FontLab is still holding the old copy.</p>
 <p>A script in the Scripting panel is read each time you run it. A module isn't. That's why you've never met the problem before.</p>
 <p>There are two ways out. Quitting FontLab and starting it again always works, since a new session has nothing built. The quicker way is to ask for a fresh read:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">studio_marks</span>
 
-<span class="n">importlib</span><span class="o">.</span><span class="n">reload</span><span class="p">(</span><span class="n">halfmoon</span><span class="p">)</span>
+<span class="n">importlib</span><span class="o">.</span><span class="n">reload</span><span class="p">(</span><span class="n">studio_marks</span><span class="p">)</span>
 
 <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">halfmoon</span><span class="o">.</span><span class="n">status_tally</span><span class="p">(</span><span class="n">font</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">studio_marks</span><span class="o">.</span><span class="n">status_tally</span><span class="p">(</span><span class="n">font</span><span class="p">))</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>{'untouched': 197, 'unknown-color': 10, 'needs-work': 3, 'not-drawn': 3}
 </code></pre></div>
-<p><code>importlib.reload(halfmoon)</code> reads the file again and rebuilds the module in place. Keep that line in while you're working on the module, and take it out when the module has settled.</p>
+<p><code>importlib.reload(studio_marks)</code> reads the file again and rebuilds the module in place. <code>importlib</code> is one more module that comes with Python. Keep that line in while you're working on a module, and take it out when the module has settled.</p>
 <p>The function is found. Now read what it found: ten glyphs in an unknown color and none done. That's correct too. The module says done is 151, and the nine green cells in your practice font were painted 121 in chapter 32. Ines's new green is a decision for the studio's Plum, where somebody will repaint the cells. Your practice font keeps the old one.</p>
-<p>Change <code>GREEN</code> back to 121 in <code>halfmoon.py</code>, save, and run the script again. The reload line is still in it, so the change takes:</p>
+<p>Change <code>GREEN</code> back to 121 in <code>studio_marks.py</code>, save, and run the script again. The reload line is still in it, so the change takes:</p>
 <div class="highlight"><pre><span></span><code>{'untouched': 197, 'done': 9, 'unknown-color': 1, 'needs-work': 3, 'not-drawn': 3}
 </code></pre></div>
 <p>The pairs come in the order the font first showed each status: <code>A</code> is green and comes before the odd <code>Q</code>, which comes before the yellow <code>a</code>.</p>
-<h2 id="step-6-thin-scripts">Step 6: Thin scripts<a class="headerlink" href="#step-6-thin-scripts" title="Permanent link">&para;</a></h2>
+<details class="info">
+<summary>Going deeper: lines that run only when a module is run directly</summary>
+<p>A module can hold a few lines that run only when you run the file directly, and not when another script imports it. You'll see them in other people's modules, looking like this:</p>
+<div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">LEGEND</span><span class="p">)</span>
+</code></pre></div>
+<p>Python puts the name of each module in a box called <code>__name__</code>. For the file you ran, the box holds <code>"__main__"</code>. For a file that was imported, it holds the module's own name. People use those lines for a quick test of the module. You can leave them alone for now.</p>
+</details>
+<h2 id="step-6-what-a-module-of-your-own-costs">Step 6: What a module of your own costs<a class="headerlink" href="#step-6-what-a-module-of-your-own-costs" title="Permanent link">&para;</a></h2>
 <p>Now look at what's left of <code>status_marks.py</code> when the module does the shared work:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Reports how many glyphs have each of Ines's statuses.</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">studio_marks</span>
 
 <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
-<span class="n">tally</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">status_tally</span><span class="p">(</span><span class="n">font</span><span class="p">)</span>
+<span class="n">tally</span> <span class="o">=</span> <span class="n">studio_marks</span><span class="o">.</span><span class="n">status_tally</span><span class="p">(</span><span class="n">font</span><span class="p">)</span>
 
-<span class="k">for</span> <span class="n">status</span> <span class="ow">in</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">LEGEND</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+<span class="k">for</span> <span class="n">status</span> <span class="ow">in</span> <span class="n">studio_marks</span><span class="o">.</span><span class="n">LEGEND</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">status</span><span class="si">:</span><span class="s2">&lt;14</span><span class="si">}{</span><span class="n">tally</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">status</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="si">:</span><span class="s2">&gt;4</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">'unknown-color'</span><span class="si">:</span><span class="s2">&lt;14</span><span class="si">}{</span><span class="n">tally</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'unknown-color'</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="si">:</span><span class="s2">&gt;4</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </code></pre></div>
@@ -5466,73 +5457,22 @@ needs-work       3
 done             9
 unknown-color    1
 </code></pre></div>
-<p>Seven lines and a comment, and they say what the script is for. The rest of the work is in the module.</p>
-<p>Do the same to <code>Friday Report.py</code>. Delete its own <code>widest_glyph</code>, add <code>import halfmoon</code>, and call <code>halfmoon.widest_glyph(font)</code>. Then give Ines her statuses. The report goes to a file, so the new lines belong inside the <code>with</code> block, indented to match the lines already there, and each <code>print</code> needs its <code>file=f</code>:</p>
-<div class="highlight"><pre><span></span><code>        <span class="n">tally</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">status_tally</span><span class="p">(</span><span class="n">font</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">status</span> <span class="ow">in</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">LEGEND</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">status</span><span class="si">:</span><span class="s2">&lt;14</span><span class="si">}{</span><span class="n">tally</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">status</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="si">:</span><span class="s2">&gt;4</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">'unknown-color'</span><span class="si">:</span><span class="s2">&lt;14</span><span class="si">}{</span><span class="n">tally</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'unknown-color'</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="si">:</span><span class="s2">&gt;4</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
+<p>Seven lines and a comment. It's short, and the green lives in one place.</p>
+<p>Now Mira sends this script to Ines, who runs it on her laptop:</p>
+<div class="highlight"><pre><span></span><code>ModuleNotFoundError: No module named 'studio_marks'
 </code></pre></div>
-<p>Leave off <code>file=f</code> and those lines go to the Output panel while the file stays as it was. The file in the Scripts folder is still the thing you click in the menu, and <code>halfmoon.py</code> stays in the folder Python searches. One is a script you run. The other is a module you borrow from.</p>
-<p>That's the rule for what goes where. If two scripts need the same function, the same constant or the same legend, it goes in the module. Whatever makes this script different from that one stays in the script.</p>
-<details class="info">
-<summary>Going deeper: lines that run only when a module is run directly</summary>
-<p>A module can hold a few lines that run only when you run the file directly, and not when another script imports it. You'll see them in other people's modules, looking like this:</p>
-<div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">LEGEND</span><span class="p">)</span>
-</code></pre></div>
-<p>Python puts the name of each module in a box called <code>__name__</code>. For the file you ran, the box holds <code>"__main__"</code>. For a file that was imported, it holds the module's own name. People use those lines for a quick test of the module. You can leave them alone for now.</p>
-</details>
-<h2 id="the-whole-module">The whole module<a class="headerlink" href="#the-whole-module" title="Permanent link">&para;</a></h2>
-<p><code>halfmoon.py</code>, as it stands today:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># Shared tools for Halfmoon Type scripts.</span>
-<span class="c1"># Borrow from it with: import halfmoon</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
-
-<span class="n">RED</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="n">YELLOW</span> <span class="o">=</span> <span class="mi">61</span>
-<span class="n">GREEN</span> <span class="o">=</span> <span class="mi">121</span>
-
-<span class="n">LEGEND</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="mi">0</span><span class="p">:</span> <span class="s2">"untouched"</span><span class="p">,</span>
-    <span class="n">RED</span><span class="p">:</span> <span class="s2">"not-drawn"</span><span class="p">,</span>
-    <span class="n">YELLOW</span><span class="p">:</span> <span class="s2">"needs-work"</span><span class="p">,</span>
-    <span class="n">GREEN</span><span class="p">:</span> <span class="s2">"done"</span><span class="p">,</span>
-<span class="p">}</span>
-
-
-<span class="k">def</span><span class="w"> </span><span class="nf">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span>
-
-
-<span class="k">def</span><span class="w"> </span><span class="nf">is_empty</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span><span class="o">.</span><span class="n">isEmpty</span><span class="p">()</span>
-
-
-<span class="k">def</span><span class="w"> </span><span class="nf">widest_glyph</span><span class="p">(</span><span class="n">font</span><span class="p">):</span>
-    <span class="n">widest</span> <span class="o">=</span> <span class="n">font</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="k">for</span> <span class="n">glyph</span> <span class="ow">in</span> <span class="n">font</span><span class="o">.</span><span class="n">glyphs</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">glyph</span><span class="o">.</span><span class="n">width</span> <span class="o">&gt;</span> <span class="n">widest</span><span class="o">.</span><span class="n">width</span><span class="p">:</span>
-            <span class="n">widest</span> <span class="o">=</span> <span class="n">glyph</span>
-    <span class="k">return</span> <span class="n">widest</span>
-
-
-<span class="k">def</span><span class="w"> </span><span class="nf">status_tally</span><span class="p">(</span><span class="n">font</span><span class="p">):</span>
-    <span class="n">tally</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">glyph</span> <span class="ow">in</span> <span class="n">font</span><span class="o">.</span><span class="n">glyphs</span><span class="p">:</span>
-        <span class="n">status</span> <span class="o">=</span> <span class="n">LEGEND</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span><span class="o">.</span><span class="n">mark</span><span class="p">,</span> <span class="s2">"unknown-color"</span><span class="p">)</span>
-        <span class="n">tally</span><span class="p">[</span><span class="n">status</span><span class="p">]</span> <span class="o">=</span> <span class="n">tally</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
-    <span class="k">return</span> <span class="n">tally</span>
-</code></pre></div>
-<p>It will grow. From here on, when a chapter writes a function that more than one script could use, I'll say "put it in <code>halfmoon.py</code>", and you'll know what that means.</p>
-<p>In the studio's copy Mira changes one line, <code>GREEN = 151</code>, in one file, and repaints nine cells. Yours stays at 121, to match the cells you painted. Then she deletes <code>test2.py</code>.</p>
+<p>Of course. <code>studio_marks.py</code> is in Mira's <code>site-packages</code> folder, not in Ines's. The thin script only works on a machine that has the module, and the module is a file you have to remember to copy along with it, and to copy again every time it changes. The same goes for anyone who picks up one of your scripts a year from now on a new computer.</p>
+<p>So there's a trade. A module of your own keeps a fact in one place, and a script that carries its own copy runs anywhere Fly is installed. For a few scripts on one machine, the copies are easier. For a set of tools that a whole studio uses, a module is right, and chapter 133 shows how to pack one up properly so that it travels.</p>
+<p>This book takes the first side until then. Every listing from here on carries the functions it needs, so you can open any chapter and run its scripts without anything from an earlier one. When a function comes back, I'll say where you first wrote it, and paste it again. Chapter 40 gathers the most useful ones in one place, ready to paste.</p>
+<p><code>studio_marks.py</code> was for learning. No later chapter imports it, and you can delete it from <code>site-packages</code> whenever you like.</p>
+<p>In the studio's copies Mira changes <code>GREEN = 151</code> in four places, puts the constants at the top of each script where she'll see them next time, and repaints nine cells. Yours stay at 121, to match the cells you painted. Then she deletes <code>test2.py</code>.</p>
 <h2 id="what-you-learned">What you learned<a class="headerlink" href="#what-you-learned" title="Permanent link">&para;</a></h2>
-<p>A module is a Python file that other scripts borrow from with <code>import</code>, and its functions and constants are reached with a dot. Python looks for modules only in the folders listed in <code>sys.path</code>, and it reads each one once per session, so an edited module needs <code>importlib.reload</code> or a restart of FontLab. Keep what scripts share in the module and what makes a script different in the script.</p>
+<p>A module is a Python file that other scripts borrow from with <code>import</code>. <code>import json</code> hands you the whole module and you reach in with a dot. <code>from pathlib import Path</code> takes one name out. Dots in an import path are steps into folders, and <code>as</code> gives a long path a short name. Python looks for modules only in the folders listed in <code>sys.path</code>, and says <code>ModuleNotFoundError</code> when it finds nothing. It reads each module once per session, so a module you've edited needs <code>importlib.reload</code> or a restart of FontLab, or you get an <code>AttributeError</code> for the name you just added. A module of your own has to travel with every script that imports it.</p>
 <h2 id="try-it-yourself">Try it yourself<a class="headerlink" href="#try-it-yourself" title="Permanent link">&para;</a></h2>
 <ol>
-<li>Move <code>names_without_unicode(font)</code> from your Friday report into <code>halfmoon.py</code>, and change the report to call it with the dot. Run the report before and after. The output shouldn't change by a single character, and that's the test of whether you moved it correctly.</li>
-<li>Add a constant <code>UNKNOWN = "unknown-color"</code> to the module and use it in <code>status_tally</code>. Then use <code>halfmoon.UNKNOWN</code> in the thin script too. How many places hold that word now?</li>
-<li>Rename <code>halfmoon.py</code> to <code>Halfmoon Tools.py</code> and run <code>import halfmoon</code> again. Why does it still work? Now run <code>importlib.reload(halfmoon)</code> and read the error. Then try <code>import Halfmoon Tools</code> and read that one. Which of the two errors comes from Python looking for a file, and which comes before it looks at all? Put the name back when you're done.</li>
+<li>Copy <code>names_without_unicode(font)</code> from your Friday report into <code>studio_marks.py</code>, reload, and call it from a new script as <code>studio_marks.names_without_unicode(font)</code>. The output should match the report's line for line. Then ask yourself what Ines would need on her laptop to run that new script.</li>
+<li>Add a constant <code>UNKNOWN = "unknown-color"</code> to the module and use it in <code>status_tally</code>. Then use <code>studio_marks.UNKNOWN</code> in the thin script too. How many places hold that word now?</li>
+<li>Rename <code>studio_marks.py</code> to <code>Studio Marks.py</code> and run <code>import studio_marks</code> again. Why does it still work? Now run <code>importlib.reload(studio_marks)</code> and read the error. Then try <code>import Studio Marks</code> and read that one. Which of the two errors comes from Python looking for a file, and which comes before it looks at all? Put the name back when you're done.</li>
 </ol>
 <h2 id="next">Next<a class="headerlink" href="#next" title="Permanent link">&para;</a></h2>
 <p><code>widest_glyph(font)</code> always looks at every glyph. Mira wants it to look at only the selected ones, sometimes. Chapter 34 gives functions arguments that you may leave out.</p>

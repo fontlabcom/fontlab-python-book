@@ -13,7 +13,6 @@ One limit before you start. The chapter's title says a master, and what you'll m
 ## What you need
 
 - `Plum-practice` open in FontLab 9, saved, with Fly installed.
-- `halfmoon.py` with `tell`.
 - Chapter 106's sum and chapter 55's rule about borrowed glyphs.
 
 I couldn't run the code in FontLab 9. The two calls that make and attach the layer are the ones Fly's Layer Manager uses, and I've followed its order. The output is from a stand-in.
@@ -109,8 +108,17 @@ The other reasons you may meet: `layer already exists`, `master outlines are inc
 import fly.ap.core.history.glyphs as history
 import fly.ap.core.scripting as scripting
 import fly.ap.studios.layer_manager.intermediate as intermediate
-import halfmoon
-from fly import fl
+from fly import fl, qt
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
+
+
+# Chapter 39's tell, written out again so this script runs by itself.
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
 
 GLYPHS = ["zero", "one", "two", "three", "four", "five", "six", "seven",
           "eight", "nine", "hyphen"]
@@ -133,7 +141,7 @@ def interpolated(glyph, values, name):
 
 def main():
     if fl.CurrentFont() is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     package = scripting.current_package()
     axis = package.axes[0]

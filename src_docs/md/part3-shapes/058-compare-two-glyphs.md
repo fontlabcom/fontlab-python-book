@@ -15,7 +15,7 @@ So today's question is whether two glyphs are the same drawing. You'll need a wa
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py` as chapter 49 left it.
+- The scripts from chapters 42 to 49.
 
 Nothing in this chapter changes the font. The outputs below were computed from Plum's source file, not copied from FontLab's Output panel.
 
@@ -24,14 +24,14 @@ Nothing in this chapter changes the font. The outputs below were computed from P
 For comparing, a glyph is its points and nothing else. Make each node into a pair of numbers:
 
 ```python
-import halfmoon
 from fly import fl
+from fly.tr.proxy.fl.objects.glyph import pGlyph
 
 font = fl.CurrentFont()
 
 
 def points_of(font, name, master):
-    nodes = halfmoon.rich(font, font[name]).nodes(master)
+    nodes = pGlyph(font, font[name]).nodes(master)
     return [(node.x, node.y) for node in nodes]
 
 
@@ -240,11 +240,13 @@ Mira can add a pair without reading a line of the code below it. She can also ge
 #FLM: Compare Glyph Pairs
 # Tells whether pairs of glyphs are still the same drawing, turned upside
 # down or mirrored. Changes nothing.
-import halfmoon
-from fly import fl
+from fly import fl, qt
+from fly.ap.ui.dialogs import run_standard_message_box
+from fly.tr.proxy.fl.objects.glyph import pGlyph
 
 MASTERS = ["Light", "Regular", "Bold"]
 TOLERANCE = 3
+TITLE = "Halfmoon"
 PAIRS = [
     ("six", "nine", "turn"),
     ("n", "u", "turn"),
@@ -259,8 +261,13 @@ PAIRS = [
 ]
 
 
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
+
 def points_of(font, name, master):
-    nodes = halfmoon.rich(font, font[name]).nodes(master)
+    nodes = pGlyph(font, font[name]).nodes(master)
     return [(node.x, node.y) for node in nodes]
 
 
@@ -307,7 +314,7 @@ def verdict(gaps):
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     have = {glyph.name for glyph in font.glyphs}
     print(f"{'':<27}{'how':<6}{'L':>4}{'R':>4}{'B':>4}")

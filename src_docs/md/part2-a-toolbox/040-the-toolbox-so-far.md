@@ -13,13 +13,13 @@ There's almost no new Python in this chapter: one conversion, `tuple(...)`, whic
 ## What you need
 
 - FontLab 9 with Fly installed, and `Plum-practice` open in the Font window.
-- `halfmoon.py` as [chapter 39](039-ask-the-user.md) left it.
+- The window helpers from [chapter 39](039-ask-the-user.md). They're repeated below, so you don't need the old scripts.
 - `smallcaps.txt` from chapter 27, in your `scripting-book` folder.
 - Save the font before you start. This script adds glyphs.
 
-## Step 1: Move the reader into the module
+## Step 1: Make the reader a function
 
-In chapter 27 you wrote the lines that read a list of names from a file: open it, strip each line, and skip blanks and the lines that start with `#`. A second script needs them now, and the rule from chapter 33 says what to do. Put it in `halfmoon.py`:
+In chapter 27 you wrote the lines that read a list of names from a file: open it, strip each line, and skip blanks and the lines that start with `#`. A second script needs them now, so give them a name. Start the new script, `add_from_list.py`, with this function:
 
 ```python
 def read_names(path):
@@ -38,15 +38,14 @@ I haven't folded this into a comprehension. You could, but the line needs a box,
 
 ## Step 2: Work out what's missing
 
-Start the new script. Call it `add_from_list.py` for now.
+Add these lines to `add_from_list.py`. The imports go at the top, the rest below `read_names`:
 
 ```python
 from pathlib import Path
 from fly import fl
-import halfmoon
 
 font = fl.CurrentFont()
-wanted = halfmoon.read_names(Path(font.path).parent / "smallcaps.txt")
+wanted = read_names(Path(font.path).parent / "smallcaps.txt")
 
 have = {glyph.name for glyph in font.glyphs}
 to_make = [name for name in wanted if name not in have]
@@ -115,14 +114,14 @@ ValueError: Refused: d.sc is listed twice.
 
 The traceback above that line runs through a file called `creation.py`. Chapter 38 told you what to do with it: the last line is a refusal that somebody wrote on purpose, and the last step of the trail that's yours is the `create_glyphs` line. The helper looked through all the forms before it touched the font, found the same name twice, and stopped. Look at the Font window. Nothing has been added, including the six glyphs that were fine. It's the all-or-nothing rule from chapter 31, and here the helper enforces it for you.
 
-You could fix the file. But the art director's files will always have such things in them, and the right place to cope is the reader. In `halfmoon.py`, change one line of `read_names`:
+You could fix the file. But the art director's files will always have such things in them, and the right place to cope is the reader. Change one line of `read_names`:
 
 ```python
             if name and not name.startswith("#") and name not in names:
                 names.append(name)
 ```
 
-Now a name that's already in the list is skipped. Reload the module and run the script again.
+Now a name that's already in the list is skipped. Run the script again.
 
 ```text
 7 glyphs added
@@ -134,7 +133,7 @@ The helper refuses in two other cases that you should know about. If any name in
 
 ## The whole script
 
-Wrap it in `main`, add the guards and the questions, and give it a menu name:
+Wrap it in `main`, add the guards and the questions, and give it a menu name. The script carries `tell`, `ask` and `choose_text_file` from chapter 39 and the finished `read_names` from Step 4, so it runs by itself:
 
 ```python
 #FLM: Add Glyphs From List
@@ -145,40 +144,76 @@ from fly import fl
 import fly.ap.core.scripting as scripting
 import fly.ap.core.history.glyphs as history
 from fly.ap.glyphs.creation import NewGlyph, create_glyphs
-import halfmoon
+from fly import qt
+from fly.ap.ui.dialogs import run_standard_message_box, run_file_dialog
 
+TITLE = "Halfmoon Type"
 MASTERS = ["Light", "Regular", "Bold"]
 WIDTH = 500
+
+
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
+
+def ask(question):
+    box = qt.QtGui.QMessageBox
+    answer = run_standard_message_box(
+        qt, fl.MainWindow(), TITLE, question, "Question", box.Yes | box.No
+    )
+    return answer == box.Yes
+
+
+def text_files_only(kind, dialog):
+    dialog.setNameFilters(["Text files (*.txt)"])
+
+
+def choose_text_file(caption, folder=""):
+    paths = run_file_dialog(qt.QtGui, text_files_only, caption, folder)
+    if paths is None:
+        return None
+    return paths[0]
+
+
+def read_names(path):
+    names = []
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            name = line.strip()
+            if name and not name.startswith("#") and name not in names:
+                names.append(name)
+    return names
 
 
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
 
     folder = Path(font.path).parent if font.path else ""
-    path = halfmoon.choose_text_file("Choose a glyph list", folder)
+    path = choose_text_file("Choose a glyph list", folder)
     if path is None:
         return
 
-    wanted = halfmoon.read_names(path)
+    wanted = read_names(path)
     have = {glyph.name for glyph in font.glyphs}
     to_make = [name for name in wanted if name not in have]
     if not to_make:
-        halfmoon.tell(f"All {len(wanted)} glyphs in the list are in the font already.")
+        tell(f"All {len(wanted)} glyphs in the list are in the font already.")
         return
 
     print(f"{len(wanted)} wanted, {len(to_make)} to make:")
     print(" ".join(to_make))
-    if not halfmoon.ask(f"Add {len(to_make)} empty glyphs, {WIDTH} units wide?"):
+    if not ask(f"Add {len(to_make)} empty glyphs, {WIDTH} units wide?"):
         return
 
     layers = tuple([(master, WIDTH) for master in MASTERS])
     specs = [NewGlyph(name, layers) for name in to_make]
     package = scripting.current_package()
     made = create_glyphs(package, specs, "Add glyphs from list", history.scan_auto_facts(package))
-    halfmoon.tell(f"Added {len(made.glyphs)} glyphs. Each one is its own Undo step.")
+    tell(f"Added {len(made.glyphs)} glyphs. Each one is its own Undo step.")
 
 
 main()
@@ -186,7 +221,7 @@ main()
 
 One line is new in form. `folder = Path(font.path).parent if font.path else ""` uses the value-with-a-choice from chapter 37: the font's folder if the font has been saved, and otherwise an empty string, which lets the file window open wherever it likes. That's the unsaved-font guard chapter 26 left you as an exercise.
 
-Save it as `Add Glyphs From List.py` in `Scripts/Halfmoon/`. It has under fifty lines. The collecting part is three lines long, and the rest is questions, guards and news. That proportion is normal for a script other people will run. It's also why the module matters. If `ask`, `tell`, `choose_text_file` and `read_names` weren't in `halfmoon.py`, this script would be a hundred lines long, and the next one would carry the same hundred lines again.
+Save it as `Add Glyphs From List.py` in `Scripts/Halfmoon/`. The collecting part is three lines long, and the rest is questions, guards and news. That proportion is normal for a script other people will run. About thirty of its lines are the helpers at the top, and they're the same lines every time. That's why you want a clean copy of them to paste from, which is the second thing Mira reads out.
 
 ## What's in the box
 
@@ -202,19 +237,150 @@ Here's what Mira reads out to Ines. First, the menu. These are in `Scripts/Halfm
 
 Look at the third column. Three of the five can't hurt anything. The two that change the font ask first, check before they act, and say how to take the change back. You can now see chapters 29 to 31 and chapter 39 as one lesson spread over four days.
 
-Second, the module. `halfmoon.py` holds what the scripts share:
+Second, the helpers. They aren't in a module, because a script that imports a file of yours only runs on a machine that has the file, as Ines found in chapter 33. They're a set of snippets, kept in one text file, `snippets.py`, in your `scripting-book` folder. You never import it. When a script needs a helper, you copy the block it's in, with its imports, and paste it at the top of the script. Each block below runs by itself.
 
-| Kind | Names |
-|---|---|
-| Constants | `RED`, `YELLOW`, `GREEN`, `LEGEND`, `TITLE` |
-| Glyph questions | `rich`, `is_empty`, `glyphs_of`, `widest_glyph`, `wider_than` |
-| Tables and tallies | `metrics_rows`, `by_width`, `lopsided`, `status_tally` |
-| Files | `read_names` |
-| Windows | `tell`, `ask`, `ask_text`, `choose_text_file`, `choose_save_file` |
+The colours and the tally, from chapters 32 and 33:
 
-That's about twenty names. Every one is a thing Mira got wrong at least once before she got it right, and none of them will have to be got right again.
+```python
+from fly.tr.proxy.fl.objects.glyph import pGlyph
 
-Third, the Python. In Part 1 you learned to say things to a font one glyph at a time. In Part 2 you learned to keep what it answers and to work with other people's material. Dictionaries look things up and count them, and sets compare (chapters 21 to 25). Text files go in and out, and tables go to a spreadsheet (26 to 28). Changes can be undone, plans come before changes and switches default to safe (29 to 31). Constants, a module of your own and functions with defaults keep the scripts short (32 to 34). Rows, sorting and one-line lists shape the answers (35 to 37). And you can read a long error from end to end and ask a person a question (38 and 39).
+RED = 1
+YELLOW = 61
+GREEN = 121
+
+LEGEND = {
+    0: "untouched",
+    RED: "not-drawn",
+    YELLOW: "needs-work",
+    GREEN: "done",
+}
+
+
+def status_tally(font):
+    tally = {}
+    for glyph in font.glyphs:
+        status = LEGEND.get(pGlyph(font, glyph).mark, "unknown-color")
+        tally[status] = tally.get(status, 0) + 1
+    return tally
+```
+
+Glyph questions, from chapters 33, 34 and 37:
+
+```python
+from fly.tr.proxy.fl.objects.glyph import pGlyph
+import fly.ap.core.scripting as scripting
+
+
+def is_empty(font, glyph):
+    return pGlyph(font, glyph).isEmpty()
+
+
+def glyphs_of(font, only_selected=False):
+    if not only_selected:
+        return font.glyphs
+    return [font[name] for name in scripting.names_selected_names()]
+
+
+def widest_glyph(font, only_selected=False):
+    widest = None
+    for glyph in glyphs_of(font, only_selected):
+        if widest is None or glyph.width > widest.width:
+            widest = glyph
+    return widest
+
+
+def wider_than(font, limit=700, only_selected=False):
+    return [g.name for g in glyphs_of(font, only_selected) if g.width > limit]
+```
+
+Tables, from chapters 35 and 36. These need `pGlyph` and `glyphs_of` from the block above:
+
+```python
+def metrics_rows(font, only_selected=False):
+    rows = []
+    for glyph in glyphs_of(font, only_selected):
+        measured = pGlyph(font, glyph)
+        if not measured.isEmpty():
+            rows.append((glyph.name, measured.getLSB(), int(glyph.width), measured.getRSB()))
+    return rows
+
+
+def by_width(row):
+    return row[2]
+
+
+def lopsided(row):
+    name, lsb, width, rsb = row
+    return abs(lsb - rsb)
+```
+
+Files, from chapter 27 and today:
+
+```python
+def read_names(path):
+    names = []
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            name = line.strip()
+            if name and not name.startswith("#") and name not in names:
+                names.append(name)
+    return names
+```
+
+Windows, from chapter 39:
+
+```python
+from fly import fl, qt
+from fly.ap.ui.dialogs import run_standard_message_box, run_text_dialog, run_file_dialog
+
+TITLE = "Halfmoon Type"
+
+
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
+
+def ask(question):
+    box = qt.QtGui.QMessageBox
+    answer = run_standard_message_box(
+        qt, fl.MainWindow(), TITLE, question, "Question", box.Yes | box.No
+    )
+    return answer == box.Yes
+
+
+def ask_text(label, start=""):
+    return run_text_dialog(qt.QtGui, label, start, TITLE)
+
+
+def text_files_only(kind, dialog):
+    dialog.setNameFilters(["Text files (*.txt)"])
+
+
+def choose_text_file(caption, folder=""):
+    paths = run_file_dialog(qt.QtGui, text_files_only, caption, folder)
+    if paths is None:
+        return None
+    return paths[0]
+
+
+def for_saving(kind, dialog):
+    dialog.setAcceptMode(kind.AcceptSave)
+    dialog.setNameFilters(["Text files (*.txt)"])
+
+
+def choose_save_file(caption, folder=""):
+    paths = run_file_dialog(qt.QtGui, for_saving, caption, folder)
+    if paths is None:
+        return None
+    return paths[0]
+```
+
+`glyphs_of` and `wider_than` are the one-line versions from chapter 37. They do the same as the loops in chapter 34.
+
+That's about twenty names. Every one is a thing Mira got wrong at least once before she got it right. Now she pastes the right version, and the wrong one doesn't come back.
+
+Third, the Python. In Part 1 you learned to say things to a font one glyph at a time. In Part 2 you learned to keep what it answers and to work with other people's material. Dictionaries look things up and count them, and sets compare (chapters 21 to 25). Text files go in and out, and tables go to a spreadsheet (26 to 28). Changes can be undone, plans come before changes and switches default to safe (29 to 31). Constants, modules and functions with defaults keep the scripts short (32 to 34). Rows, sorting and one-line lists shape the answers (35 to 37). And you can read a long error from end to end and ask a person a question (38 and 39).
 
 Ines writes for a while. Mira's own guess is that the Friday numbers used to take her most of an hour and now take a minute, and that the two renaming afternoons in week five would each be ten minutes today. Ines doesn't write down a total. She writes: *Mira's chores no longer depend on Mira.* Then she underlines "Inventory", which she ran herself on Tuesday on a font Mira has never opened.
 
@@ -236,13 +402,13 @@ So far a glyph has been a name, a Unicode value, a width with its two sidebearin
 
 ## What you learned
 
-A script that other people run is mostly guards, questions and news around a few lines of work, and a shared module keeps that from being typed twice. Adding glyphs goes through a helper that takes a description of each one, checks the whole list before it touches the font, and records each addition so that it can be undone. When a helper refuses a list, it's usually better to fix the code that makes the list than to fix the file.
+A script that other people run is mostly guards, questions and news around a few lines of work, and a set of snippets keeps you from writing those twice. Adding glyphs goes through a helper that takes a description of each one, checks the whole list before it touches the font, and records each addition so that it can be undone. When a helper refuses a list, it's usually better to fix the code that makes the list than to fix the file.
 
 ## Try it yourself
 
 1. Give each new glyph the width of its parent instead of 500: `d.sc` gets the width of `d`, and `zero.sc` the width of `zero`. You'll need `split` from chapter 9, a lookup like the one in chapter 21, and a decision about what to do when the parent isn't in the font. Use the same width in all three masters for now.
-2. Add a sixth command to the menu: `Status Report`, which prints `halfmoon.status_tally(font)` sorted by count, largest first, as chapter 36 showed. It's a script of about ten lines. Does it need to ask anything? Does it need a guard?
-3. Go through the scripts in your `scripting-book` folder from Part 1 and pick one that still has its own copy of `is_empty` or its own loop for the widest glyph. Rewrite it to use `halfmoon`, and check that its output hasn't changed. Then count how many lines you deleted.
+2. Add a sixth command to the menu: `Status Report`, which pastes in the colours-and-tally snippet and prints `status_tally(font)` sorted by count, largest first, as chapter 36 showed. It's a script of about ten lines. Does it need to ask anything? Does it need a guard?
+3. Go through the scripts in your `scripting-book` folder from Part 1 and pick one that still has its own copy of `is_empty` or its own loop for the widest glyph. Replace that copy with the snippet from this chapter, and check that its output hasn't changed. Did the old copy differ from the snippet? Where?
 
 ## Next
 

@@ -24,4 +24,4 @@ Oskar's sheet has four lines open when the part begins. This part crosses out tw
 - Make the left sidebearing of the *d*, *q* and *g* match the *o*.
 - Find kerning pairs that are larger than they should be.
 
-You need the toolbox from Part 2 (`halfmoon.py`), the practice copy of Plum with the letters Part 3 added, and Fly installed in FontLab 9.
+You need the small helpers from Part 2, which each chapter writes out again where it uses them, the practice copy of Plum with the letters Part 3 added, and Fly installed in FontLab 9.

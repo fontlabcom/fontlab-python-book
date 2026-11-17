@@ -5291,7 +5291,6 @@
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>Plum-practice</code> open in FontLab 9, with Fly installed.</li>
-<li><code>halfmoon.py</code> with <code>tell</code>.</li>
 <li>Chapter 102's result: every glyph you compare has the same skeleton in all three masters.</li>
 </ul>
 <p>I couldn't run the code in FontLab 9. The sums are plain Python and I ran those. The glyph's coordinates come from Plum's source file.</p>
@@ -5370,9 +5369,18 @@
 <span class="c1"># Works out one glyph between two masters, by hand. Changes nothing.</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.masters.interpolation.model</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">interpolation</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly.pens</span><span class="w"> </span><span class="kn">import</span> <span class="n">layer_of</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span>
+
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Halfmoon"</span>
+
+
+<span class="c1"># Chapter 39's tell, written out again so this script runs by itself.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+
 
 <span class="n">GLYPH</span> <span class="o">=</span> <span class="s2">"hyphen"</span>
 <span class="n">LOW</span> <span class="o">=</span> <span class="s2">"Regular"</span>
@@ -5405,12 +5413,12 @@
 
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="k">if</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">package</span> <span class="o">=</span> <span class="n">scripting</span><span class="o">.</span><span class="n">current_package</span><span class="p">()</span>
     <span class="n">glyph</span> <span class="o">=</span> <span class="n">package</span><span class="o">.</span><span class="n">findName</span><span class="p">(</span><span class="n">GLYPH</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">glyph</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="sa">f</span><span class="s2">"There is no glyph named </span><span class="si">{</span><span class="n">GLYPH</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="sa">f</span><span class="s2">"There is no glyph named </span><span class="si">{</span><span class="n">GLYPH</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">low_layer</span> <span class="o">=</span> <span class="n">layer_of</span><span class="p">(</span><span class="n">glyph</span><span class="p">,</span> <span class="n">LOW</span><span class="p">)</span>
     <span class="n">high_layer</span> <span class="o">=</span> <span class="n">layer_of</span><span class="p">(</span><span class="n">glyph</span><span class="p">,</span> <span class="n">HIGH</span><span class="p">)</span>

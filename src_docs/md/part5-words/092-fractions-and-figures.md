@@ -13,7 +13,7 @@ Until now each feature you wrote did one thing to one glyph at a time. `frac` ha
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py`, `Add Glyphs From List.py` from chapter 40 and `list_features.py` from chapter 87.
+- `Add Glyphs From List.py` from chapter 40 and `list_features.py` from chapter 87. The script below defines `tell` and `ask` from [chapter 39](../part2-a-toolbox/039-ask-the-user.md) again, so it runs by itself.
 - The five features the font has after chapter 91.
 
 I couldn't run the code in FontLab 9. I ran the name building and the text building in plain Python on Plum's glyph names. I also played the typesetting program by hand, with a few lines of Python that apply the rules as I understand them, to get the glyph sequences this chapter quotes. No real layout program has seen this feature. Treat the `frac` text as a careful draft until chapter 93 and a compile have looked at it.
@@ -176,10 +176,26 @@ print(group(["zero", "one"]))
 # Does not compile: do that in the Features panel afterward.
 import unicodedata
 
-import halfmoon
-from fly import fl
+from fly import fl, qt
 import fly.ap.core.scripting as scripting
 import fly.ap.features.code as fea_code
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
+
+
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
+
+def ask(question):
+    box = qt.QtGui.QMessageBox
+    answer = run_standard_message_box(
+        qt, fl.MainWindow(), TITLE, question, "Question", box.Yes | box.No
+    )
+    return answer == box.Yes
+
 
 DRY_RUN = True
 
@@ -220,7 +236,7 @@ def frac_text(figures):
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     names = [glyph.name for glyph in font.glyphs]
     figures = by_category(font, "Nd")
@@ -250,7 +266,7 @@ def main():
         print(made[2][1])
         print("Dry run. Nothing written.")
         return
-    if not halfmoon.ask(f"Write {len(made)} features?"):
+    if not ask(f"Write {len(made)} features?"):
         return
     updated = {"prefix": blocks["prefix"], "features": kept + made}
     result = scripting.write_feature_blocks(

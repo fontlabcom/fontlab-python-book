@@ -13,7 +13,6 @@ So two glyphs now have an anchor in one master out of three. Chapter 102's check
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py` with `tell`.
 - Chapter 55 fresh in your mind: an edit is `("set", name, (x, y))`, and a row of work is a glyph, a layer and a list of edits.
 
 I couldn't run the code in FontLab 9. I ran the arithmetic on the anchors and widths in Plum's source file, and the numbers below come from there.
@@ -162,9 +161,18 @@ import fly.ap.anchors.writer as anchors
 import fly.ap.core.history.glyphs as history
 import fly.ap.core.scripting as scripting
 import fly.ap.masters.inspect.model as masters_model
-import halfmoon
-from fly import fl
+from fly import fl, qt
 from fly.pens import layer_of
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
+
+
+# Chapter 39's tell, written out again so this script runs by itself.
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
 
 TRUSTED = "Regular"
 DRY_RUN = True
@@ -189,7 +197,7 @@ def missing_edits(source, target):
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     package = scripting.current_package()
     others = [m for m in masters_model.master_order(package) if m != TRUSTED]

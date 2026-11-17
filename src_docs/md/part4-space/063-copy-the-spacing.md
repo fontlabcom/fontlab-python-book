@@ -13,7 +13,7 @@ It's a sensible line. The `d`, the `q` and the `g` all begin with the same round
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed, and the Font window in front.
-- `halfmoon.py` with `rich`, `ask` and `tell`.
+- The helpers `ask` and `tell` from chapter 39. The scripts below write them out again, so each one runs by itself.
 - The font as chapter 62 left it. The exercises there are optional, and this chapter says where they'd show.
 
 This chapter changes the font, in two Undo steps. I couldn't run it in FontLab 9. The numbers come from Plum's source file.
@@ -23,12 +23,12 @@ This chapter changes the font, in two Undo steps. I couldn't run it in FontLab 9
 Before you copy anything, see how far apart the four glyphs are:
 
 ```python
-import halfmoon
 from fly import fl
+from fly.tr.proxy.fl.objects.glyph import pGlyph
 
 font = fl.CurrentFont()
 for master in ["Light", "Regular", "Bold"]:
-    lefts = [halfmoon.rich(font, font[name]).getLSB(master) for name in ["o", "d", "q", "g"]]
+    lefts = [pGlyph(font, font[name]).getLSB(master) for name in ["o", "d", "q", "g"]]
     print(master, lefts)
 ```
 
@@ -63,7 +63,7 @@ With that, the difference for one glyph in one master is two lookups and a subtr
 ```python
 name = "d"
 model = LEFT_LIKE[name]
-dx = halfmoon.rich(font, font[model]).getLSB("Light") - halfmoon.rich(font, font[name]).getLSB("Light")
+dx = pGlyph(font, font[model]).getLSB("Light") - pGlyph(font, font[name]).getLSB("Light")
 print(name, "follows", model, "and must move by", dx)
 ```
 
@@ -103,8 +103,8 @@ rows = []
 for glyph in font.glyphs:
     if glyph.name not in LEFT_LIKE:
         continue
-    rich = halfmoon.rich(font, glyph)
-    model = halfmoon.rich(font, font[LEFT_LIKE[glyph.name]])
+    rich = pGlyph(font, glyph)
+    model = pGlyph(font, font[LEFT_LIKE[glyph.name]])
     for master in ["Light", "Regular", "Bold"]:
         dx = model.getLSB(master) - rich.getLSB(master)
         if dx != 0:
@@ -191,18 +191,34 @@ One thing this pass doesn't do: it doesn't move the breve. The `g` under it went
 #FLM: Copy Sidebearings
 # Gives glyphs the left or right sidebearing of a model glyph,
 # then makes accented letters as wide as their base letter.
-import halfmoon
 import fly.ap.anchors.writer as anchors
 import fly.ap.components.writer as parts
 import fly.ap.core.history.glyphs as history
 import fly.ap.core.scripting as scripting
 import fly.ap.metrics.panel.model as metrics
-from fly import fl
+from fly import fl, qt
 from fly.pens import layer_of
+from fly.ap.ui.dialogs import run_standard_message_box
+from fly.tr.proxy.fl.objects.glyph import pGlyph
+
+TITLE = "Halfmoon"
 
 MASTERS = ["Light", "Regular", "Bold"]
 LEFT_LIKE = {"d": "o", "q": "o", "g": "o"}
 RIGHT_LIKE = {}
+
+
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
+
+def ask(question):
+    box = qt.QtGui.QMessageBox
+    answer = run_standard_message_box(
+        qt, fl.MainWindow(), TITLE, question, "Question", box.Yes | box.No
+    )
+    return answer == box.Yes
 
 
 def side_rows(font):
@@ -211,16 +227,16 @@ def side_rows(font):
         name = glyph.name
         if name not in LEFT_LIKE and name not in RIGHT_LIKE:
             continue
-        rich = halfmoon.rich(font, glyph)
+        rich = pGlyph(font, glyph)
         for master in MASTERS:
             dx = 0
             width = rich.getAdvance(master)
             if name in LEFT_LIKE:
-                model = halfmoon.rich(font, font[LEFT_LIKE[name]])
+                model = pGlyph(font, font[LEFT_LIKE[name]])
                 dx = model.getLSB(master) - rich.getLSB(master)
                 width += dx
             if name in RIGHT_LIKE:
-                model = halfmoon.rich(font, font[RIGHT_LIKE[name]])
+                model = pGlyph(font, font[RIGHT_LIKE[name]])
                 width += model.getRSB(master) - rich.getRSB(master)
             if dx != 0 or width != rich.getAdvance(master):
                 rows.append((rich, master, dx, width))
@@ -228,7 +244,7 @@ def side_rows(font):
 
 
 def is_accent(font, name, master):
-    layer = layer_of(halfmoon.rich(font, font[name]).fl, master)
+    layer = layer_of(pGlyph(font, font[name]).fl, master)
     return any([family.startswith("_") for family in anchors.anchor_points(layer)])
 
 
@@ -236,7 +252,7 @@ def follow_rows(font):
     rows = []
     left = []
     for glyph in font.glyphs:
-        rich = halfmoon.rich(font, glyph)
+        rich = pGlyph(font, glyph)
         for master in MASTERS:
             layer = layer_of(rich.fl, master)
             found = parts.components(layer)
@@ -246,7 +262,7 @@ def follow_rows(font):
                 continue
             if not all([is_accent(font, parts.base_of(part), master) for part in found[1:]]):
                 continue
-            base = halfmoon.rich(font, font[parts.base_of(found[0])])
+            base = pGlyph(font, font[parts.base_of(found[0])])
             if base.getAdvance(master) == rich.getAdvance(master):
                 continue
             if layer.autoLayer:
@@ -280,18 +296,18 @@ def apply(rows, title):
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     models = list(LEFT_LIKE.values()) + list(RIGHT_LIKE.values())
     missing = [name for name in models if font[name] is None]
     if missing:
-        halfmoon.tell(f"No glyph named: {' '.join(missing)}")
+        tell(f"No glyph named: {' '.join(missing)}")
         return
 
     rows = side_rows(font)
     show(rows)
     print(f"{len(rows)} layers to change.")
-    if rows and halfmoon.ask(f"Copy sidebearings on {len(rows)} layers?"):
+    if rows and ask(f"Copy sidebearings on {len(rows)} layers?"):
         apply(rows, "Copy sidebearings")
 
     rows, left = follow_rows(font)
@@ -299,7 +315,7 @@ def main():
     print(f"{len(rows)} accented letters differ from their base in width.")
     if left:
         print(f"Automatic, left to FontLab: {', '.join(left)}")
-    if rows and halfmoon.ask(f"Make {len(rows)} accented letters as wide as their base?"):
+    if rows and ask(f"Make {len(rows)} accented letters as wide as their base?"):
         apply(rows, "Follow base widths")
 
 
@@ -321,7 +337,7 @@ Run it again and both counts are 0. The last line stays for as long as `gbreve` 
 
 `main` uses the name `rows` twice, first for the side rows and then for the follower rows. That's allowed. The second assignment throws out the first list, which has done its work by then. The follower rows must be made after the first change and not before, since they compare with widths that the first change sets.
 
-`if rows and halfmoon.ask(...)` leans on something chapter 35 used as `if not rows:`. An empty list counts as false. With no rows, Python doesn't go on to the second half, and nobody is asked a question about 0 layers.
+`if rows and ask(...)` leans on something chapter 35 used as `if not rows:`. An empty list counts as false. With no rows, Python doesn't go on to the second half, and nobody is asked a question about 0 layers.
 
 The rows of the two passes have the same shape, four things each, so `show` and `apply` serve both. That wasn't luck. I gave the follower rows a move of 0 so that they'd fit.
 

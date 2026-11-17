@@ -11,7 +11,7 @@ Nobody wants to retype 102 values. The relations between the pairs are sound: `A
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py` with `ask` and `tell`.
+- The helpers `ask` and `tell` from chapter 39. The scripts below write them out again, so each one runs by itself.
 - The kerning as chapter 78 left it: 102 pairs in each master.
 
 I couldn't run the code in FontLab 9. The numbers below were computed in plain Python from Plum's source file with the changes of chapters 72 to 78 applied.
@@ -138,15 +138,30 @@ The script gets a guard as well. A percentage under 10 or over 300 is almost cer
 #FLM: Scale Kerning
 # Multiplies every kerning value of MASTER by PERCENT / 100.
 # Halves round away from zero. A pair that becomes 0 is removed.
-import halfmoon
 import fly.ap.core.scripting as scripting
 import fly.ap.kerning.batch as kerning_batch
 import fly.ap.kerning.edit.model as kerning_edit
-from fly import fl
+from fly import fl, qt
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
 
 MASTER = "Bold"
 PERCENT = 85
 SHOW = 7
+
+
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
+
+def ask(question):
+    box = qt.QtGui.QMessageBox
+    answer = run_standard_message_box(
+        qt, fl.MainWindow(), TITLE, question, "Question", box.Yes | box.No
+    )
+    return answer == box.Yes
 
 
 def strength(pairs):
@@ -172,10 +187,10 @@ def size_then_name(item):
 
 def main():
     if fl.CurrentFont() is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     if PERCENT < 10 or PERCENT > 300:
-        halfmoon.tell(f"PERCENT is {PERCENT}. Write 85 for 85 per cent.")
+        tell(f"PERCENT is {PERCENT}. Write 85 for 85 per cent.")
         return
     package = scripting.current_package()
     pairs = scripting.kerning_pairs(package, MASTER)
@@ -189,7 +204,7 @@ def main():
     print(f"{len(plan)} pairs change, {len(gone)} would be removed.")
     if not plan:
         return
-    if not halfmoon.ask(f"Scale {len(plan)} pairs of the {MASTER} to {PERCENT} per cent?"):
+    if not ask(f"Scale {len(plan)} pairs of the {MASTER} to {PERCENT} per cent?"):
         return
 
     before = strength(pairs)

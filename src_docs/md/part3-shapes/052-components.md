@@ -15,7 +15,7 @@ You know why, roughly. In chapter 41 you found that `eacute` has two elements an
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py` with `rich`.
+- The chapters on loops and dictionaries from Part 2.
 - Nothing in the font changes today. Every script in this chapter reads only.
 
 The outputs below were computed from Plum's source file, not copied from FontLab's Output panel. So were the names, shifts and counts.
@@ -26,12 +26,12 @@ A layer keeps its elements in `layer.shapes`, as chapter 41 showed. Some of thos
 
 ```python
 import fly.ap.components.writer as parts
-import halfmoon
 from fly import fl
 from fly.pens import layer_of
+from fly.tr.proxy.fl.objects.glyph import pGlyph
 
 font = fl.CurrentFont()
-glyph = halfmoon.rich(font, font["adieresis"])
+glyph = pGlyph(font, font["adieresis"])
 layer = layer_of(glyph.fl, "Regular")
 for part in parts.components(layer):
     print(parts.base_of(part), parts.offset(part))
@@ -50,7 +50,7 @@ So the `ä` in the Regular is two notes. One says "show `a` here, where it is". 
 
 ## Step 2: A pair of numbers
 
-`parts.offset` gave `(-12.0, 0.0)`: two numbers in parentheses. You've had four numbers that way from `halfmoon.box`, and you took them apart with four names on the left of the `=`. A pair comes apart the same way:
+`parts.offset` gave `(-12.0, 0.0)`: two numbers in parentheses. You've had four numbers that way from `box` in chapter 43, and you took them apart with four names on the left of the `=`. A pair comes apart the same way:
 
 ```python
 dx, dy = parts.offset(part)
@@ -92,7 +92,7 @@ Now the chore. Go through every glyph, and print the ones that have components:
 MASTER = "Regular"
 
 for glyph in font.glyphs:
-    layer = layer_of(halfmoon.rich(font, glyph).fl, MASTER)
+    layer = layer_of(fl.flGlyph(glyph, font), MASTER)
     texts = []
     for part in parts.components(layer):
         dx, dy = parts.offset(part)
@@ -133,7 +133,7 @@ The list from step 3 has the answer in it, but you'd have to read 85 lines to fi
 ```python
 users = {}
 for glyph in font.glyphs:
-    layer = layer_of(halfmoon.rich(font, glyph).fl, MASTER)
+    layer = layer_of(fl.flGlyph(glyph, font), MASTER)
     for part in parts.components(layer):
         base = parts.base_of(part)
         users[base].append(glyph.name)
@@ -177,7 +177,7 @@ The second line is worth a look too. Five glyphs borrow the period. Make the per
 The exclamation mark is on that list. Its dot is a period. Its stem is nobody's, so it's drawn in the glyph. Ask for both:
 
 ```python
-glyph = halfmoon.rich(font, font["exclam"])
+glyph = pGlyph(font, font["exclam"])
 layer = layer_of(glyph.fl, MASTER)
 print(len(parts.components(layer)), len(glyph.contours(MASTER)))
 ```
@@ -215,9 +215,9 @@ Here is `list_components.py`. It prints the list, counts, and then turns the lis
 # of each component, and then the base glyphs that are borrowed most.
 # Reads only.
 import fly.ap.components.writer as parts
-import halfmoon
 from fly import fl
 from fly.pens import layer_of
+from fly.tr.proxy.fl.objects.glyph import pGlyph
 
 MASTER = "Regular"
 TOP = 6
@@ -237,7 +237,7 @@ def main():
     built = 0
     mixed = 0
     for glyph in font.glyphs:
-        rich = halfmoon.rich(font, glyph)
+        rich = pGlyph(font, glyph)
         found = parts.components(layer_of(rich.fl, MASTER))
         if not found:
             continue

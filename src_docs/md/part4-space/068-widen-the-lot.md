@@ -15,7 +15,7 @@ So today every Bold right side in the alphabet gets a new value, in one go. The 
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed, and the Font window in front.
-- `halfmoon.py` with `rich`, `ask`, `ask_text` and `tell`.
+- The helpers `ask`, `ask_text` and `tell` from chapter 39. The scripts below write them out again, so each one runs by itself.
 - `copy_sb.py` from chapter 63, for the accented letters at the end.
 
 The script changes the font, in one Undo step. I couldn't run it in FontLab 9. Its numbers come from Plum's source file with the changes of chapters 62, 63 and 67 worked in.
@@ -25,12 +25,25 @@ The script changes the font, in one Undo step. I couldn't run it in FontLab 9. I
 Too tight means too little, so add some. Say 20 units on the right of every letter. Before you write anything into the font, work out what that would give for four letters:
 
 ```python
-import halfmoon
-from fly import fl
+from fly import fl, qt
+from fly.ap.ui.dialogs import run_standard_message_box, run_text_dialog
+from fly.tr.proxy.fl.objects.glyph import pGlyph
+
+TITLE = "Halfmoon"
+
+
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
+
+def ask_text(label, start=""):
+    return run_text_dialog(qt.QtGui, label, start, TITLE)
+
 
 font = fl.CurrentFont()
 for name in ["n", "o", "H", "D"]:
-    rich = halfmoon.rich(font, font[name])
+    rich = pGlyph(font, font[name])
     print(name, rich.getLSB("Bold"), rich.getRSB("Bold") + 20)
 ```
 
@@ -98,7 +111,7 @@ This sum also has a property that "add 20" lacks. It reads the Regular and write
 0.8 is a guess from two letters, and Ines will want to try others. So the script asks, with `ask_text` from chapter 39 and a starting value in the field:
 
 ```python
-text = halfmoon.ask_text("Right sides, as a share of the Regular's:", "0.8")
+text = ask_text("Right sides, as a share of the Regular's:", "0.8")
 print(round(66 * text))
 ```
 
@@ -147,13 +160,13 @@ Python wants a point. And somebody will type `four fifths` one day, or nothing. 
 
 ```python
 def ask_factor(start):
-    text = halfmoon.ask_text("Right sides, as a share of the Regular's:", start)
+    text = ask_text("Right sides, as a share of the Regular's:", start)
     if text is None:
         return None
     try:
         return float(text.strip())
     except ValueError:
-        halfmoon.tell(f"{text} isn't a number I can read. Use a point, as in 0.8.")
+        tell(f"{text} isn't a number I can read. Use a point, as in 0.8.")
         return None
 ```
 
@@ -166,26 +179,46 @@ The function has three ways out. Cancel gives `None`. A good number gives the nu
 # Sets the Bold's right sidebearings to a share of the Regular's.
 import string
 
-import halfmoon
 import fly.ap.core.history.glyphs as history
 import fly.ap.core.scripting as scripting
 import fly.ap.metrics.panel.model as metrics
-from fly import fl
+from fly import fl, qt
 from fly.pens import layer_of
+from fly.ap.ui.dialogs import run_standard_message_box, run_text_dialog
+from fly.tr.proxy.fl.objects.glyph import pGlyph
+
+TITLE = "Halfmoon"
 
 SOURCE = "Regular"
 TARGET = "Bold"
 LETTERS = string.ascii_uppercase + string.ascii_lowercase
 
 
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
+
+def ask(question):
+    box = qt.QtGui.QMessageBox
+    answer = run_standard_message_box(
+        qt, fl.MainWindow(), TITLE, question, "Question", box.Yes | box.No
+    )
+    return answer == box.Yes
+
+
+def ask_text(label, start=""):
+    return run_text_dialog(qt.QtGui, label, start, TITLE)
+
+
 def ask_factor(start):
-    text = halfmoon.ask_text(f"Right sides, as a share of the {SOURCE}'s:", start)
+    text = ask_text(f"Right sides, as a share of the {SOURCE}'s:", start)
     if text is None:
         return None
     try:
         return float(text.strip())
     except ValueError:
-        halfmoon.tell(f"{text} isn't a number I can read. Use a point, as in 0.8.")
+        tell(f"{text} isn't a number I can read. Use a point, as in 0.8.")
         return None
 
 
@@ -194,7 +227,7 @@ def plan_rows(font, factor):
     for name in LETTERS:
         if font[name] is None:
             continue
-        rich = halfmoon.rich(font, font[name])
+        rich = pGlyph(font, font[name])
         layer = layer_of(rich.fl, TARGET)
         if str(layer.metricsRight) or str(layer.metricsWidth):
             print(f"{name}: has a rule for its right side or width. Left alone.")
@@ -209,7 +242,7 @@ def plan_rows(font, factor):
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     factor = ask_factor("0.8")
     if factor is None:
@@ -219,7 +252,7 @@ def main():
     for rich, layer, old, new, width in rows:
         print(f"{rich.name:<4}{old:>5} to {new:>3}   width {rich.getAdvance(TARGET)} to {width}")
     print(f"{len(rows)} layers to change, factor {factor}.")
-    if not rows or not halfmoon.ask(f"Set {len(rows)} right sidebearings in the {TARGET}?"):
+    if not rows or not ask(f"Set {len(rows)} right sidebearings in the {TARGET}?"):
         return
 
     def change():

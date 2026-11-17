@@ -5314,19 +5314,19 @@
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>Plum-practice</code> open in FontLab 9, with Fly installed.</li>
-<li><code>halfmoon.py</code> with <code>rich</code>.</li>
+<li>The chapters on loops and dictionaries from Part 2.</li>
 <li>Nothing in the font changes today. Every script in this chapter reads only.</li>
 </ul>
 <p>The outputs below were computed from Plum's source file, not copied from FontLab's Output panel. So were the names, shifts and counts.</p>
 <h2 id="step-1-ask-an-element-what-it-borrows">Step 1: Ask an element what it borrows<a class="headerlink" href="#step-1-ask-an-element-what-it-borrows" title="Permanent link">&para;</a></h2>
 <p>A layer keeps its elements in <code>layer.shapes</code>, as chapter 41 showed. Some of those are drawings and some are components. Fly has a small module that picks out the components and reads them:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.components.writer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">parts</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly.pens</span><span class="w"> </span><span class="kn">import</span> <span class="n">layer_of</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
 
 <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
-<span class="n">glyph</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"adieresis"</span><span class="p">])</span>
+<span class="n">glyph</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"adieresis"</span><span class="p">])</span>
 <span class="n">layer</span> <span class="o">=</span> <span class="n">layer_of</span><span class="p">(</span><span class="n">glyph</span><span class="o">.</span><span class="n">fl</span><span class="p">,</span> <span class="s2">"Regular"</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">parts</span><span class="o">.</span><span class="n">components</span><span class="p">(</span><span class="n">layer</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">parts</span><span class="o">.</span><span class="n">base_of</span><span class="p">(</span><span class="n">part</span><span class="p">),</span> <span class="n">parts</span><span class="o">.</span><span class="n">offset</span><span class="p">(</span><span class="n">part</span><span class="p">))</span>
@@ -5338,7 +5338,7 @@ dieresis (-12.0, 0.0)
 <p><code>parts.components(layer)</code> gives a list of the layer's components, in order. <code>parts.base_of(part)</code> gives the name of the glyph a component points at. FontLab calls that glyph the <strong>base</strong> of the component. <code>parts.offset(part)</code> gives the shift, as a pair of numbers: across and up.</p>
 <p>So the <code>ä</code> in the Regular is two notes. One says "show <code>a</code> here, where it is". The other says "show <code>dieresis</code> here, 12 units to the left". There's no outline in the glyph. When Mira opened the bowl of <code>a</code>, there was nothing in <code>adieresis</code> to update. FontLab draws it from the <code>a</code> every time it shows it.</p>
 <h2 id="step-2-a-pair-of-numbers">Step 2: A pair of numbers<a class="headerlink" href="#step-2-a-pair-of-numbers" title="Permanent link">&para;</a></h2>
-<p><code>parts.offset</code> gave <code>(-12.0, 0.0)</code>: two numbers in parentheses. You've had four numbers that way from <code>halfmoon.box</code>, and you took them apart with four names on the left of the <code>=</code>. A pair comes apart the same way:</p>
+<p><code>parts.offset</code> gave <code>(-12.0, 0.0)</code>: two numbers in parentheses. You've had four numbers that way from <code>box</code> in chapter 43, and you took them apart with four names on the left of the <code>=</code>. A pair comes apart the same way:</p>
 <div class="highlight"><pre><span></span><code><span class="n">dx</span><span class="p">,</span> <span class="n">dy</span> <span class="o">=</span> <span class="n">parts</span><span class="o">.</span><span class="n">offset</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">dx</span><span class="p">),</span> <span class="nb">round</span><span class="p">(</span><span class="n">dy</span><span class="p">))</span>
 </code></pre></div>
@@ -5365,7 +5365,7 @@ Bold dieresis -13 0
 <div class="highlight"><pre><span></span><code><span class="n">MASTER</span> <span class="o">=</span> <span class="s2">"Regular"</span>
 
 <span class="k">for</span> <span class="n">glyph</span> <span class="ow">in</span> <span class="n">font</span><span class="o">.</span><span class="n">glyphs</span><span class="p">:</span>
-    <span class="n">layer</span> <span class="o">=</span> <span class="n">layer_of</span><span class="p">(</span><span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span><span class="o">.</span><span class="n">fl</span><span class="p">,</span> <span class="n">MASTER</span><span class="p">)</span>
+    <span class="n">layer</span> <span class="o">=</span> <span class="n">layer_of</span><span class="p">(</span><span class="n">fl</span><span class="o">.</span><span class="n">flGlyph</span><span class="p">(</span><span class="n">glyph</span><span class="p">,</span> <span class="n">font</span><span class="p">),</span> <span class="n">MASTER</span><span class="p">)</span>
     <span class="n">texts</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">parts</span><span class="o">.</span><span class="n">components</span><span class="p">(</span><span class="n">layer</span><span class="p">):</span>
         <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span> <span class="o">=</span> <span class="n">parts</span><span class="o">.</span><span class="n">offset</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
@@ -5393,7 +5393,7 @@ ellipsis      period 0 0, period 230 0, period 460 0
 <p>The list from step 3 has the answer in it, but you'd have to read 85 lines to find it. A dictionary can turn the list around: the key is a base glyph, and the value is a list of the glyphs that borrow it. That's new. Until now the values in your dictionaries were single things, a number or a name. A value can be a list, and then you fill it with <code>append</code>:</p>
 <div class="highlight"><pre><span></span><code><span class="n">users</span> <span class="o">=</span> <span class="p">{}</span>
 <span class="k">for</span> <span class="n">glyph</span> <span class="ow">in</span> <span class="n">font</span><span class="o">.</span><span class="n">glyphs</span><span class="p">:</span>
-    <span class="n">layer</span> <span class="o">=</span> <span class="n">layer_of</span><span class="p">(</span><span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span><span class="o">.</span><span class="n">fl</span><span class="p">,</span> <span class="n">MASTER</span><span class="p">)</span>
+    <span class="n">layer</span> <span class="o">=</span> <span class="n">layer_of</span><span class="p">(</span><span class="n">fl</span><span class="o">.</span><span class="n">flGlyph</span><span class="p">(</span><span class="n">glyph</span><span class="p">,</span> <span class="n">font</span><span class="p">),</span> <span class="n">MASTER</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">parts</span><span class="o">.</span><span class="n">components</span><span class="p">(</span><span class="n">layer</span><span class="p">):</span>
         <span class="n">base</span> <span class="o">=</span> <span class="n">parts</span><span class="o">.</span><span class="n">base_of</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
         <span class="n">users</span><span class="p">[</span><span class="n">base</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">glyph</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
@@ -5420,7 +5420,7 @@ KeyError: 'A'
 <p>The second line is worth a look too. Five glyphs borrow the period. Make the period heavier, and the colon, the semicolon, the ellipsis and both exclamation marks get heavier dots. That's a comfort when you want it and a surprise when you don't.</p>
 <h2 id="step-5-borrowed-and-drawn-in-one-glyph">Step 5: Borrowed and drawn in one glyph<a class="headerlink" href="#step-5-borrowed-and-drawn-in-one-glyph" title="Permanent link">&para;</a></h2>
 <p>The exclamation mark is on that list. Its dot is a period. Its stem is nobody's, so it's drawn in the glyph. Ask for both:</p>
-<div class="highlight"><pre><span></span><code><span class="n">glyph</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"exclam"</span><span class="p">])</span>
+<div class="highlight"><pre><span></span><code><span class="n">glyph</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"exclam"</span><span class="p">])</span>
 <span class="n">layer</span> <span class="o">=</span> <span class="n">layer_of</span><span class="p">(</span><span class="n">glyph</span><span class="o">.</span><span class="n">fl</span><span class="p">,</span> <span class="n">MASTER</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="o">.</span><span class="n">components</span><span class="p">(</span><span class="n">layer</span><span class="p">)),</span> <span class="nb">len</span><span class="p">(</span><span class="n">glyph</span><span class="o">.</span><span class="n">contours</span><span class="p">(</span><span class="n">MASTER</span><span class="p">)))</span>
 </code></pre></div>
@@ -5442,9 +5442,9 @@ KeyError: 'A'
 <span class="c1"># of each component, and then the base glyphs that are borrowed most.</span>
 <span class="c1"># Reads only.</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.components.writer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">parts</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly.pens</span><span class="w"> </span><span class="kn">import</span> <span class="n">layer_of</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
 
 <span class="n">MASTER</span> <span class="o">=</span> <span class="s2">"Regular"</span>
 <span class="n">TOP</span> <span class="o">=</span> <span class="mi">6</span>
@@ -5464,7 +5464,7 @@ KeyError: 'A'
     <span class="n">built</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">mixed</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">for</span> <span class="n">glyph</span> <span class="ow">in</span> <span class="n">font</span><span class="o">.</span><span class="n">glyphs</span><span class="p">:</span>
-        <span class="n">rich</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span>
+        <span class="n">rich</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span>
         <span class="n">found</span> <span class="o">=</span> <span class="n">parts</span><span class="o">.</span><span class="n">components</span><span class="p">(</span><span class="n">layer_of</span><span class="p">(</span><span class="n">rich</span><span class="o">.</span><span class="n">fl</span><span class="p">,</span> <span class="n">MASTER</span><span class="p">))</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">found</span><span class="p">:</span>
             <span class="k">continue</span>

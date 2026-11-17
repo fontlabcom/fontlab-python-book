@@ -5308,10 +5308,10 @@
 
 <h1 id="139-test-your-tools">139. Test your tools<a class="headerlink" href="#139-test-your-tools" title="Permanent link">&para;</a></h1>
 <p>It's Monday 11 January. On Friday the build stopped at "Glyph proof" the first time through, and it took twenty minutes to find out why.</p>
-<p>The week before, Mira had tidied <code>halfmoon.py</code>. One of the things she tidied was <code>key</code>, the small function from chapter 112 that makes two spellings of a name comparable. She took out <code>.lower()</code>, because the names she was looking at were all in the same capitals anyway. They weren't, for one weight. Three scripts use <code>key</code> to find font files, and all three stopped finding one.</p>
-<p>The change was one word, three scripts broke, and nobody knew for four days. Today you write down what your functions are supposed to do, in a form Python can check in a second, in the Terminal, with FontLab closed.</p>
+<p>The week before, Mira had tidied <code>proof_html.py</code>, chapter 115's glyph proof. One of the things she tidied was its copy of <code>key</code>, the small function from chapter 112 that makes two spellings of a name comparable. She took out <code>.lower()</code>, because the names she was looking at were all in the same capitals anyway. They weren't, for one weight. The proof uses <code>key</code> to find font files, and it stopped finding one.</p>
+<p>The change was one word, the build broke, and nobody knew for four days. Today you write down what your functions are supposed to do, in a form Python can check in a second, in the Terminal, with FontLab closed.</p>
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
-<p><code>uv</code> from chapter 4 and the Terminal from chapter 137. The <code>halfmoon-tools</code> folder from chapter 133, and a copy of chapter 136's <code>plum_report.py</code> put inside it, next to <code>pyproject.toml</code>. No FontLab at all.</p>
+<p><code>uv</code> from chapter 4 and the Terminal from chapter 137. The <code>spacing-tools</code> folder from chapter 133, with copies of chapter 115's <code>proof_html.py</code> and chapter 136's <code>plum_report.py</code> put inside it, next to <code>pyproject.toml</code>. No FontLab at all.</p>
 <p>This is the one chapter where I can say the opposite of what I usually say. I ran all of it. Every block of Terminal output below is copied from a real run on my machine, including the failures. Your version numbers and timings will differ.</p>
 <h2 id="step-1-a-claim-python-can-check">Step 1: A claim Python can check<a class="headerlink" href="#step-1-a-claim-python-can-check" title="Permanent link">&para;</a></h2>
 <p>You have checked your work all through this book by running a script and reading what it printed. That works, and it has two costs. You have to be there. And you have to remember what the right answer looked like.</p>
@@ -5332,41 +5332,41 @@
 <p>Notice what the test doesn't say. It doesn't say how <code>key</code> works. It says what must come out for something that goes in. Mira could rewrite <code>key</code> from top to bottom tomorrow, and as long as those two spellings still come out equal, the test has no complaint. A test fixes the behaviour and leaves the code free.</p>
 <h2 id="step-2-something-to-run-them">Step 2: Something to run them<a class="headerlink" href="#step-2-something-to-run-them" title="Permanent link">&para;</a></h2>
 <p>You could call each test function yourself. There's a tool that does it for you, and it's the one nearly everybody uses: pytest. It looks in the folder for files whose names start with <code>test_</code>, runs every function in them whose name starts with <code>test_</code>, and reports.</p>
-<p>It isn't installed, and it doesn't need to be. In the Terminal, in the <code>halfmoon-tools</code> folder:</p>
+<p>It isn't installed, and it doesn't need to be. In the Terminal, in the <code>spacing-tools</code> folder:</p>
 <div class="highlight"><pre><span></span><code>uv run --no-project --with pytest --with fontParts pytest -q
 </code></pre></div>
 <p>The <code>-q</code> at the end asks pytest for its short report. This is chapter 137's <code>--with</code> again: run pytest, with pytest and fontParts available for this one run. You'll need fontParts in step 4. <code>--no-project</code> is new. <code>uv</code> sees the <code>pyproject.toml</code> that chapter 133 wrote for FontLab's installer and takes the folder for a project of its own kind, which it isn't: without those two words it stops and complains that the file has no version.</p>
 <h2 id="step-3-a-file-you-cant-import">Step 3: A file you can't import<a class="headerlink" href="#step-3-a-file-you-cant-import" title="Permanent link">&para;</a></h2>
-<p>Here is the natural first test file, and the mistake. Save it as <code>test_hm.py</code> in <code>halfmoon-tools</code>:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
+<p>Here is the natural first test file, and the mistake. Save it as <code>test_proof.py</code> in <code>spacing-tools</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">proof_html</span><span class="w"> </span><span class="kn">import</span> <span class="n">key</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">test_key_ignores_capitals_and_punctuation</span><span class="p">():</span>
-    <span class="k">assert</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="s2">"Plum-SemiBold"</span><span class="p">)</span> <span class="o">==</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="s2">"plum semibold"</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">key</span><span class="p">(</span><span class="s2">"Plum-SemiBold"</span><span class="p">)</span> <span class="o">==</span> <span class="n">key</span><span class="p">(</span><span class="s2">"plum semibold"</span><span class="p">)</span>
 </code></pre></div>
 <p>Run pytest:</p>
-<div class="highlight"><pre><span></span><code>test_hm.py:1: in &lt;module&gt;
-    import halfmoon
-halfmoon/__init__.py:1: in &lt;module&gt;
-    from fly import fl
+<div class="highlight"><pre><span></span><code>test_proof.py:1: in &lt;module&gt;
+    from proof_html import key
+proof_html.py:7: in &lt;module&gt;
+    import fly.ap.core.scripting as scripting
 E   ModuleNotFoundError: No module named 'fly'
 </code></pre></div>
-<p>The test never ran. <code>key</code> needs nothing from FontLab; it takes a string and returns a string. But it lives in a file whose first line needs FontLab, and importing one function means importing its whole file. The last line of pytest's report says <code>Interrupted: 1 error during collection</code>: it gave up before running any test in any file.</p>
-<p>Delete <code>test_hm.py</code>. As long as it's in the folder, pytest stops there and runs nothing else.</p>
-<p>The cure is to sort your functions by what they need. Since chapter 133, <code>halfmoon</code> is a folder with an <code>__init__.py</code> in it. The plain functions can't go into that folder, because Python runs <code>__init__.py</code>, and its <code>from fly import fl</code>, before it lets you have anything else from there. They need a package of their own. In <code>halfmoon-tools</code>, make a folder <code>plain</code> beside the folder <code>halfmoon</code>, and in it a file <code>__init__.py</code>:</p>
+<p>The test never ran. <code>key</code> needs nothing from FontLab; it takes a string and returns a string. But it lives in a file whose imports need FontLab, and importing one function means importing its whole file. The last line of pytest's report says <code>Interrupted: 1 error during collection</code>: it gave up before running any test in any file.</p>
+<p>Delete <code>test_proof.py</code>. As long as it's in the folder, pytest stops there and runs nothing else.</p>
+<p>The cure is to sort your functions by what they need. The plain functions can't stay in a script that starts by importing Fly, because Python runs those imports before it lets you have anything else from the file. They need a package of their own, of the kind chapter 133 made. In <code>spacing-tools</code>, make a folder <code>plain</code> beside the folder <code>spacing_tools</code>, and in it a file <code>__init__.py</code>:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Small functions that need nothing from FontLab, so that tests can</span>
-<span class="c1"># import them anywhere. The halfmoon package borrows them from here.</span>
+<span class="c1"># import them anywhere. FontLab scripts borrow them from here.</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">key</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
     <span class="k">return</span> <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">isalnum</span><span class="p">()])</span>
 </code></pre></div>
-<p>Then, in <code>halfmoon/__init__.py</code>, delete <code>key</code> and put this line with the other imports:</p>
+<p>Then, in <code>proof_html.py</code>, delete <code>def key</code> and its line, and put this line with the other imports:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">plain</span><span class="w"> </span><span class="kn">import</span> <span class="n">key</span>
 </code></pre></div>
-<p><code>halfmoon.key</code> still exists, so no script that uses it has to change. It's now a borrowed name, and the function itself lives where a test can reach it.</p>
-<p>FontLab has to be able to find <code>plain</code> too, or every script that imports <code>halfmoon</code> stops with <code>No module named 'plain'</code>. In <code>pyproject.toml</code>, the line chapter 133 wrote becomes:</p>
-<div class="highlight"><pre><span></span><code>packages = ["halfmoon", "plain"]
+<p>The rest of <code>proof_html.py</code> still says <code>key(...)</code>, so nothing else in it has to change. <code>key</code> is now a borrowed name, and the function itself lives where a test can reach it. Copy the changed <code>proof_html.py</code> back over the one FontLab runs.</p>
+<p>FontLab has to be able to find <code>plain</code> too, or the glyph proof stops with <code>No module named 'plain'</code>. In <code>pyproject.toml</code>, the line chapter 133 wrote becomes:</p>
+<div class="highlight"><pre><span></span><code>packages = ["spacing_tools", "plain"]
 </code></pre></div>
 <p>When the tests pass, run chapter 133's Check Package, run <code>install.vfpy</code> again and restart FontLab. I haven't seen that second install run.</p>
 <p>This is the lasting idea of the chapter, more than <code>assert</code> or pytest. A function that works something out from plain values can be tested anywhere. A function that reaches into FontLab can only be tested in FontLab, by hand. So keep the working-out apart from the reaching-in. You did this in chapter 136 without being told why: <code>summary</code> and <code>lines</code> are handed a font and print nothing.</p>
@@ -5452,7 +5452,7 @@ E   ModuleNotFoundError: No module named 'fly'
         <span class="s2">"Kerning pairs     0"</span><span class="p">,</span>
     <span class="p">]</span>
 </code></pre></div>
-<p>Save it as <code>test_tools.py</code> in <code>halfmoon-tools</code>, beside the <code>plain</code> folder and <code>plum_report.py</code>.</p>
+<p>Save it as <code>test_tools.py</code> in <code>spacing-tools</code>, beside the <code>plain</code> folder and <code>plum_report.py</code>.</p>
 <p><code>small_font</code> builds the font: <code>n</code> and <code>m</code> with a triangle drawn in each, a <code>space</code> with nothing drawn, an <code>n.alt</code> with no character and nothing drawn, and one kerning pair. The pen lines are chapter 46's. Every test that wants a font calls <code>small_font()</code> and gets a fresh one, so no test can spoil the font for the next.</p>
 <p>Each test makes one claim, or two that belong together. When one fails, its name tells you what's wrong before you read any code.</p>
 <p>Two tests are there because of things this book already got wrong once. <code>test_key_ignores_capitals_and_punctuation</code> pins down what Mira's tidying broke. <code>test_summary_sorts_the_empty_glyphs</code> pins down chapter 136's mistake, the order that differed between editors. A good time to write a test is right after a bug: you know what went wrong, and the test keeps it from coming back unnoticed.</p>
@@ -5488,7 +5488,7 @@ E         At index 3 diff: 'Nothing drawn     0  ' != 'Nothing drawn     0'
 <div class="highlight"><pre><span></span><code>.......                                                                  [100%]
 7 passed in 0.06s
 </code></pre></div>
-<p>It took six hundredths of a second. Send Tove the new file. And since you fixed the copy in <code>halfmoon-tools</code>, copy it over the <code>plum_report.py</code> that FontLab runs.</p>
+<p>It took six hundredths of a second. Send Tove the new file. And since you fixed the copy in <code>spacing-tools</code>, copy it over the <code>plum_report.py</code> that FontLab runs.</p>
 <h2 id="break-it-on-purpose">Break it on purpose<a class="headerlink" href="#break-it-on-purpose" title="Permanent link">&para;</a></h2>
 <p>Do what Mira did. In <code>plain/__init__.py</code>, change <code>text.lower()</code> to <code>text</code> and run pytest:</p>
 <div class="highlight"><pre><span></span><code>&gt;       assert plain.key("Plum-SemiBold") == plain.key("plum semibold")
@@ -5509,7 +5509,7 @@ FAILED test_tools.py::test_key_keeps_digits - AssertionError: assert 'Plumv10...
 <ol>
 <li>Write <code>test_key_of_an_empty_string</code>. Decide what <code>key("")</code> should give before you run it.</li>
 <li>Add a glyph to <code>small_font</code> that's wider than <code>m</code>. Run pytest and read which tests fail. Then decide for each whether the test or the font should change.</li>
-<li>Find one more function in the <code>halfmoon</code> package, or in any script from Part 6, that takes plain values and returns plain values. Move it to <code>plain/__init__.py</code>, leave a borrowed name behind, and write two tests for it.</li>
+<li>Find one more function in any script from Part 6 that takes plain values and returns plain values. Move it to <code>plain/__init__.py</code>, import it back into the script, and write two tests for it.</li>
 </ol>
 <h2 id="next">Next<a class="headerlink" href="#next" title="Permanent link">&para;</a></h2>
 <p>Oskar's holiday ends next week. In July he left a sheet with eleven lines on it and a folder called <code>chores</code>. The last chapter is his first morning back in the new year: what he finds, what's on the new list, and where you go from here.</p>

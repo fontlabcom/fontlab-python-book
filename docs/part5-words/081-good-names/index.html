@@ -5335,7 +5335,7 @@
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>Plum-practice</code> open in FontLab 9, with Fly installed.</li>
-<li><code>halfmoon.py</code> with <code>tell</code>.</li>
+<li>The <code>tell</code> function from <a href="../../part2-a-toolbox/039-ask-the-user/">chapter 39</a>. The script below defines it again, so it runs by itself.</li>
 </ul>
 <p>I couldn't run the code in FontLab 9. The outputs below were computed in plain Python. I haven't seen which names FontLab itself refuses when you type them into the Font window, or what an export says about a bad one, so this chapter claims nothing about either.</p>
 <h2 id="step-1-what-a-name-may-contain">Step 1: What a name may contain<a class="headerlink" href="#step-1-what-a-name-may-contain" title="Permanent link">&para;</a></h2>
@@ -5444,8 +5444,16 @@ uni00c1 False
 <div class="highlight"><pre><span></span><code><span class="c1">#FLM: Name Check</span>
 <span class="c1"># Checks every glyph name in the font, and any names pasted into EXTRA,</span>
 <span class="c1"># against the naming rules. Changes nothing.</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span>
+
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Halfmoon"</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+
 
 <span class="n">EXTRA</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">"uni0041.alt2 copy"</span><span class="p">,</span> <span class="s2">"3quarters"</span><span class="p">,</span> <span class="s2">"e..sc"</span><span class="p">,</span> <span class="s2">"ñ"</span><span class="p">,</span>
@@ -5504,7 +5512,7 @@ uni00c1 False
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">font</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">report</span><span class="p">(</span><span class="s2">"font"</span><span class="p">,</span> <span class="p">[</span><span class="n">glyph</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">glyph</span> <span class="ow">in</span> <span class="n">font</span><span class="o">.</span><span class="n">glyphs</span><span class="p">])</span>
     <span class="k">if</span> <span class="n">EXTRA</span><span class="p">:</span>

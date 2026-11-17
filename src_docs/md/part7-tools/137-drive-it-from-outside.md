@@ -103,7 +103,7 @@ This is new. Inside FontLab, a script that failed told you so. Between two progr
 
 That changes how you cut the work up. Each request should be short, so that it fits. And a request whose silence would be dangerous shouldn't be sent at all. Chapter 119's last step gives the font its next version number. If that call went silent, you wouldn't know whether Plum is at 1.004 or 1.005, and running it again might make it 1.006. So that step stays inside FontLab, where the answer appears in front of you and Edit > Undo is one keystroke away. The steps that only read and report are safe to repeat, and those are the ones to drive from outside.
 
-There's a third trap in the same call. `friday_build.main` opens a small window when no font is open, and so does anything that uses `halfmoon.ask` or `halfmoon.tell`. A window waits for a click. Nobody is there to click, and the call ends without a useful answer. Code you send from outside mustn't ask questions.
+There's a third trap in the same call. `friday_build.main` opens a small window when no font is open, and so does any script that uses chapter 39's `ask` or `tell`. A window waits for a click. Nobody is there to click, and the call ends without a useful answer. Code you send from outside mustn't ask questions.
 
 ## The whole script
 

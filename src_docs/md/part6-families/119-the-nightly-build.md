@@ -13,7 +13,7 @@ Remembering an order is work for a script. Today you write the one that calls th
 ## What you need
 
 - `Plum-practice` open in FontLab 9 and saved, with Fly installed.
-- The scripts from chapters 97, 112, 114, 115, 116 and 118, and `halfmoon.py`.
+- The scripts from chapters 97, 112, 114, 115, 116 and 118.
 
 I couldn't run the code in FontLab 9. I ran today's script and the six it calls in plain Python, with stand-ins for FontLab and with font files I built myself, through a whole Friday: a refusal, a first half, an export and a second half. Every block of output below comes from those runs.
 
@@ -40,7 +40,7 @@ Each of the six ends by printing. `ship_check.py` prints `Not ready.` and you re
 
 So make the same three changes to each of the six.
 
-First, move it out of the Scripts folder to the folder where `halfmoon.py` lives, as chapter 114 did with `preflight.py`, so it can be imported.
+First, move it out of the Scripts folder to the `site-packages` folder where Fly lives, as chapter 114 did with `preflight.py`, so it can be imported.
 
 Second, change its last line from `main()` to chapter 114's guard, so that importing it doesn't run it:
 
@@ -135,12 +135,21 @@ from pathlib import Path
 import bump_version
 import export_family
 import fly.ap.core.scripting as scripting
-import halfmoon
 import inspect_export
 import proof_html
 import proof_text
 import ship_check
-from fly import fl
+from fly import fl, qt
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
+
+
+# Chapter 39's tell, written out again so this script runs by itself.
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
 
 LOG = []
 
@@ -213,7 +222,7 @@ def build(font, package):
 def main():
     font = fl.CurrentFont()
     if font is None or not font.path:
-        halfmoon.tell("Open a saved font first.")
+        tell("Open a saved font first.")
         return
     exports = Path(font.path).parent / "exports"
     exports.mkdir(exist_ok=True)

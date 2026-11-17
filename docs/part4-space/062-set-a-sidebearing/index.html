@@ -5291,19 +5291,19 @@
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>Plum-practice</code> open in FontLab 9, with Fly installed. Keep the Font window in front, as in chapter 53.</li>
-<li><code>halfmoon.py</code> with <code>rich</code>, <code>box</code>, <code>ask</code>, <code>tell</code> and <code>set_width</code> from chapter 49.</li>
+<li>The helpers <code>box</code>, <code>ask</code> and <code>tell</code> from chapters 39 and 43, and <code>set_width</code> from chapter 49. The scripts below write them out again, so each one runs by itself.</li>
 <li><code>sb_report.py</code> from chapter 61, to look at the result.</li>
 </ul>
 <p>This chapter changes the font. Every change is one Undo step. I couldn't run it in FontLab 9, so the outputs are worked out from Plum's source file and from the code of the tools.</p>
 <h2 id="step-1-the-right-side-is-the-width">Step 1: The right side is the width<a class="headerlink" href="#step-1-the-right-side-is-the-width" title="Permanent link">&para;</a></h2>
 <p>Chapter 61 said it in passing: the right sidebearing is what's left of the width after the shape ends. So to get more white on the right you make the box wider, and nothing else has to happen.</p>
 <p>Start with the numbers as they are:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly.pens</span><span class="w"> </span><span class="kn">import</span> <span class="n">layer_of</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
 
 <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
-<span class="n">rich</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"m"</span><span class="p">])</span>
+<span class="n">rich</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"m"</span><span class="p">])</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">rich</span><span class="o">.</span><span class="n">getLSB</span><span class="p">(</span><span class="s2">"Bold"</span><span class="p">),</span> <span class="n">rich</span><span class="o">.</span><span class="n">getAdvance</span><span class="p">(</span><span class="s2">"Bold"</span><span class="p">),</span> <span class="n">rich</span><span class="o">.</span><span class="n">getRSB</span><span class="p">(</span><span class="s2">"Bold"</span><span class="p">))</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>56 788 14
@@ -5315,9 +5315,22 @@
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>806
 </code></pre></div>
-<p>Now set it. <code>halfmoon.set_width</code> from chapter 49 takes the rich glyph, the layer, the new width and a name for the Undo step:</p>
-<div class="highlight"><pre><span></span><code><span class="n">layer</span> <span class="o">=</span> <span class="n">layer_of</span><span class="p">(</span><span class="n">rich</span><span class="o">.</span><span class="n">fl</span><span class="p">,</span> <span class="s2">"Bold"</span><span class="p">)</span>
-<span class="n">halfmoon</span><span class="o">.</span><span class="n">set_width</span><span class="p">(</span><span class="n">rich</span><span class="p">,</span> <span class="n">layer</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="s2">"Set right sidebearing"</span><span class="p">)</span>
+<p>Now set it. <code>set_width</code> from chapter 49 takes the rich glyph, the layer, the new width and a name for the Undo step. Here it is again, so this runs by itself:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.history.glyphs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">history</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">set_width</span><span class="p">(</span><span class="n">glyph</span><span class="p">,</span> <span class="n">layer</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">"Set width"</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">change</span><span class="p">():</span>
+        <span class="n">layer</span><span class="o">.</span><span class="n">advanceWidth</span> <span class="o">=</span> <span class="n">width</span>
+
+    <span class="n">package</span> <span class="o">=</span> <span class="n">scripting</span><span class="o">.</span><span class="n">current_package</span><span class="p">()</span>
+    <span class="n">facts</span> <span class="o">=</span> <span class="n">history</span><span class="o">.</span><span class="n">scan_auto_facts</span><span class="p">(</span><span class="n">package</span><span class="p">)</span>
+    <span class="n">history</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="p">[</span><span class="n">layer</span><span class="p">],</span> <span class="p">[</span><span class="n">glyph</span><span class="o">.</span><span class="n">fl</span><span class="p">],</span> <span class="n">change</span><span class="p">,</span> <span class="n">operation</span><span class="o">=</span><span class="s2">"geometry"</span><span class="p">,</span> <span class="n">facts</span><span class="o">=</span><span class="n">facts</span><span class="p">)</span>
+
+
+<span class="n">layer</span> <span class="o">=</span> <span class="n">layer_of</span><span class="p">(</span><span class="n">rich</span><span class="o">.</span><span class="n">fl</span><span class="p">,</span> <span class="s2">"Bold"</span><span class="p">)</span>
+<span class="n">set_width</span><span class="p">(</span><span class="n">rich</span><span class="p">,</span> <span class="n">layer</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="s2">"Set right sidebearing"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">rich</span><span class="o">.</span><span class="n">getLSB</span><span class="p">(</span><span class="s2">"Bold"</span><span class="p">),</span> <span class="n">rich</span><span class="o">.</span><span class="n">getAdvance</span><span class="p">(</span><span class="s2">"Bold"</span><span class="p">),</span> <span class="n">rich</span><span class="o">.</span><span class="n">getRSB</span><span class="p">(</span><span class="s2">"Bold"</span><span class="p">))</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>56 806 32
@@ -5325,7 +5338,7 @@
 <p>The left sidebearing stayed at 56. The shape didn't move. Only the right edge of the box went 18 units further out.</p>
 <p>That last <code>print</code> isn't decoration. Chapter 29 had you print before and after a change, and here it earns its place: you asked for a right sidebearing, you set a width, and the only proof that the one led to the other is to ask for the sidebearing again.</p>
 <h2 id="step-2-the-mistake">Step 2: The mistake<a class="headerlink" href="#step-2-the-mistake" title="Permanent link">&para;</a></h2>
-<p>Now the <code>i</code>. It has 46 on the left and should have 56. Ten more. The same recipe, then, with one thing to settle first. The <code>i</code> is borrowed by <code>ij</code>, which FontLab builds itself, and chapter 55 showed what follows: the change is refused with <code>Refused. i: base of auto ij.</code> unless <code>history.commit</code> hears <code>allow_bases=True</code>. So <code>set_width</code> in <code>halfmoon.py</code> gets a fifth parameter and passes it on:</p>
+<p>Now the <code>i</code>. It has 46 on the left and should have 56. Ten more. The same recipe, then, with one thing to settle first. The <code>i</code> is borrowed by <code>ij</code>, which FontLab builds itself, and chapter 55 showed what follows: the change is refused with <code>Refused. i: base of auto ij.</code> unless <code>history.commit</code> hears <code>allow_bases=True</code>. So <code>set_width</code> gets a fifth parameter and passes it on:</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_width</span><span class="p">(</span><span class="n">glyph</span><span class="p">,</span> <span class="n">layer</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">"Set width"</span><span class="p">,</span> <span class="n">allow_bases</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">change</span><span class="p">():</span>
         <span class="n">layer</span><span class="o">.</span><span class="n">advanceWidth</span> <span class="o">=</span> <span class="n">width</span>
@@ -5336,11 +5349,11 @@
                    <span class="n">facts</span><span class="o">=</span><span class="n">facts</span><span class="p">,</span> <span class="n">allow_bases</span><span class="o">=</span><span class="n">allow_bases</span><span class="p">)</span>
 </code></pre></div>
 <p>The default is <code>False</code>, so every call you've written so far behaves as before. Save the font, as chapter 55 asked, and then:</p>
-<div class="highlight"><pre><span></span><code><span class="n">rich</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"i"</span><span class="p">])</span>
+<div class="highlight"><pre><span></span><code><span class="n">rich</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"i"</span><span class="p">])</span>
 <span class="n">layer</span> <span class="o">=</span> <span class="n">layer_of</span><span class="p">(</span><span class="n">rich</span><span class="o">.</span><span class="n">fl</span><span class="p">,</span> <span class="s2">"Bold"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">rich</span><span class="o">.</span><span class="n">getLSB</span><span class="p">(</span><span class="s2">"Bold"</span><span class="p">),</span> <span class="n">rich</span><span class="o">.</span><span class="n">getAdvance</span><span class="p">(</span><span class="s2">"Bold"</span><span class="p">),</span> <span class="n">rich</span><span class="o">.</span><span class="n">getRSB</span><span class="p">(</span><span class="s2">"Bold"</span><span class="p">))</span>
 
-<span class="n">halfmoon</span><span class="o">.</span><span class="n">set_width</span><span class="p">(</span><span class="n">rich</span><span class="p">,</span> <span class="n">layer</span><span class="p">,</span> <span class="n">rich</span><span class="o">.</span><span class="n">getAdvance</span><span class="p">(</span><span class="s2">"Bold"</span><span class="p">)</span> <span class="o">+</span> <span class="mi">10</span><span class="p">,</span> <span class="s2">"Set left sidebearing"</span><span class="p">,</span>
+<span class="n">set_width</span><span class="p">(</span><span class="n">rich</span><span class="p">,</span> <span class="n">layer</span><span class="p">,</span> <span class="n">rich</span><span class="o">.</span><span class="n">getAdvance</span><span class="p">(</span><span class="s2">"Bold"</span><span class="p">)</span> <span class="o">+</span> <span class="mi">10</span><span class="p">,</span> <span class="s2">"Set left sidebearing"</span><span class="p">,</span>
                    <span class="n">allow_bases</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">rich</span><span class="o">.</span><span class="n">getLSB</span><span class="p">(</span><span class="s2">"Bold"</span><span class="p">),</span> <span class="n">rich</span><span class="o">.</span><span class="n">getAdvance</span><span class="p">(</span><span class="s2">"Bold"</span><span class="p">),</span> <span class="n">rich</span><span class="o">.</span><span class="n">getRSB</span><span class="p">(</span><span class="s2">"Bold"</span><span class="p">))</span>
 </code></pre></div>
@@ -5424,7 +5437,7 @@
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.components.writer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">parts</span>
 
 <span class="k">for</span> <span class="n">glyph</span> <span class="ow">in</span> <span class="n">font</span><span class="o">.</span><span class="n">glyphs</span><span class="p">:</span>
-    <span class="n">found</span> <span class="o">=</span> <span class="n">parts</span><span class="o">.</span><span class="n">components</span><span class="p">(</span><span class="n">layer_of</span><span class="p">(</span><span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span><span class="o">.</span><span class="n">fl</span><span class="p">,</span> <span class="s2">"Bold"</span><span class="p">))</span>
+    <span class="n">found</span> <span class="o">=</span> <span class="n">parts</span><span class="o">.</span><span class="n">components</span><span class="p">(</span><span class="n">layer_of</span><span class="p">(</span><span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span><span class="o">.</span><span class="n">fl</span><span class="p">,</span> <span class="s2">"Bold"</span><span class="p">))</span>
     <span class="k">if</span> <span class="s2">"i"</span> <span class="ow">in</span> <span class="p">[</span><span class="n">parts</span><span class="o">.</span><span class="n">base_of</span><span class="p">(</span><span class="n">part</span><span class="p">)</span> <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">found</span><span class="p">]:</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">glyph</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="p">[(</span><span class="n">parts</span><span class="o">.</span><span class="n">base_of</span><span class="p">(</span><span class="n">part</span><span class="p">),</span> <span class="n">parts</span><span class="o">.</span><span class="n">offset</span><span class="p">(</span><span class="n">part</span><span class="p">))</span> <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">found</span><span class="p">])</span>
 </code></pre></div>
@@ -5438,18 +5451,42 @@
 <div class="highlight"><pre><span></span><code><span class="c1">#FLM: Set Sidebearings</span>
 <span class="c1"># Sets the left and right sidebearing of one glyph in one master.</span>
 <span class="c1"># None for a side leaves it alone. One Undo step.</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.components.writer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">parts</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.history.glyphs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">history</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.metrics.panel.model</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">metrics</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly.pens</span><span class="w"> </span><span class="kn">import</span> <span class="n">layer_of</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
 
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Halfmoon"</span>
 <span class="n">GLYPH</span> <span class="o">=</span> <span class="s2">"i"</span>
 <span class="n">MASTER</span> <span class="o">=</span> <span class="s2">"Bold"</span>
 <span class="n">LEFT</span> <span class="o">=</span> <span class="mi">56</span>
 <span class="n">RIGHT</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">ask</span><span class="p">(</span><span class="n">question</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">answer</span> <span class="o">=</span> <span class="n">run_standard_message_box</span><span class="p">(</span>
+        <span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">question</span><span class="p">,</span> <span class="s2">"Question"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Yes</span> <span class="o">|</span> <span class="n">box</span><span class="o">.</span><span class="n">No</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">answer</span> <span class="o">==</span> <span class="n">box</span><span class="o">.</span><span class="n">Yes</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">box</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">master</span><span class="o">=</span><span class="s2">"Regular"</span><span class="p">):</span>
+    <span class="n">nodes</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="n">master</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">nodes</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">xs</span> <span class="o">=</span> <span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">x</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">]</span>
+    <span class="n">ys</span> <span class="o">=</span> <span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">y</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">]</span>
+    <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">xs</span><span class="p">),</span> <span class="nb">min</span><span class="p">(</span><span class="n">ys</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">xs</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">ys</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">plan</span><span class="p">(</span><span class="n">rich</span><span class="p">,</span> <span class="n">master</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">):</span>
@@ -5466,7 +5503,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">borrowers</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">master</span><span class="p">):</span>
     <span class="n">found</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">glyph</span> <span class="ow">in</span> <span class="n">font</span><span class="o">.</span><span class="n">glyphs</span><span class="p">:</span>
-        <span class="n">layer</span> <span class="o">=</span> <span class="n">layer_of</span><span class="p">(</span><span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span><span class="o">.</span><span class="n">fl</span><span class="p">,</span> <span class="n">master</span><span class="p">)</span>
+        <span class="n">layer</span> <span class="o">=</span> <span class="n">layer_of</span><span class="p">(</span><span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span><span class="o">.</span><span class="n">fl</span><span class="p">,</span> <span class="n">master</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="n">parts</span><span class="o">.</span><span class="n">base_of</span><span class="p">(</span><span class="n">part</span><span class="p">)</span> <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">parts</span><span class="o">.</span><span class="n">components</span><span class="p">(</span><span class="n">layer</span><span class="p">)]:</span>
             <span class="n">found</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">glyph</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">found</span>
@@ -5479,12 +5516,12 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">font</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">font</span><span class="p">[</span><span class="n">GLYPH</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Open a font that has a glyph named </span><span class="si">{</span><span class="n">GLYPH</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Open a font that has a glyph named </span><span class="si">{</span><span class="n">GLYPH</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
         <span class="k">return</span>
-    <span class="k">if</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">GLYPH</span><span class="p">],</span> <span class="n">MASTER</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">GLYPH</span><span class="si">}</span><span class="s2"> has no outline in </span><span class="si">{</span><span class="n">MASTER</span><span class="si">}</span><span class="s2">, so it has no sidebearings to set."</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">box</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">GLYPH</span><span class="p">],</span> <span class="n">MASTER</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">tell</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">GLYPH</span><span class="si">}</span><span class="s2"> has no outline in </span><span class="si">{</span><span class="n">MASTER</span><span class="si">}</span><span class="s2">, so it has no sidebearings to set."</span><span class="p">)</span>
         <span class="k">return</span>
-    <span class="n">rich</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">GLYPH</span><span class="p">])</span>
+    <span class="n">rich</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">GLYPH</span><span class="p">])</span>
     <span class="n">layer</span> <span class="o">=</span> <span class="n">layer_of</span><span class="p">(</span><span class="n">rich</span><span class="o">.</span><span class="n">fl</span><span class="p">,</span> <span class="n">MASTER</span><span class="p">)</span>
     <span class="n">dx</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">plan</span><span class="p">(</span><span class="n">rich</span><span class="p">,</span> <span class="n">MASTER</span><span class="p">,</span> <span class="n">LEFT</span><span class="p">,</span> <span class="n">RIGHT</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">dx</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">width</span> <span class="o">==</span> <span class="n">rich</span><span class="o">.</span><span class="n">getAdvance</span><span class="p">(</span><span class="n">MASTER</span><span class="p">):</span>
@@ -5498,7 +5535,7 @@
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"The shape also moves inside: </span><span class="si">{</span><span class="s1">' '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">users</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">users</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Borrowed by: </span><span class="si">{</span><span class="s1">' '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">users</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">ask</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Change </span><span class="si">{</span><span class="n">GLYPH</span><span class="si">}</span><span class="s2"> in </span><span class="si">{</span><span class="n">MASTER</span><span class="si">}</span><span class="s2">?"</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ask</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Change </span><span class="si">{</span><span class="n">GLYPH</span><span class="si">}</span><span class="s2"> in </span><span class="si">{</span><span class="n">MASTER</span><span class="si">}</span><span class="s2">?"</span><span class="p">):</span>
         <span class="k">return</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">change</span><span class="p">():</span>
@@ -5526,7 +5563,7 @@ i Bold after: left 56, width 232, right 24
 <p>A few things in it are worth a second look.</p>
 <p><code>plan</code> works out both numbers before anything is touched. The width starts as it is, grows by the move on the left, and grows again by whatever the right side needs. Either <code>if</code> can be skipped, so one function serves for the left side, the right side or both. It returns a pair, as <code>mark_shift</code> did in chapter 53.</p>
 <p><code>change</code> is written inside <code>main</code>, after the question. It's the function-in-a-function from chapter 49, and it sees <code>layer</code>, <code>dx</code> and <code>width</code> because it was written where those boxes live.</p>
-<p>The guard with <code>halfmoon.box</code> keeps the script away from glyphs with no outline of their own. A <code>space</code> has a width and no shape, so "left sidebearing" means nothing for it. A glyph made only of components is a different case, and chapter 63 takes it up.</p>
+<p>The guard with <code>box</code> keeps the script away from glyphs with no outline of their own. A <code>space</code> has a width and no shape, so "left sidebearing" means nothing for it. A glyph made only of components is a different case, and chapter 63 takes it up.</p>
 <p>Mira runs the script for the <code>i</code> and, with three constants changed, for the <code>m</code>. Then she runs <code>sb_report.py</code> on <code>minimum</code> again:</p>
 <div class="highlight"><pre><span></span><code>Bold       88   80   88   80   84   92   smallest 80, spread 12
 </code></pre></div>
@@ -5537,7 +5574,7 @@ i Bold after: left 56, width 232, right 24
 <ol>
 <li>Oskar once left a note that said "Give the H 60 on each side." Do it in the Bold: set <code>GLYPH = "H"</code>, <code>LEFT = 60</code> and <code>RIGHT = 60</code>. The Bold <code>H</code> starts at left 56, width 672, right 40. Work out the plan on paper before you run the script. You should get a move of 4 and a width of 696.</li>
 <li>Set the right sidebearing of the Bold <code>n</code> to 40, with <code>LEFT = None</code>. Then print the three numbers of the Bold <code>ntilde</code>. Its width is still 523. In one sentence: why does the script not warn you about <code>ntilde</code>, and should it?</li>
-<li>Set <code>GLYPH = "ij"</code> and run the script. It stops at the guard and says the glyph has no outline, since <code>ij</code> is two borrowed shapes. Now try the width alone, in the Scripting panel: <code>halfmoon.set_width(rich, layer, 470, allow_bases=True)</code> for the Bold layer of <code>ij</code>. By Fly's code that should stop with a refusal that begins <code>Refused: auto layer</code>. Why does <code>allow_bases=True</code> not help here? Chapter 55 has the answer.</li>
+<li>Set <code>GLYPH = "ij"</code> and run the script. It stops at the guard and says the glyph has no outline, since <code>ij</code> is two borrowed shapes. Now try the width alone, in the Scripting panel: <code>set_width(rich, layer, 470, allow_bases=True)</code> for the Bold layer of <code>ij</code>. By Fly's code that should stop with a refusal that begins <code>Refused: auto layer</code>. Why does <code>allow_bases=True</code> not help here? Chapter 55 has the answer.</li>
 </ol>
 <h2 id="next">Next<a class="headerlink" href="#next" title="Permanent link">&para;</a></h2>
 <p>The <code>d</code>, the <code>q</code> and the <code>g</code> begin with the same round stroke as the <code>o</code>, and Oskar's sheet says their left sides should match it. Chapter 63 copies sidebearings from one glyph to others, with a dictionary that says who follows whom.</p>

@@ -95,7 +95,7 @@ You would never have found this in FontLab alone. A script that runs in one plac
 
 ## The whole script
 
-There are three files today. The first does the work. Save it as `plum_report.py`, beside `halfmoon.py`:
+There are three files today. The first does the work. Save it as `plum_report.py` in the `site-packages` folder from chapter 33, where Python looks when a script says `import`:
 
 ```python
 # A font report that uses only fontParts names, so it can run in any
@@ -143,7 +143,7 @@ def report(font):
         print(line)
 ```
 
-It has no `#FLM` line and no import. It doesn't use `halfmoon`, because Tove doesn't have `halfmoon`. That's the price of a portable file: it can lean on Python and on the agreement, and on nothing of yours.
+It has no `#FLM` line and no import. It doesn't use Fly or anything you wrote in earlier chapters, because Tove has neither. That's the price of a portable file: it can lean on Python and on the agreement, and on nothing of yours.
 
 `summary` gathers the facts into a dictionary, as the functions of chapter 95 did. `lines` turns the facts into text. `report` prints, and deals with there being no font. Keeping them apart means the part that reads the font can be checked without printing anything, which chapter 139 will use.
 

@@ -1648,10 +1648,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#step-1-move-the-reader-into-the-module" class="md-nav__link">
+  <a href="#step-1-make-the-reader-a-function" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 1: Move the reader into the module
+        Step 1: Make the reader a function
       
     </span>
   </a>
@@ -5181,10 +5181,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#step-1-move-the-reader-into-the-module" class="md-nav__link">
+  <a href="#step-1-make-the-reader-a-function" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 1: Move the reader into the module
+        Step 1: Make the reader a function
       
     </span>
   </a>
@@ -5313,12 +5313,12 @@
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li>FontLab 9 with Fly installed, and <code>Plum-practice</code> open in the Font window.</li>
-<li><code>halfmoon.py</code> as <a href="../039-ask-the-user/">chapter 39</a> left it.</li>
+<li>The window helpers from <a href="../039-ask-the-user/">chapter 39</a>. They're repeated below, so you don't need the old scripts.</li>
 <li><code>smallcaps.txt</code> from chapter 27, in your <code>scripting-book</code> folder.</li>
 <li>Save the font before you start. This script adds glyphs.</li>
 </ul>
-<h2 id="step-1-move-the-reader-into-the-module">Step 1: Move the reader into the module<a class="headerlink" href="#step-1-move-the-reader-into-the-module" title="Permanent link">&para;</a></h2>
-<p>In chapter 27 you wrote the lines that read a list of names from a file: open it, strip each line, and skip blanks and the lines that start with <code>#</code>. A second script needs them now, and the rule from chapter 33 says what to do. Put it in <code>halfmoon.py</code>:</p>
+<h2 id="step-1-make-the-reader-a-function">Step 1: Make the reader a function<a class="headerlink" href="#step-1-make-the-reader-a-function" title="Permanent link">&para;</a></h2>
+<p>In chapter 27 you wrote the lines that read a list of names from a file: open it, strip each line, and skip blanks and the lines that start with <code>#</code>. A second script needs them now, so give them a name. Start the new script, <code>add_from_list.py</code>, with this function:</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_names</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
     <span class="n">names</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -5331,13 +5331,12 @@
 <p>The test <code>if name and not name.startswith("#")</code> reads "if there's anything left and it isn't a note". An empty string counts as false, as chapter 31 said, so the blank lines drop out.</p>
 <p>I haven't folded this into a comprehension. You could, but the line needs a box, <code>name</code>, to hold the stripped text that's used twice. Chapter 37's rule says that's a job for a loop.</p>
 <h2 id="step-2-work-out-whats-missing">Step 2: Work out what's missing<a class="headerlink" href="#step-2-work-out-whats-missing" title="Permanent link">&para;</a></h2>
-<p>Start the new script. Call it <code>add_from_list.py</code> for now.</p>
+<p>Add these lines to <code>add_from_list.py</code>. The imports go at the top, the rest below <code>read_names</code>:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
 
 <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
-<span class="n">wanted</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">read_names</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">font</span><span class="o">.</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">"smallcaps.txt"</span><span class="p">)</span>
+<span class="n">wanted</span> <span class="o">=</span> <span class="n">read_names</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">font</span><span class="o">.</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">"smallcaps.txt"</span><span class="p">)</span>
 
 <span class="n">have</span> <span class="o">=</span> <span class="p">{</span><span class="n">glyph</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">glyph</span> <span class="ow">in</span> <span class="n">font</span><span class="o">.</span><span class="n">glyphs</span><span class="p">}</span>
 <span class="n">to_make</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">wanted</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">have</span><span class="p">]</span>
@@ -5384,17 +5383,17 @@ d.sc e.sc f.sc g.sc h.sc zero.sc one.sc
 <div class="highlight"><pre><span></span><code>ValueError: Refused: d.sc is listed twice.
 </code></pre></div>
 <p>The traceback above that line runs through a file called <code>creation.py</code>. Chapter 38 told you what to do with it: the last line is a refusal that somebody wrote on purpose, and the last step of the trail that's yours is the <code>create_glyphs</code> line. The helper looked through all the forms before it touched the font, found the same name twice, and stopped. Look at the Font window. Nothing has been added, including the six glyphs that were fine. It's the all-or-nothing rule from chapter 31, and here the helper enforces it for you.</p>
-<p>You could fix the file. But the art director's files will always have such things in them, and the right place to cope is the reader. In <code>halfmoon.py</code>, change one line of <code>read_names</code>:</p>
+<p>You could fix the file. But the art director's files will always have such things in them, and the right place to cope is the reader. Change one line of <code>read_names</code>:</p>
 <div class="highlight"><pre><span></span><code>            <span class="k">if</span> <span class="n">name</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"#"</span><span class="p">)</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
                 <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 </code></pre></div>
-<p>Now a name that's already in the list is skipped. Reload the module and run the script again.</p>
+<p>Now a name that's already in the list is skipped. Run the script again.</p>
 <div class="highlight"><pre><span></span><code>7 glyphs added
 </code></pre></div>
 <p>Scroll to the end of the Font window. There should be seven new empty cells, <code>d.sc</code> to <code>one.sc</code>, in the order of the file. In chapter 29 one run was one Undo step. This helper is different. Fly's source says it records each new glyph as its own step, so taking all seven back means seven undos. I haven't watched it do so. The quick way back is <strong>File &gt; Revert Font</strong>, and that's why you saved first.</p>
 <p>The helper refuses in two other cases that you should know about. If any name in the list already exists in the font, it says <code>Refused: a.sc exists now. Check the list again.</code> Our script can't trip that one, because <code>to_make</code> leaves those names out. And if you run the script while a Glyph window is the active window, it asks you to switch to the Font window first, for the same reason as in chapter 29.</p>
 <h2 id="the-whole-script">The whole script<a class="headerlink" href="#the-whole-script" title="Permanent link">&para;</a></h2>
-<p>Wrap it in <code>main</code>, add the guards and the questions, and give it a menu name:</p>
+<p>Wrap it in <code>main</code>, add the guards and the questions, and give it a menu name. The script carries <code>tell</code>, <code>ask</code> and <code>choose_text_file</code> from chapter 39 and the finished <code>read_names</code> from Step 4, so it runs by itself:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">#FLM: Add Glyphs From List</span>
 <span class="c1"># Adds an empty glyph for every name in a text file</span>
 <span class="c1"># that the current font doesn't have yet.</span>
@@ -5403,46 +5402,82 @@ d.sc e.sc f.sc g.sc h.sc zero.sc one.sc
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.history.glyphs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">history</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.glyphs.creation</span><span class="w"> </span><span class="kn">import</span> <span class="n">NewGlyph</span><span class="p">,</span> <span class="n">create_glyphs</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">qt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span><span class="p">,</span> <span class="n">run_file_dialog</span>
 
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Halfmoon Type"</span>
 <span class="n">MASTERS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Light"</span><span class="p">,</span> <span class="s2">"Regular"</span><span class="p">,</span> <span class="s2">"Bold"</span><span class="p">]</span>
 <span class="n">WIDTH</span> <span class="o">=</span> <span class="mi">500</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">ask</span><span class="p">(</span><span class="n">question</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">answer</span> <span class="o">=</span> <span class="n">run_standard_message_box</span><span class="p">(</span>
+        <span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">question</span><span class="p">,</span> <span class="s2">"Question"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Yes</span> <span class="o">|</span> <span class="n">box</span><span class="o">.</span><span class="n">No</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">answer</span> <span class="o">==</span> <span class="n">box</span><span class="o">.</span><span class="n">Yes</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">text_files_only</span><span class="p">(</span><span class="n">kind</span><span class="p">,</span> <span class="n">dialog</span><span class="p">):</span>
+    <span class="n">dialog</span><span class="o">.</span><span class="n">setNameFilters</span><span class="p">([</span><span class="s2">"Text files (*.txt)"</span><span class="p">])</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">choose_text_file</span><span class="p">(</span><span class="n">caption</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="s2">""</span><span class="p">):</span>
+    <span class="n">paths</span> <span class="o">=</span> <span class="n">run_file_dialog</span><span class="p">(</span><span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="p">,</span> <span class="n">text_files_only</span><span class="p">,</span> <span class="n">caption</span><span class="p">,</span> <span class="n">folder</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">paths</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">paths</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">read_names</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"#"</span><span class="p">)</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+                <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">names</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">font</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
         <span class="k">return</span>
 
     <span class="n">folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">font</span><span class="o">.</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="k">if</span> <span class="n">font</span><span class="o">.</span><span class="n">path</span> <span class="k">else</span> <span class="s2">""</span>
-    <span class="n">path</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">choose_text_file</span><span class="p">(</span><span class="s2">"Choose a glyph list"</span><span class="p">,</span> <span class="n">folder</span><span class="p">)</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">choose_text_file</span><span class="p">(</span><span class="s2">"Choose a glyph list"</span><span class="p">,</span> <span class="n">folder</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span>
 
-    <span class="n">wanted</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">read_names</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">wanted</span> <span class="o">=</span> <span class="n">read_names</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="n">have</span> <span class="o">=</span> <span class="p">{</span><span class="n">glyph</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">glyph</span> <span class="ow">in</span> <span class="n">font</span><span class="o">.</span><span class="n">glyphs</span><span class="p">}</span>
     <span class="n">to_make</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">wanted</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">have</span><span class="p">]</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">to_make</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="sa">f</span><span class="s2">"All </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">wanted</span><span class="p">)</span><span class="si">}</span><span class="s2"> glyphs in the list are in the font already."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="sa">f</span><span class="s2">"All </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">wanted</span><span class="p">)</span><span class="si">}</span><span class="s2"> glyphs in the list are in the font already."</span><span class="p">)</span>
         <span class="k">return</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">wanted</span><span class="p">)</span><span class="si">}</span><span class="s2"> wanted, </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">to_make</span><span class="p">)</span><span class="si">}</span><span class="s2"> to make:"</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">to_make</span><span class="p">))</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">ask</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Add </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">to_make</span><span class="p">)</span><span class="si">}</span><span class="s2"> empty glyphs, </span><span class="si">{</span><span class="n">WIDTH</span><span class="si">}</span><span class="s2"> units wide?"</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ask</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Add </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">to_make</span><span class="p">)</span><span class="si">}</span><span class="s2"> empty glyphs, </span><span class="si">{</span><span class="n">WIDTH</span><span class="si">}</span><span class="s2"> units wide?"</span><span class="p">):</span>
         <span class="k">return</span>
 
     <span class="n">layers</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([(</span><span class="n">master</span><span class="p">,</span> <span class="n">WIDTH</span><span class="p">)</span> <span class="k">for</span> <span class="n">master</span> <span class="ow">in</span> <span class="n">MASTERS</span><span class="p">])</span>
     <span class="n">specs</span> <span class="o">=</span> <span class="p">[</span><span class="n">NewGlyph</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">layers</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">to_make</span><span class="p">]</span>
     <span class="n">package</span> <span class="o">=</span> <span class="n">scripting</span><span class="o">.</span><span class="n">current_package</span><span class="p">()</span>
     <span class="n">made</span> <span class="o">=</span> <span class="n">create_glyphs</span><span class="p">(</span><span class="n">package</span><span class="p">,</span> <span class="n">specs</span><span class="p">,</span> <span class="s2">"Add glyphs from list"</span><span class="p">,</span> <span class="n">history</span><span class="o">.</span><span class="n">scan_auto_facts</span><span class="p">(</span><span class="n">package</span><span class="p">))</span>
-    <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Added </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">made</span><span class="o">.</span><span class="n">glyphs</span><span class="p">)</span><span class="si">}</span><span class="s2"> glyphs. Each one is its own Undo step."</span><span class="p">)</span>
+    <span class="n">tell</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Added </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">made</span><span class="o">.</span><span class="n">glyphs</span><span class="p">)</span><span class="si">}</span><span class="s2"> glyphs. Each one is its own Undo step."</span><span class="p">)</span>
 
 
 <span class="n">main</span><span class="p">()</span>
 </code></pre></div>
 <p>One line is new in form. <code>folder = Path(font.path).parent if font.path else ""</code> uses the value-with-a-choice from chapter 37: the font's folder if the font has been saved, and otherwise an empty string, which lets the file window open wherever it likes. That's the unsaved-font guard chapter 26 left you as an exercise.</p>
-<p>Save it as <code>Add Glyphs From List.py</code> in <code>Scripts/Halfmoon/</code>. It has under fifty lines. The collecting part is three lines long, and the rest is questions, guards and news. That proportion is normal for a script other people will run. It's also why the module matters. If <code>ask</code>, <code>tell</code>, <code>choose_text_file</code> and <code>read_names</code> weren't in <code>halfmoon.py</code>, this script would be a hundred lines long, and the next one would carry the same hundred lines again.</p>
+<p>Save it as <code>Add Glyphs From List.py</code> in <code>Scripts/Halfmoon/</code>. The collecting part is three lines long, and the rest is questions, guards and news. That proportion is normal for a script other people will run. About thirty of its lines are the helpers at the top, and they're the same lines every time. That's why you want a clean copy of them to paste from, which is the second thing Mira reads out.</p>
 <h2 id="whats-in-the-box">What's in the box<a class="headerlink" href="#whats-in-the-box" title="Permanent link">&para;</a></h2>
 <p>Here's what Mira reads out to Ines. First, the menu. These are in <code>Scripts/Halfmoon/</code>, and anyone in the studio can run them without opening a file:</p>
 <table>
@@ -5482,39 +5517,132 @@ d.sc e.sc f.sc g.sc h.sc zero.sc one.sc
 </tbody>
 </table>
 <p>Look at the third column. Three of the five can't hurt anything. The two that change the font ask first, check before they act, and say how to take the change back. You can now see chapters 29 to 31 and chapter 39 as one lesson spread over four days.</p>
-<p>Second, the module. <code>halfmoon.py</code> holds what the scripts share:</p>
-<table>
-<thead>
-<tr>
-<th>Kind</th>
-<th>Names</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Constants</td>
-<td><code>RED</code>, <code>YELLOW</code>, <code>GREEN</code>, <code>LEGEND</code>, <code>TITLE</code></td>
-</tr>
-<tr>
-<td>Glyph questions</td>
-<td><code>rich</code>, <code>is_empty</code>, <code>glyphs_of</code>, <code>widest_glyph</code>, <code>wider_than</code></td>
-</tr>
-<tr>
-<td>Tables and tallies</td>
-<td><code>metrics_rows</code>, <code>by_width</code>, <code>lopsided</code>, <code>status_tally</code></td>
-</tr>
-<tr>
-<td>Files</td>
-<td><code>read_names</code></td>
-</tr>
-<tr>
-<td>Windows</td>
-<td><code>tell</code>, <code>ask</code>, <code>ask_text</code>, <code>choose_text_file</code>, <code>choose_save_file</code></td>
-</tr>
-</tbody>
-</table>
-<p>That's about twenty names. Every one is a thing Mira got wrong at least once before she got it right, and none of them will have to be got right again.</p>
-<p>Third, the Python. In Part 1 you learned to say things to a font one glyph at a time. In Part 2 you learned to keep what it answers and to work with other people's material. Dictionaries look things up and count them, and sets compare (chapters 21 to 25). Text files go in and out, and tables go to a spreadsheet (26 to 28). Changes can be undone, plans come before changes and switches default to safe (29 to 31). Constants, a module of your own and functions with defaults keep the scripts short (32 to 34). Rows, sorting and one-line lists shape the answers (35 to 37). And you can read a long error from end to end and ask a person a question (38 and 39).</p>
+<p>Second, the helpers. They aren't in a module, because a script that imports a file of yours only runs on a machine that has the file, as Ines found in chapter 33. They're a set of snippets, kept in one text file, <code>snippets.py</code>, in your <code>scripting-book</code> folder. You never import it. When a script needs a helper, you copy the block it's in, with its imports, and paste it at the top of the script. Each block below runs by itself.</p>
+<p>The colours and the tally, from chapters 32 and 33:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
+
+<span class="n">RED</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">YELLOW</span> <span class="o">=</span> <span class="mi">61</span>
+<span class="n">GREEN</span> <span class="o">=</span> <span class="mi">121</span>
+
+<span class="n">LEGEND</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mi">0</span><span class="p">:</span> <span class="s2">"untouched"</span><span class="p">,</span>
+    <span class="n">RED</span><span class="p">:</span> <span class="s2">"not-drawn"</span><span class="p">,</span>
+    <span class="n">YELLOW</span><span class="p">:</span> <span class="s2">"needs-work"</span><span class="p">,</span>
+    <span class="n">GREEN</span><span class="p">:</span> <span class="s2">"done"</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">status_tally</span><span class="p">(</span><span class="n">font</span><span class="p">):</span>
+    <span class="n">tally</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">glyph</span> <span class="ow">in</span> <span class="n">font</span><span class="o">.</span><span class="n">glyphs</span><span class="p">:</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="n">LEGEND</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span><span class="o">.</span><span class="n">mark</span><span class="p">,</span> <span class="s2">"unknown-color"</span><span class="p">)</span>
+        <span class="n">tally</span><span class="p">[</span><span class="n">status</span><span class="p">]</span> <span class="o">=</span> <span class="n">tally</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">tally</span>
+</code></pre></div>
+<p>Glyph questions, from chapters 33, 34 and 37:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">is_empty</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span><span class="o">.</span><span class="n">isEmpty</span><span class="p">()</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">glyphs_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">only_selected</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">font</span><span class="o">.</span><span class="n">glyphs</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">scripting</span><span class="o">.</span><span class="n">names_selected_names</span><span class="p">()]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">widest_glyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">widest</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">glyph</span> <span class="ow">in</span> <span class="n">glyphs_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">widest</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">glyph</span><span class="o">.</span><span class="n">width</span> <span class="o">&gt;</span> <span class="n">widest</span><span class="o">.</span><span class="n">width</span><span class="p">:</span>
+            <span class="n">widest</span> <span class="o">=</span> <span class="n">glyph</span>
+    <span class="k">return</span> <span class="n">widest</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">wider_than</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">700</span><span class="p">,</span> <span class="n">only_selected</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">g</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">glyphs_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="p">)</span> <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">width</span> <span class="o">&gt;</span> <span class="n">limit</span><span class="p">]</span>
+</code></pre></div>
+<p>Tables, from chapters 35 and 36. These need <code>pGlyph</code> and <code>glyphs_of</code> from the block above:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">metrics_rows</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">glyph</span> <span class="ow">in</span> <span class="n">glyphs_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="p">):</span>
+        <span class="n">measured</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">measured</span><span class="o">.</span><span class="n">isEmpty</span><span class="p">():</span>
+            <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">glyph</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">measured</span><span class="o">.</span><span class="n">getLSB</span><span class="p">(),</span> <span class="nb">int</span><span class="p">(</span><span class="n">glyph</span><span class="o">.</span><span class="n">width</span><span class="p">),</span> <span class="n">measured</span><span class="o">.</span><span class="n">getRSB</span><span class="p">()))</span>
+    <span class="k">return</span> <span class="n">rows</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">by_width</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">lopsided</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+    <span class="n">name</span><span class="p">,</span> <span class="n">lsb</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">rsb</span> <span class="o">=</span> <span class="n">row</span>
+    <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="n">lsb</span> <span class="o">-</span> <span class="n">rsb</span><span class="p">)</span>
+</code></pre></div>
+<p>Files, from chapter 27 and today:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_names</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"#"</span><span class="p">)</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+                <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">names</span>
+</code></pre></div>
+<p>Windows, from chapter 39:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span><span class="p">,</span> <span class="n">run_text_dialog</span><span class="p">,</span> <span class="n">run_file_dialog</span>
+
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Halfmoon Type"</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">ask</span><span class="p">(</span><span class="n">question</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">answer</span> <span class="o">=</span> <span class="n">run_standard_message_box</span><span class="p">(</span>
+        <span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">question</span><span class="p">,</span> <span class="s2">"Question"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Yes</span> <span class="o">|</span> <span class="n">box</span><span class="o">.</span><span class="n">No</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">answer</span> <span class="o">==</span> <span class="n">box</span><span class="o">.</span><span class="n">Yes</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">ask_text</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="s2">""</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">run_text_dialog</span><span class="p">(</span><span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">TITLE</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">text_files_only</span><span class="p">(</span><span class="n">kind</span><span class="p">,</span> <span class="n">dialog</span><span class="p">):</span>
+    <span class="n">dialog</span><span class="o">.</span><span class="n">setNameFilters</span><span class="p">([</span><span class="s2">"Text files (*.txt)"</span><span class="p">])</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">choose_text_file</span><span class="p">(</span><span class="n">caption</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="s2">""</span><span class="p">):</span>
+    <span class="n">paths</span> <span class="o">=</span> <span class="n">run_file_dialog</span><span class="p">(</span><span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="p">,</span> <span class="n">text_files_only</span><span class="p">,</span> <span class="n">caption</span><span class="p">,</span> <span class="n">folder</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">paths</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">paths</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">for_saving</span><span class="p">(</span><span class="n">kind</span><span class="p">,</span> <span class="n">dialog</span><span class="p">):</span>
+    <span class="n">dialog</span><span class="o">.</span><span class="n">setAcceptMode</span><span class="p">(</span><span class="n">kind</span><span class="o">.</span><span class="n">AcceptSave</span><span class="p">)</span>
+    <span class="n">dialog</span><span class="o">.</span><span class="n">setNameFilters</span><span class="p">([</span><span class="s2">"Text files (*.txt)"</span><span class="p">])</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">choose_save_file</span><span class="p">(</span><span class="n">caption</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="s2">""</span><span class="p">):</span>
+    <span class="n">paths</span> <span class="o">=</span> <span class="n">run_file_dialog</span><span class="p">(</span><span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="p">,</span> <span class="n">for_saving</span><span class="p">,</span> <span class="n">caption</span><span class="p">,</span> <span class="n">folder</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">paths</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">paths</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</code></pre></div>
+<p><code>glyphs_of</code> and <code>wider_than</code> are the one-line versions from chapter 37. They do the same as the loops in chapter 34.</p>
+<p>That's about twenty names. Every one is a thing Mira got wrong at least once before she got it right. Now she pastes the right version, and the wrong one doesn't come back.</p>
+<p>Third, the Python. In Part 1 you learned to say things to a font one glyph at a time. In Part 2 you learned to keep what it answers and to work with other people's material. Dictionaries look things up and count them, and sets compare (chapters 21 to 25). Text files go in and out, and tables go to a spreadsheet (26 to 28). Changes can be undone, plans come before changes and switches default to safe (29 to 31). Constants, modules and functions with defaults keep the scripts short (32 to 34). Rows, sorting and one-line lists shape the answers (35 to 37). And you can read a long error from end to end and ask a person a question (38 and 39).</p>
 <p>Ines writes for a while. Mira's own guess is that the Friday numbers used to take her most of an hour and now take a minute, and that the two renaming afternoons in week five would each be ten minutes today. Ines doesn't write down a total. She writes: <em>Mira's chores no longer depend on Mira.</em> Then she underlines "Inventory", which she ran herself on Tuesday on a font Mira has never opened.</p>
 <h2 id="where-you-are">Where you are<a class="headerlink" href="#where-you-are" title="Permanent link">&para;</a></h2>
 <p>Get out Oskar's sheet. It hasn't moved since chapter 20. Four lines are crossed out and seven are left:</p>
@@ -5530,12 +5658,12 @@ d.sc e.sc f.sc g.sc h.sc zero.sc one.sc
 <p>Part 2 crossed out none of them, and that's as it should be. The chores of these four weeks came from Ines, Tomas and the publisher. They were all about names, numbers and lists, the outside of a glyph. Every line left on the sheet is about what's inside one: outlines, borrowed shapes, sidebearings measured against other shapes, accents sitting on letters.</p>
 <p>So far a glyph has been a name, a Unicode value, a width with its two sidebearings, a color and a tag. You've asked whether it's empty, and that's the only question you've asked about what's drawn in it. In Part 3 you'll look at the drawing.</p>
 <h2 id="what-you-learned">What you learned<a class="headerlink" href="#what-you-learned" title="Permanent link">&para;</a></h2>
-<p>A script that other people run is mostly guards, questions and news around a few lines of work, and a shared module keeps that from being typed twice. Adding glyphs goes through a helper that takes a description of each one, checks the whole list before it touches the font, and records each addition so that it can be undone. When a helper refuses a list, it's usually better to fix the code that makes the list than to fix the file.</p>
+<p>A script that other people run is mostly guards, questions and news around a few lines of work, and a set of snippets keeps you from writing those twice. Adding glyphs goes through a helper that takes a description of each one, checks the whole list before it touches the font, and records each addition so that it can be undone. When a helper refuses a list, it's usually better to fix the code that makes the list than to fix the file.</p>
 <h2 id="try-it-yourself">Try it yourself<a class="headerlink" href="#try-it-yourself" title="Permanent link">&para;</a></h2>
 <ol>
 <li>Give each new glyph the width of its parent instead of 500: <code>d.sc</code> gets the width of <code>d</code>, and <code>zero.sc</code> the width of <code>zero</code>. You'll need <code>split</code> from chapter 9, a lookup like the one in chapter 21, and a decision about what to do when the parent isn't in the font. Use the same width in all three masters for now.</li>
-<li>Add a sixth command to the menu: <code>Status Report</code>, which prints <code>halfmoon.status_tally(font)</code> sorted by count, largest first, as chapter 36 showed. It's a script of about ten lines. Does it need to ask anything? Does it need a guard?</li>
-<li>Go through the scripts in your <code>scripting-book</code> folder from Part 1 and pick one that still has its own copy of <code>is_empty</code> or its own loop for the widest glyph. Rewrite it to use <code>halfmoon</code>, and check that its output hasn't changed. Then count how many lines you deleted.</li>
+<li>Add a sixth command to the menu: <code>Status Report</code>, which pastes in the colours-and-tally snippet and prints <code>status_tally(font)</code> sorted by count, largest first, as chapter 36 showed. It's a script of about ten lines. Does it need to ask anything? Does it need a guard?</li>
+<li>Go through the scripts in your <code>scripting-book</code> folder from Part 1 and pick one that still has its own copy of <code>is_empty</code> or its own loop for the widest glyph. Replace that copy with the snippet from this chapter, and check that its output hasn't changed. Did the old copy differ from the snippet? Where?</li>
 </ol>
 <h2 id="next">Next<a class="headerlink" href="#next" title="Permanent link">&para;</a></h2>
 <p>Part 3 opens with a glyph window and a single letter. Chapter 41 asks the <code>o</code> what it's made of, and the answer is two closed outlines and a count of points.</p>

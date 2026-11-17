@@ -4243,10 +4243,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#step-2-do-what-chapter-115-said" class="md-nav__link">
+  <a href="#step-2-borrow-three-functions-from-chapter-115" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 2: Do what chapter 115 said
+        Step 2: Borrow three functions from chapter 115
       
     </span>
   </a>
@@ -5181,10 +5181,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#step-2-do-what-chapter-115-said" class="md-nav__link">
+  <a href="#step-2-borrow-three-functions-from-chapter-115" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 2: Do what chapter 115 said
+        Step 2: Borrow three functions from chapter 115
       
     </span>
   </a>
@@ -5290,7 +5290,7 @@
 <p>That makes five styles, nine lines each, and every line is the same piece of HTML with three things changed. Building those with f-strings and plus signs, as chapter 115 did, would work, and you'd lose your place in the quote marks. Python has a tool for text with holes in it.</p>
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>Plum-practice</code> open in FontLab 9, with Fly installed, and <code>halfmoon.py</code>.</li>
+<li><code>Plum-practice</code> open in FontLab 9, with Fly installed.</li>
 <li>The export folder for version 1.002 with five OTF files in it.</li>
 <li><code>proof_html.py</code> from chapter 115, to borrow from.</li>
 </ul>
@@ -5308,12 +5308,11 @@ Bold at 36pt
 <p>A <code>Template</code> is a string with named holes. A hole is a dollar sign and a name. <code>substitute</code> fills the holes from the names you give it and returns the finished text. The template itself doesn't change, so you can fill it as often as you like.</p>
 <p>The braces in <code>${size}pt</code> mark where the name ends. Without them Python would look for a hole called <code>sizept</code>.</p>
 <p>Why not an f-string? An f-string is filled once, at the line where it's written. A template is written in one place and filled in another, many times. And a template doesn't care about curly braces, so a style sheet can sit inside one as it is, with none of chapter 88's doubling.</p>
-<h2 id="step-2-do-what-chapter-115-said">Step 2: Do what chapter 115 said<a class="headerlink" href="#step-2-do-what-chapter-115-said" title="Permanent link">&para;</a></h2>
-<p>Chapter 115 copied <code>key</code> from chapter 112 and said that a third script wanting it would send it to <code>halfmoon.py</code>. This is the third script. It also needs <code>latest_export</code> and <code>font_file</code>.</p>
-<p>Open <code>halfmoon.py</code>. If the top of the file doesn't already have this line, add it:</p>
+<h2 id="step-2-borrow-three-functions-from-chapter-115">Step 2: Borrow three functions from chapter 115<a class="headerlink" href="#step-2-borrow-three-functions-from-chapter-115" title="Permanent link">&para;</a></h2>
+<p>This script needs three functions you already have: <code>key</code> from chapter 112, and <code>latest_export</code> and <code>font_file</code> from chapter 115. Copy them in, unchanged, so this script runs by itself. They need <code>Path</code>, so the script's imports gain this line:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 </code></pre></div>
-<p>Then move the three functions across from <code>proof_html.py</code>, unchanged:</p>
+<p>And here are the three:</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">key</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
     <span class="k">return</span> <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">isalnum</span><span class="p">()])</span>
 
@@ -5334,7 +5333,7 @@ Bold at 36pt
             <span class="k">return</span> <span class="n">path</span>
     <span class="k">return</span> <span class="kc">None</span>
 </code></pre></div>
-<p>In <code>proof_html.py</code>, delete the three and write <code>halfmoon.latest_export</code> and <code>halfmoon.font_file</code> where they're called. Chapter 112's <code>export_family.py</code> has its own copy of <code>key</code>: delete that one too and write <code>halfmoon.key</code> in its place, so there is one <code>key</code> in the house. Run it once to see that Friday's page still comes out. FontLab may be holding the old <code>halfmoon</code> in memory, so use chapter 33's reload if it complains that the module has no <code>latest_export</code>.</p>
+<p>That makes three copies of <code>key</code> in three scripts. Chapter 114 said a copy is two things to mend. It is, but each script still runs on its own, and <code>key</code> is one line that hasn't changed since chapter 112.</p>
 <h2 id="step-3-the-mistake">Step 3: The mistake<a class="headerlink" href="#step-3-the-mistake" title="Permanent link">&para;</a></h2>
 <p>Mira's first sample paragraph came from the publisher's own style guide:</p>
 <div class="highlight"><pre><span></span><code><span class="n">TEXT</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"The dictionary is set in two columns on a page of 148 × 210 mm. "</span>
@@ -5358,11 +5357,21 @@ Bold at 36pt
 <span class="c1"># Writes a web page that sets words and a paragraph in every exported</span>
 <span class="c1"># style, at a ladder of sizes. Changes nothing in the font.</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">html</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">string</span><span class="w"> </span><span class="kn">import</span> <span class="n">Template</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span>
+
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Halfmoon"</span>
+
+
+<span class="c1"># Chapter 39's tell, written out again so this script runs by itself.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+
 
 <span class="n">STYLES</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Light"</span><span class="p">,</span> <span class="s2">"Regular"</span><span class="p">,</span> <span class="s2">"Medium"</span><span class="p">,</span> <span class="s2">"SemiBold"</span><span class="p">,</span> <span class="s2">"Bold"</span><span class="p">]</span>
 <span class="n">SIZES</span> <span class="o">=</span> <span class="p">[</span><span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">36</span><span class="p">]</span>
@@ -5395,6 +5404,27 @@ Bold at 36pt
 <span class="s2">"""</span><span class="p">)</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">key</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">isalnum</span><span class="p">()])</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">latest_export</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">package</span><span class="p">):</span>
+    <span class="n">info</span> <span class="o">=</span> <span class="n">package</span><span class="o">.</span><span class="n">info</span>
+    <span class="n">ending</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"-v</span><span class="si">{</span><span class="n">info</span><span class="o">.</span><span class="n">versionMajor</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">info</span><span class="o">.</span><span class="n">versionMinor</span><span class="si">:</span><span class="s2">03d</span><span class="si">}</span><span class="s2">"</span>
+    <span class="n">exports</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">font</span><span class="o">.</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">"exports"</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">exports</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">folders</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">exports</span><span class="o">.</span><span class="n">iterdir</span><span class="p">())</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">ending</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="n">folders</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">folders</span> <span class="k">else</span> <span class="kc">None</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">font_file</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">family</span><span class="p">,</span> <span class="n">style</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">folder</span><span class="o">.</span><span class="n">rglob</span><span class="p">(</span><span class="s2">"*.otf"</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">key</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">stem</span><span class="p">)</span> <span class="o">==</span> <span class="n">key</span><span class="p">(</span><span class="n">family</span> <span class="o">+</span> <span class="n">style</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">path</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+
 <span class="k">def</span><span class="w"> </span><span class="nf">absent</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
     <span class="n">codes</span> <span class="o">=</span> <span class="p">{</span><span class="n">glyph</span><span class="o">.</span><span class="n">unicode</span> <span class="k">for</span> <span class="n">glyph</span> <span class="ow">in</span> <span class="n">font</span><span class="o">.</span><span class="n">glyphs</span> <span class="k">if</span> <span class="n">glyph</span><span class="o">.</span><span class="n">unicode</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">}</span>
     <span class="k">return</span> <span class="nb">sorted</span><span class="p">({</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">text</span> <span class="k">if</span> <span class="nb">ord</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">codes</span><span class="p">})</span>
@@ -5414,22 +5444,22 @@ Bold at 36pt
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">font</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">package</span> <span class="o">=</span> <span class="n">scripting</span><span class="o">.</span><span class="n">current_package</span><span class="p">()</span>
     <span class="n">lacking</span> <span class="o">=</span> <span class="n">absent</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">WORDS</span> <span class="o">+</span> <span class="n">TEXT</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">lacking</span><span class="p">:</span>
         <span class="n">listed</span> <span class="o">=</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2"> (U+</span><span class="si">{</span><span class="nb">ord</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="si">:</span><span class="s2">04X</span><span class="si">}</span><span class="s2">)"</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">lacking</span><span class="p">])</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="sa">f</span><span class="s2">"The font has no glyph for: </span><span class="si">{</span><span class="n">listed</span><span class="si">}</span><span class="s2">. Change the text."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="sa">f</span><span class="s2">"The font has no glyph for: </span><span class="si">{</span><span class="n">listed</span><span class="si">}</span><span class="s2">. Change the text."</span><span class="p">)</span>
         <span class="k">return</span>
-    <span class="n">folder</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">latest_export</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">package</span><span class="p">)</span>
+    <span class="n">folder</span> <span class="o">=</span> <span class="n">latest_export</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">package</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">folder</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"No export folder for this version. Export first."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"No export folder for this version. Export first."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">faces</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">blocks</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">style</span> <span class="ow">in</span> <span class="n">STYLES</span><span class="p">:</span>
-        <span class="n">source</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">font_file</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">package</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">familyName</span><span class="p">,</span> <span class="n">style</span><span class="p">)</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">font_file</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">package</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">familyName</span><span class="p">,</span> <span class="n">style</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">source</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"No </span><span class="si">{</span><span class="n">style</span><span class="si">}</span><span class="s2"> .otf in </span><span class="si">{</span><span class="n">folder</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">. Left out."</span><span class="p">)</span>
             <span class="k">continue</span>

@@ -5291,7 +5291,7 @@
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>Plum-practice</code> open in FontLab 9, with Fly installed.</li>
-<li><code>halfmoon.py</code> from Part 2, in the folder where chapter 33 put it.</li>
+<li>The functions and loops from Part 2.</li>
 <li>Yesterday's idea of layer, contour and node.</li>
 </ul>
 <p>The outputs below were computed from Plum's source file, not copied from FontLab's Output panel. Treat what the calls return as what the helpers' source says they return.</p>
@@ -5341,34 +5341,33 @@
 <div class="highlight"><pre><span></span><code>8 16
 </code></pre></div>
 <h2 id="step-3-a-function-with-two-answers">Step 3: A function with two answers<a class="headerlink" href="#step-3-a-function-with-two-answers" title="Permanent link">&para;</a></h2>
-<p>This belongs in <code>halfmoon.py</code>, because we'll want it again. Add it under <code>metrics_rows</code>:</p>
-<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">node_counts</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">master</span><span class="o">=</span><span class="s2">"Regular"</span><span class="p">):</span>
-    <span class="n">nodes</span> <span class="o">=</span> <span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="n">master</span><span class="p">)</span>
+<p>We'll want this again, so make it a function. Define it in this script:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">node_counts</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">master</span><span class="o">=</span><span class="s2">"Regular"</span><span class="p">):</span>
+    <span class="n">nodes</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="n">master</span><span class="p">)</span>
     <span class="n">on</span> <span class="o">=</span> <span class="nb">len</span><span class="p">([</span><span class="n">node</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span> <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">isOn</span><span class="p">()])</span>
     <span class="k">return</span> <span class="n">on</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span> <span class="o">-</span> <span class="n">on</span>
 </code></pre></div>
 <p>There are three things to notice.</p>
-<p>The first line uses <code>rich</code>, the helper from chapter 33 that puts a plain glyph into the well-equipped box. Then it calls <code>nodes(master)</code>, with something in the slot this time. Yesterday <code>pGlyph()</code> and <code>nodes()</code> with empty parentheses meant "the glyph on screen, the layer that's showing". That's fine for one glyph you're looking at. A script that walks the whole font isn't looking at anything, so it should say which layer it wants by name: <code>"Regular"</code>. The name goes in as a default argument, the way chapter 34 showed, so you can ask for another master when you need to.</p>
+<p>The first line uses <code>pGlyph</code> again, but this time you hand it the font and the glyph, so it doesn't depend on what's on screen. Then it calls <code>nodes(master)</code>, with something in the slot this time. Yesterday <code>pGlyph()</code> and <code>nodes()</code> with empty parentheses meant "the glyph on screen, the layer that's showing". That's fine for one glyph you're looking at. A script that walks the whole font isn't looking at anything, so it should say which layer it wants by name: <code>"Regular"</code>. The name goes in as a default argument, the way chapter 34 showed, so you can ask for another master when you need to.</p>
 <p>The second line is a comprehension with a filter, from chapter 37: collect the nodes that are on the line, and take the length of the collection.</p>
 <p>The third line returns two values with a comma between them. You've seen this from the other side. In chapter 35 you unpacked a row with <code>name, lsb, width, rsb = row</code>. A comma between values makes a tuple, with or without parentheses around it, so <code>return on, len(nodes) - on</code> hands back one tuple of two numbers. The caller unpacks it the same way:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
 
-<span class="n">importlib</span><span class="o">.</span><span class="n">reload</span><span class="p">(</span><span class="n">halfmoon</span><span class="p">)</span>
 <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
-<span class="n">on</span><span class="p">,</span> <span class="n">off</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">node_counts</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"o"</span><span class="p">])</span>
+<span class="n">on</span><span class="p">,</span> <span class="n">off</span> <span class="o">=</span> <span class="n">node_counts</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"o"</span><span class="p">])</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">on</span><span class="p">,</span> <span class="n">off</span><span class="p">)</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>8 16
 </code></pre></div>
-<p>The <code>reload</code> line is there because you've edited the module, and FontLab may still be holding the old copy, as chapter 33 explained. Take it out once the function works.</p>
 <p>Try a few more by hand. <code>H</code> gives <code>12 0</code>: it's all straight lines. <code>l</code> gives <code>4 0</code>, a plain rectangle. <code>n</code> gives <code>12 8</code>, which is four curved pieces with two handles each, and the rest straight.</p>
 <h2 id="step-4-every-glyph">Step 4: Every glyph<a class="headerlink" href="#step-4-every-glyph" title="Permanent link">&para;</a></h2>
 <p>Now walk the font. For each glyph we want a row with its name and its counts, as in chapter 35:</p>
 <div class="highlight"><pre><span></span><code><span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">glyph</span> <span class="ow">in</span> <span class="n">font</span><span class="o">.</span><span class="n">glyphs</span><span class="p">:</span>
-    <span class="n">on</span><span class="p">,</span> <span class="n">off</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">node_counts</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span>
+    <span class="n">on</span><span class="p">,</span> <span class="n">off</span> <span class="o">=</span> <span class="n">node_counts</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span>
     <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">glyph</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">on</span><span class="p">,</span> <span class="n">off</span><span class="p">,</span> <span class="n">on</span> <span class="o">+</span> <span class="n">off</span><span class="p">))</span>
 <span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">))</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">rows</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
@@ -5384,7 +5383,7 @@
 <p>Many of the rows are all zeros: glyphs built from other glyphs, like <code>eacute</code>, and the empty ones waiting to be drawn. They'd only clutter the answer, so keep the rows that have something in them:</p>
 <div class="highlight"><pre><span></span><code><span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">glyph</span> <span class="ow">in</span> <span class="n">font</span><span class="o">.</span><span class="n">glyphs</span><span class="p">:</span>
-    <span class="n">on</span><span class="p">,</span> <span class="n">off</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">node_counts</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span>
+    <span class="n">on</span><span class="p">,</span> <span class="n">off</span> <span class="o">=</span> <span class="n">node_counts</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">on</span> <span class="o">+</span> <span class="n">off</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">glyph</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">on</span><span class="p">,</span> <span class="n">off</span><span class="p">,</span> <span class="n">on</span> <span class="o">+</span> <span class="n">off</span><span class="p">))</span>
 <span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">))</span>
@@ -5420,7 +5419,7 @@ percent       20   32    52
 </code></pre></div>
 <p>That works for every row, because we kept only glyphs with nodes. But suppose you'd done it inside the first loop, before the filter, for every glyph in the font:</p>
 <div class="highlight"><pre><span></span><code><span class="k">for</span> <span class="n">glyph</span> <span class="ow">in</span> <span class="n">font</span><span class="o">.</span><span class="n">glyphs</span><span class="p">:</span>
-    <span class="n">on</span><span class="p">,</span> <span class="n">off</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">node_counts</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span>
+    <span class="n">on</span><span class="p">,</span> <span class="n">off</span> <span class="o">=</span> <span class="n">node_counts</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">glyph</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">off</span> <span class="o">/</span> <span class="n">on</span><span class="p">)</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>.notdef 0.0
@@ -5439,11 +5438,17 @@ ZeroDivisionError: division by zero
 <p>Here is <code>node_count.py</code>:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Lists the glyphs with the most nodes in one master, and the font's totals.</span>
 <span class="c1"># Reads only.</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
 
 <span class="n">MASTER</span> <span class="o">=</span> <span class="s2">"Regular"</span>
 <span class="n">HOW_MANY</span> <span class="o">=</span> <span class="mi">5</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">node_counts</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">master</span><span class="o">=</span><span class="s2">"Regular"</span><span class="p">):</span>
+    <span class="n">nodes</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="n">master</span><span class="p">)</span>
+    <span class="n">on</span> <span class="o">=</span> <span class="nb">len</span><span class="p">([</span><span class="n">node</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span> <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">isOn</span><span class="p">()])</span>
+    <span class="k">return</span> <span class="n">on</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span> <span class="o">-</span> <span class="n">on</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">by_total</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
@@ -5458,7 +5463,7 @@ ZeroDivisionError: division by zero
 
     <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">glyph</span> <span class="ow">in</span> <span class="n">font</span><span class="o">.</span><span class="n">glyphs</span><span class="p">:</span>
-        <span class="n">on</span><span class="p">,</span> <span class="n">off</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">node_counts</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">MASTER</span><span class="p">)</span>
+        <span class="n">on</span><span class="p">,</span> <span class="n">off</span> <span class="o">=</span> <span class="n">node_counts</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">MASTER</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">on</span> <span class="o">+</span> <span class="n">off</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">glyph</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">on</span><span class="p">,</span> <span class="n">off</span><span class="p">,</span> <span class="n">on</span> <span class="o">+</span> <span class="n">off</span><span class="p">))</span>
 

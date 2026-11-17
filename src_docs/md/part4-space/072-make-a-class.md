@@ -13,7 +13,7 @@ It's the first script of this part that changes the kerning.
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py` with `rich`, `ask` and `tell`.
+- The helpers `ask` and `tell` from chapter 39. The scripts below write them out again, so each one runs by itself.
 - The accented letters of chapters 56 and 60. Without them the script finds nothing to add.
 - A saved copy of the font from before today.
 
@@ -144,12 +144,15 @@ That line alone would leave no step in the Edit menu. So it goes inside `history
 #FLM: Build Kerning Classes
 # Adds accented letters to the kerning class their base letter stands for,
 # in every master, and makes the class if the font has none.
-import halfmoon
 import fly.ap.components.writer as parts
 import fly.ap.core.history.glyphs as history
 import fly.ap.core.scripting as scripting
-from fly import fl
+from fly import fl, qt
 from fly.pens import layer_of
+from fly.ap.ui.dialogs import run_standard_message_box
+from fly.tr.proxy.fl.objects.glyph import pGlyph
+
+TITLE = "Halfmoon"
 
 MASTERS = ["Light", "Regular", "Bold"]
 NATIVE = {"left": "KernLeft", "right": "KernRight"}
@@ -165,8 +168,21 @@ RULES = {
 }
 
 
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
+
+def ask(question):
+    box = qt.QtGui.QMessageBox
+    answer = run_standard_message_box(
+        qt, fl.MainWindow(), TITLE, question, "Question", box.Yes | box.No
+    )
+    return answer == box.Yes
+
+
 def base_letter(font, name, master):
-    rich = halfmoon.rich(font, font[name])
+    rich = pGlyph(font, font[name])
     found = parts.components(layer_of(rich.fl, master))
     if len(found) < 2 or rich.contours(master):
         return None
@@ -198,7 +214,7 @@ def write(font, package, rows):
     for master, name, side, old, new in rows:
         for glyph_name in new:
             if glyph_name not in old:
-                rich = halfmoon.rich(font, font[glyph_name])
+                rich = pGlyph(font, font[glyph_name])
                 layers.append(layer_of(rich.fl, master))
                 owners[glyph_name] = rich.fl
     container = package.kerningContainer()
@@ -223,7 +239,7 @@ def write(font, package, rows):
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     package = scripting.current_package()
     rows = []
@@ -233,7 +249,7 @@ def main():
         added = " ".join([glyph_name for glyph_name in new if glyph_name not in old])
         print(f"{master:<9}{name:<10}{PLACE[side]:<8}{len(old)} to {len(new)}   + {added}")
     print(f"{len(rows)} classes to write.")
-    if not rows or not halfmoon.ask(f"Write {len(rows)} kerning classes?"):
+    if not rows or not ask(f"Write {len(rows)} kerning classes?"):
         return
     write(font, package, rows)
     still = []

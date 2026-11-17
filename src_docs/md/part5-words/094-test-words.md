@@ -13,7 +13,7 @@ That's a question about two sets, the glyphs a feature replaces and the glyphs i
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py`.
+- The `tell` function from [chapter 39](../part2-a-toolbox/039-ask-the-user.md). The script below defines it again, so it runs by itself.
 - The eight features the font has after chapter 92.
 
 I couldn't run the code in FontLab 9. I ran it in plain Python on Plum's glyph names and code points and on the feature text that chapters 88 to 92 produce. The counts are for the practice font with Part 3's glyphs in it. Without them you have 70 lowercase letters where I have 84, and 62 not covered where I have 76.
@@ -153,9 +153,17 @@ The two rows do different jobs. Paste the first into a Glyph window, switch the 
 # with the glyphs that ought to be replaced. Changes nothing.
 import unicodedata
 
-import halfmoon
-from fly import fl
+from fly import fl, qt
 import fly.ap.core.scripting as scripting
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
+
+
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
 
 WANTED = {"smcp": ["Ll"], "numr": ["Nd"], "dnom": ["Nd"]}
 WIDTH = 60
@@ -203,7 +211,7 @@ def report(tag, text, font):
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     package = scripting.current_package()
     blocks = scripting.read_feature_blocks(package)

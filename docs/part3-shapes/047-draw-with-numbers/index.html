@@ -5269,18 +5269,28 @@
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>Plum-practice</code> open in FontLab 9, with Fly installed.</li>
-<li><code>halfmoon.py</code> with <code>box</code> and <code>rect</code>.</li>
+<li><code>box</code> from chapter 43 and <code>rect</code> from yesterday. You'll write them out again here.</li>
 <li>A new empty glyph called <code>notdef.new</code>. Make it the way chapter 40 did: put that one name in a text file and run <strong>Add Glyphs From List</strong>. It will be 500 wide in all three masters.</li>
 </ul>
 <p>We draw into a new glyph and leave the real <code>.notdef</code> alone, so that Mira can put the two side by side before anything is replaced. The outputs below were computed from Plum's source file, not copied from FontLab's Output panel. The arithmetic ran in plain Python with a measuring pen, which you'll use too.</p>
 <h2 id="step-1-measure-the-stem">Step 1: Measure the stem<a class="headerlink" href="#step-1-measure-the-stem" title="Permanent link">&para;</a></h2>
-<p>How heavy is the <code>l</code>? In Plum it's a plain rectangle of four nodes, so its bounding box is the stem itself. Chapter 43 gave you the tool:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<p>How heavy is the <code>l</code>? In Plum it's a plain rectangle of four nodes, so its bounding box is the stem itself. Chapter 43 gave you the tool. Here it is again, so this script runs by itself:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">box</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">master</span><span class="o">=</span><span class="s2">"Regular"</span><span class="p">):</span>
+    <span class="n">nodes</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="n">master</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">nodes</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">xs</span> <span class="o">=</span> <span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">x</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">]</span>
+    <span class="n">ys</span> <span class="o">=</span> <span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">y</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">]</span>
+    <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">xs</span><span class="p">),</span> <span class="nb">min</span><span class="p">(</span><span class="n">ys</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">xs</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">ys</span><span class="p">)</span>
+
 
 <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
 <span class="k">for</span> <span class="n">master</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"Light"</span><span class="p">,</span> <span class="s2">"Regular"</span><span class="p">,</span> <span class="s2">"Bold"</span><span class="p">]:</span>
-    <span class="n">left</span><span class="p">,</span> <span class="n">bottom</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">top</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"l"</span><span class="p">],</span> <span class="n">master</span><span class="p">)</span>
+    <span class="n">left</span><span class="p">,</span> <span class="n">bottom</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">top</span> <span class="o">=</span> <span class="n">box</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"l"</span><span class="p">],</span> <span class="n">master</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">master</span><span class="p">,</span> <span class="n">right</span> <span class="o">-</span> <span class="n">left</span><span class="p">)</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>Light 34.0
@@ -5288,7 +5298,7 @@ Regular 82.0
 Bold 132.0
 </code></pre></div>
 <p>That's three stems and nobody had to type them. If Mira makes the Bold bolder next month, the script will measure the new stem and the frame will follow. A number you type goes out of date when the font changes, and a number you measure doesn't.</p>
-<p>Put it in the module, since "how heavy is this master" will be asked again:</p>
+<p>Make it a function, since "how heavy is this master" will be asked again:</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">stem</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">master</span><span class="o">=</span><span class="s2">"Regular"</span><span class="p">):</span>
     <span class="n">left</span><span class="p">,</span> <span class="n">bottom</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">top</span> <span class="o">=</span> <span class="n">box</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"l"</span><span class="p">],</span> <span class="n">master</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">right</span> <span class="o">-</span> <span class="n">left</span>
@@ -5303,27 +5313,28 @@ Bold 132.0
 </code></pre></div>
 <p>It takes a box as one tuple and hands back a new one. The left and bottom grow by the amount, and the right and top shrink by it. Try it:</p>
 <div class="highlight"><pre><span></span><code><span class="n">outer</span> <span class="o">=</span> <span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">450</span><span class="p">,</span> <span class="mi">688</span><span class="p">)</span>
-<span class="n">inner</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">inset</span><span class="p">(</span><span class="n">outer</span><span class="p">,</span> <span class="mi">82</span><span class="p">)</span>
+<span class="n">inner</span> <span class="o">=</span> <span class="n">inset</span><span class="p">(</span><span class="n">outer</span><span class="p">,</span> <span class="mi">82</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">inner</span><span class="p">)</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>(132, 82, 368, 606)
 </code></pre></div>
 <p>Now draw the inner box. <code>rect</code> wants a pen and four numbers. You have a pen and one tuple. The obvious thing fails:</p>
+<p>Define yesterday's <code>rect</code> in this script first, then:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fly.pens</span><span class="w"> </span><span class="kn">import</span> <span class="n">RecordingPen</span>
 
 <span class="n">pen</span> <span class="o">=</span> <span class="n">RecordingPen</span><span class="p">()</span>
-<span class="n">halfmoon</span><span class="o">.</span><span class="n">rect</span><span class="p">(</span><span class="n">pen</span><span class="p">,</span> <span class="n">inner</span><span class="p">)</span>
+<span class="n">rect</span><span class="p">(</span><span class="n">pen</span><span class="p">,</span> <span class="n">inner</span><span class="p">)</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>TypeError: rect() missing 3 required positional arguments: 'bottom', 'right', and 'top'
 </code></pre></div>
 <p>Read it closely, because it tells you what Python did. It put the pen in the first slot and the whole tuple in the second, the one called <code>left</code>, and then found three slots with nothing in them. A tuple of four numbers is one thing, and it went into one slot.</p>
 <p>You could unpack it yourself, with <code>left, bottom, right, top = inner</code> and then four names in the call. Python has a shorter way:</p>
-<div class="highlight"><pre><span></span><code><span class="n">halfmoon</span><span class="o">.</span><span class="n">rect</span><span class="p">(</span><span class="n">pen</span><span class="p">,</span> <span class="o">*</span><span class="n">inner</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="n">rect</span><span class="p">(</span><span class="n">pen</span><span class="p">,</span> <span class="o">*</span><span class="n">inner</span><span class="p">)</span>
 </code></pre></div>
-<p>The star in front of <code>inner</code> says: open this up and deal its items into the slots, one each. Picture a hand of four cards. Without the star you put the whole hand in one slot, and with it you deal one card to each of four. The call does the same as <code>halfmoon.rect(pen, 132, 82, 368, 606)</code>.</p>
+<p>The star in front of <code>inner</code> says: open this up and deal its items into the slots, one each. Picture a hand of four cards. Without the star you put the whole hand in one slot, and with it you deal one card to each of four. The call does the same as <code>rect(pen, 132, 82, 368, 606)</code>.</p>
 <p>The star only works inside the parentheses of a call, and the count has to fit. If you deal a tuple of three into four slots you'll get a "missing" complaint again, about one argument this time.</p>
 <h2 id="step-3-the-hole-runs-the-other-way">Step 3: The hole runs the other way<a class="headerlink" href="#step-3-the-hole-runs-the-other-way" title="Permanent link">&para;</a></h2>
-<p>On Friday you learned what makes a hole: a contour inside another, running against it. <code>rect</code> goes round counter-clockwise. For the hole we need one that goes clockwise. That's a job for a default argument from chapter 34. In <code>halfmoon.py</code>, change <code>rect</code> to this:</p>
+<p>On Friday you learned what makes a hole: a contour inside another, running against it. <code>rect</code> goes round counter-clockwise. For the hole we need one that goes clockwise. That's a job for a default argument from chapter 34. Change your <code>rect</code> to this:</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">rect</span><span class="p">(</span><span class="n">pen</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">bottom</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">clockwise</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="n">corners</span> <span class="o">=</span> <span class="p">[(</span><span class="n">left</span><span class="p">,</span> <span class="n">bottom</span><span class="p">),</span> <span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">bottom</span><span class="p">),</span> <span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">top</span><span class="p">),</span> <span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">top</span><span class="p">)]</span>
     <span class="k">if</span> <span class="n">clockwise</span><span class="p">:</span>
@@ -5338,12 +5349,12 @@ Bold 132.0
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fly.pens</span><span class="w"> </span><span class="kn">import</span> <span class="n">AreaPen</span>
 
 <span class="n">outer</span> <span class="o">=</span> <span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">450</span><span class="p">,</span> <span class="mi">688</span><span class="p">)</span>
-<span class="n">inner</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">inset</span><span class="p">(</span><span class="n">outer</span><span class="p">,</span> <span class="mi">82</span><span class="p">)</span>
+<span class="n">inner</span> <span class="o">=</span> <span class="n">inset</span><span class="p">(</span><span class="n">outer</span><span class="p">,</span> <span class="mi">82</span><span class="p">)</span>
 
 <span class="n">pen</span> <span class="o">=</span> <span class="n">AreaPen</span><span class="p">()</span>
-<span class="n">halfmoon</span><span class="o">.</span><span class="n">rect</span><span class="p">(</span><span class="n">pen</span><span class="p">,</span> <span class="o">*</span><span class="n">outer</span><span class="p">)</span>
+<span class="n">rect</span><span class="p">(</span><span class="n">pen</span><span class="p">,</span> <span class="o">*</span><span class="n">outer</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">pen</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
-<span class="n">halfmoon</span><span class="o">.</span><span class="n">rect</span><span class="p">(</span><span class="n">pen</span><span class="p">,</span> <span class="o">*</span><span class="n">inner</span><span class="p">,</span> <span class="n">clockwise</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">rect</span><span class="p">(</span><span class="n">pen</span><span class="p">,</span> <span class="o">*</span><span class="n">inner</span><span class="p">,</span> <span class="n">clockwise</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">pen</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>275200.0
@@ -5359,21 +5370,49 @@ Bold 132.0
 <h2 id="step-4-two-contours-one-pen">Step 4: Two contours, one pen<a class="headerlink" href="#step-4-two-contours-one-pen" title="Permanent link">&para;</a></h2>
 <p>Yesterday each <code>with</code> block held one rectangle. A pen can take as many contours as you like before the block ends, and they all go into the glyph together, as one element and one Undo step:</p>
 <div class="highlight"><pre><span></span><code><span class="k">with</span> <span class="n">FlPen</span><span class="p">(</span><span class="n">layer</span><span class="p">,</span> <span class="n">notify</span><span class="o">=</span><span class="s2">"Draw frame"</span><span class="p">)</span> <span class="k">as</span> <span class="n">pen</span><span class="p">:</span>
-    <span class="n">halfmoon</span><span class="o">.</span><span class="n">rect</span><span class="p">(</span><span class="n">pen</span><span class="p">,</span> <span class="o">*</span><span class="n">outer</span><span class="p">)</span>
-    <span class="n">halfmoon</span><span class="o">.</span><span class="n">rect</span><span class="p">(</span><span class="n">pen</span><span class="p">,</span> <span class="o">*</span><span class="n">inner</span><span class="p">,</span> <span class="n">clockwise</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">rect</span><span class="p">(</span><span class="n">pen</span><span class="p">,</span> <span class="o">*</span><span class="n">outer</span><span class="p">)</span>
+    <span class="n">rect</span><span class="p">(</span><span class="n">pen</span><span class="p">,</span> <span class="o">*</span><span class="n">inner</span><span class="p">,</span> <span class="n">clockwise</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </code></pre></div>
 <p>That's the right grouping here. A frame is one thing to the designer, so one press of Undo should take all of it away, and not leave a solid box behind.</p>
 <h2 id="the-whole-script">The whole script<a class="headerlink" href="#the-whole-script" title="Permanent link">&para;</a></h2>
-<p>Here is <code>notdef.py</code>. <code>halfmoon.py</code> gains <code>stem</code> and <code>inset</code>, and <code>rect</code> gains its sixth argument.</p>
+<p>Here is <code>notdef.py</code>. It writes out <code>box</code>, <code>stem</code>, <code>inset</code> and the new <code>rect</code> at the top, so it runs by itself.</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Draws the Halfmoon frame in every empty master of the current glyph.</span>
 <span class="c1"># The frame is as heavy as the stem of the l in that master.</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly.pens</span><span class="w"> </span><span class="kn">import</span> <span class="n">FlPen</span><span class="p">,</span> <span class="n">layer_of</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
 
 <span class="n">MASTERS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Light"</span><span class="p">,</span> <span class="s2">"Regular"</span><span class="p">,</span> <span class="s2">"Bold"</span><span class="p">]</span>
 <span class="n">SIDE</span> <span class="o">=</span> <span class="mi">50</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">box</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">,</span> <span class="n">master</span><span class="o">=</span><span class="s2">"Regular"</span><span class="p">):</span>
+    <span class="n">nodes</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="n">master</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">nodes</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">xs</span> <span class="o">=</span> <span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">x</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">]</span>
+    <span class="n">ys</span> <span class="o">=</span> <span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">y</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">]</span>
+    <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">xs</span><span class="p">),</span> <span class="nb">min</span><span class="p">(</span><span class="n">ys</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">xs</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">ys</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">stem</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">master</span><span class="o">=</span><span class="s2">"Regular"</span><span class="p">):</span>
+    <span class="n">left</span><span class="p">,</span> <span class="n">bottom</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">top</span> <span class="o">=</span> <span class="n">box</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"l"</span><span class="p">],</span> <span class="n">master</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">right</span> <span class="o">-</span> <span class="n">left</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">inset</span><span class="p">(</span><span class="n">sides</span><span class="p">,</span> <span class="n">amount</span><span class="p">):</span>
+    <span class="n">left</span><span class="p">,</span> <span class="n">bottom</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">top</span> <span class="o">=</span> <span class="n">sides</span>
+    <span class="k">return</span> <span class="n">left</span> <span class="o">+</span> <span class="n">amount</span><span class="p">,</span> <span class="n">bottom</span> <span class="o">+</span> <span class="n">amount</span><span class="p">,</span> <span class="n">right</span> <span class="o">-</span> <span class="n">amount</span><span class="p">,</span> <span class="n">top</span> <span class="o">-</span> <span class="n">amount</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">rect</span><span class="p">(</span><span class="n">pen</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">bottom</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">clockwise</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">corners</span> <span class="o">=</span> <span class="p">[(</span><span class="n">left</span><span class="p">,</span> <span class="n">bottom</span><span class="p">),</span> <span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">bottom</span><span class="p">),</span> <span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">top</span><span class="p">),</span> <span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">top</span><span class="p">)]</span>
+    <span class="k">if</span> <span class="n">clockwise</span><span class="p">:</span>
+        <span class="n">corners</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+    <span class="n">pen</span><span class="o">.</span><span class="n">moveTo</span><span class="p">(</span><span class="n">corners</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">corner</span> <span class="ow">in</span> <span class="n">corners</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+        <span class="n">pen</span><span class="o">.</span><span class="n">lineTo</span><span class="p">(</span><span class="n">corner</span><span class="p">)</span>
+    <span class="n">pen</span><span class="o">.</span><span class="n">closePath</span><span class="p">()</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
@@ -5384,13 +5423,13 @@ Bold 132.0
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">master</span><span class="si">}</span><span class="s2">: already has outlines, skipped"</span><span class="p">)</span>
             <span class="k">continue</span>
         <span class="n">layer</span> <span class="o">=</span> <span class="n">layer_of</span><span class="p">(</span><span class="n">glyph</span><span class="o">.</span><span class="n">fl</span><span class="p">,</span> <span class="n">master</span><span class="p">)</span>
-        <span class="n">cap_top</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"H"</span><span class="p">],</span> <span class="n">master</span><span class="p">)[</span><span class="mi">3</span><span class="p">]</span>
-        <span class="n">weight</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">stem</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">master</span><span class="p">)</span>
+        <span class="n">cap_top</span> <span class="o">=</span> <span class="n">box</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"H"</span><span class="p">],</span> <span class="n">master</span><span class="p">)[</span><span class="mi">3</span><span class="p">]</span>
+        <span class="n">weight</span> <span class="o">=</span> <span class="n">stem</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">master</span><span class="p">)</span>
         <span class="n">outer</span> <span class="o">=</span> <span class="p">(</span><span class="n">SIDE</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">layer</span><span class="o">.</span><span class="n">advanceWidth</span> <span class="o">-</span> <span class="n">SIDE</span><span class="p">,</span> <span class="n">cap_top</span><span class="p">)</span>
-        <span class="n">inner</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">inset</span><span class="p">(</span><span class="n">outer</span><span class="p">,</span> <span class="n">weight</span><span class="p">)</span>
+        <span class="n">inner</span> <span class="o">=</span> <span class="n">inset</span><span class="p">(</span><span class="n">outer</span><span class="p">,</span> <span class="n">weight</span><span class="p">)</span>
         <span class="k">with</span> <span class="n">FlPen</span><span class="p">(</span><span class="n">layer</span><span class="p">,</span> <span class="n">notify</span><span class="o">=</span><span class="s2">"Draw frame"</span><span class="p">)</span> <span class="k">as</span> <span class="n">pen</span><span class="p">:</span>
-            <span class="n">halfmoon</span><span class="o">.</span><span class="n">rect</span><span class="p">(</span><span class="n">pen</span><span class="p">,</span> <span class="o">*</span><span class="n">outer</span><span class="p">)</span>
-            <span class="n">halfmoon</span><span class="o">.</span><span class="n">rect</span><span class="p">(</span><span class="n">pen</span><span class="p">,</span> <span class="o">*</span><span class="n">inner</span><span class="p">,</span> <span class="n">clockwise</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">rect</span><span class="p">(</span><span class="n">pen</span><span class="p">,</span> <span class="o">*</span><span class="n">outer</span><span class="p">)</span>
+            <span class="n">rect</span><span class="p">(</span><span class="n">pen</span><span class="p">,</span> <span class="o">*</span><span class="n">inner</span><span class="p">,</span> <span class="n">clockwise</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">master</span><span class="si">:</span><span class="s2">&lt;9</span><span class="si">}</span><span class="s2">stem </span><span class="si">{</span><span class="n">weight</span><span class="si">:</span><span class="s2">&gt;5</span><span class="si">}</span><span class="s2">  hole </span><span class="si">{</span><span class="n">inner</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
 
@@ -5408,7 +5447,7 @@ Bold     stem 132.0  hole (182.0, 132.0, 318.0, 556.0)
 <p>Numbers that come from the font stay right when the font changes, so measure what you can and type only what you must. A star in a call, <code>*inner</code>, deals the items of a tuple into separate slots. A pen can hold several contours, and they become one element and one Undo step. <code>AreaPen</code> measures what's drawn into it, positive one way round and negative the other, so you can test a drawing function without a font.</p>
 <h2 id="try-it-yourself">Try it yourself<a class="headerlink" href="#try-it-yourself" title="Permanent link">&para;</a></h2>
 <ol>
-<li>In the Bold the hole is 136 units wide. Make the stem absurd: call <code>halfmoon.inset(outer, 250)</code> and look at the tuple. What's wrong with it? Add a check to <code>notdef.py</code> that refuses to draw, with a clear message, when the hole would have no width or no height.</li>
+<li>In the Bold the hole is 136 units wide. Make the stem absurd: call <code>inset(outer, 250)</code> and look at the tuple. What's wrong with it? Add a check to <code>notdef.py</code> that refuses to draw, with a clear message, when the hole would have no width or no height.</li>
 <li>Use <code>AreaPen</code> to answer a designer's question: what share of the frame's outer box is black, in each master? Divide the frame's area by the box's area and print it as a percentage with one decimal. You need no font for this, only the three stems.</li>
 <li>Draw Plum's present <code>.notdef</code> into a <code>RecordingPen</code>: a box and four triangles. To do that, write <code>triangle(pen, a, b, c)</code> in the style of <code>rect</code>, taking three points. Should it take a <code>clockwise</code> argument, or should the caller pass the points in the order it wants? Decide, and say why in a comment.</li>
 </ol>

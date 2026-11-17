@@ -5314,7 +5314,7 @@
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>Plum-practice</code> open in FontLab 9, with Fly installed.</li>
-<li><code>halfmoon.py</code>.</li>
+<li>The <code>tell</code> function from <a href="../../part2-a-toolbox/039-ask-the-user/">chapter 39</a>. The script below defines it again, so it runs by itself.</li>
 <li>A second font to compare. Close FontLab's font, copy <code>Plum-practice.vfj</code> in your file manager, name the copy <code>Plum-practice-copy.vfj</code>, and open both. In the copy, open <strong>File &gt; Font Info</strong>, change the designer to <code>S. Sagano</code> and empty the copyright line. Now you have a family of two that disagrees.</li>
 </ul>
 <p>I couldn't run the code in FontLab 9. I ran the script in plain Python with two stand-in fonts and a real settings file, including the broken files below. The way it lists the open fonts is copied from Fly's own tools. One limit shapes the whole chapter: Fly's writer refuses to write into any font except the current one, so the script reports on all open fonts and changes one.</p>
@@ -5385,9 +5385,17 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span>
+
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Halfmoon"</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+
 
 <span class="n">DRY_RUN</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="n">FILE_NAME</span> <span class="o">=</span> <span class="s2">"family-info.json"</span>
@@ -5417,16 +5425,16 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">current</span> <span class="o">=</span> <span class="n">scripting</span><span class="o">.</span><span class="n">current_package</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">current</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">current</span><span class="o">.</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="n">FILE_NAME</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">settings</span> <span class="o">=</span> <span class="n">read_settings</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="sa">f</span><span class="s2">"I can't find </span><span class="si">{</span><span class="n">FILE_NAME</span><span class="si">}</span><span class="s2"> beside the font."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="sa">f</span><span class="s2">"I can't find </span><span class="si">{</span><span class="n">FILE_NAME</span><span class="si">}</span><span class="s2"> beside the font."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">problem</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">FILE_NAME</span><span class="si">}</span><span class="s2"> can't be used: </span><span class="si">{</span><span class="n">problem</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">FILE_NAME</span><span class="si">}</span><span class="s2"> can't be used: </span><span class="si">{</span><span class="n">problem</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">packages</span> <span class="o">=</span> <span class="p">[</span><span class="n">fl</span><span class="o">.</span><span class="n">flPackage</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">fl</span><span class="o">.</span><span class="n">flWorkspace</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">packages</span><span class="p">()]</span>
     <span class="n">todo</span> <span class="o">=</span> <span class="p">[]</span>

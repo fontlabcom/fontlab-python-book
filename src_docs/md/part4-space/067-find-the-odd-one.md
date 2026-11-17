@@ -11,7 +11,7 @@ So today's question is put differently. It isn't "does this letter match its mod
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py` with `rich` and `tell`.
+- The helper `tell` from chapter 39. The scripts below write it out again, so each one runs by itself.
 
 Today's script reads and prints. It changes nothing. I couldn't run it in FontLab 9; the numbers come from Plum's source file, with the changes of chapters 62 and 63 worked in. If you did the exercises of those chapters, a few of your lines will differ, and I'll say where.
 
@@ -20,12 +20,12 @@ Today's script reads and prints. It changes nothing. I couldn't run it in FontLa
 Start with six capitals whose right side is a straight stem. Read their right sidebearings in the Bold:
 
 ```python
-import halfmoon
 from fly import fl
+from fly.tr.proxy.fl.objects.glyph import pGlyph
 
 font = fl.CurrentFont()
 names = ["H", "I", "J", "M", "N", "U"]
-values = [halfmoon.rich(font, font[name]).getRSB("Bold") for name in names]
+values = [pGlyph(font, font[name]).getRSB("Bold") for name in names]
 print(values)
 ```
 
@@ -156,8 +156,11 @@ The families of chapter 64 said "these follow that one". These groups say less: 
 ```python
 #FLM: Sidebearing Outliers
 # Reports letters whose sidebearing is far from the middle value of their group.
-import halfmoon
-from fly import fl
+from fly import fl, qt
+from fly.ap.ui.dialogs import run_standard_message_box
+from fly.tr.proxy.fl.objects.glyph import pGlyph
+
+TITLE = "Halfmoon"
 
 MASTERS = ["Light", "Regular", "Bold"]
 TOLERANCE = 8
@@ -174,13 +177,18 @@ GROUPS = [
 ]
 
 
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
+
 def middle(values):
     ordered = sorted(values)
     return ordered[len(ordered) // 2]
 
 
 def side_value(font, name, side, master):
-    rich = halfmoon.rich(font, font[name])
+    rich = pGlyph(font, font[name])
     return rich.getLSB(master) if side == "left" else rich.getRSB(master)
 
 
@@ -197,7 +205,7 @@ def odd_ones(font, master, side, names):
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     count = 0
     for master in MASTERS:

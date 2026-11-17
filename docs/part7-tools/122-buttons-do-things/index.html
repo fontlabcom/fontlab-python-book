@@ -5368,7 +5368,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
 
 <span class="n">core</span><span class="p">,</span> <span class="n">gui</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtCore</span><span class="p">,</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span>
-<span class="n">KEY</span> <span class="o">=</span> <span class="s2">"halfmoon.report"</span>
+<span class="n">KEY</span> <span class="o">=</span> <span class="s2">"tools.report"</span>
 <span class="n">SHOWN</span> <span class="o">=</span> <span class="mi">8</span>
 
 
@@ -5433,7 +5433,7 @@
 </code></pre></div>
 <p><code>bare_text</code> is new, and there's nothing new in it. <code>glyph.unicode is None</code> is chapter 115's test for a glyph without a character. <code>SHOWN</code> caps the list, because a label that tries to show thirty-nine names is taller than Ines's screen. <code>lines += names[:SHOWN]</code> adds the first eight, with the slice from chapter 10.</p>
 <p>The two slots are two lines each, and they look as if they could be one function. They can't yet. Each must remember which text to make, and a slot is called with a <code>False</code> and nothing else. Chapter 126 gives you a tidier place to keep such things.</p>
-<p>The key is a new one, <code>"halfmoon.report"</code>. With chapter 121's key, running this script would close that chapter's window. With its own key, the two can be open side by side.</p>
+<p>The key is a new one, <code>"tools.report"</code>. With chapter 121's key, running this script would close that chapter's window. With its own key, the two can be open side by side.</p>
 <h2 id="run-it">Run it<a class="headerlink" href="#run-it" title="Permanent link">&para;</a></h2>
 <p>The window opens with the three lines you know. Click <strong>No character</strong>:</p>
 <div class="highlight"><pre><span></span><code>39 glyphs have no character.

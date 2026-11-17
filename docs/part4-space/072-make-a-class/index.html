@@ -5313,7 +5313,7 @@
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>Plum-practice</code> open in FontLab 9, with Fly installed.</li>
-<li><code>halfmoon.py</code> with <code>rich</code>, <code>ask</code> and <code>tell</code>.</li>
+<li>The helpers <code>ask</code> and <code>tell</code> from chapter 39. The scripts below write them out again, so each one runs by itself.</li>
 <li>The accented letters of chapters 56 and 60. Without them the script finds nothing to add.</li>
 <li>A saved copy of the font from before today.</li>
 </ul>
@@ -5395,12 +5395,15 @@
 <div class="highlight"><pre><span></span><code><span class="c1">#FLM: Build Kerning Classes</span>
 <span class="c1"># Adds accented letters to the kerning class their base letter stands for,</span>
 <span class="c1"># in every master, and makes the class if the font has none.</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.components.writer</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">parts</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.history.glyphs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">history</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly.pens</span><span class="w"> </span><span class="kn">import</span> <span class="n">layer_of</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
+
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Halfmoon"</span>
 
 <span class="n">MASTERS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Light"</span><span class="p">,</span> <span class="s2">"Regular"</span><span class="p">,</span> <span class="s2">"Bold"</span><span class="p">]</span>
 <span class="n">NATIVE</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"left"</span><span class="p">:</span> <span class="s2">"KernLeft"</span><span class="p">,</span> <span class="s2">"right"</span><span class="p">:</span> <span class="s2">"KernRight"</span><span class="p">}</span>
@@ -5416,8 +5419,21 @@
 <span class="p">}</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">ask</span><span class="p">(</span><span class="n">question</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">answer</span> <span class="o">=</span> <span class="n">run_standard_message_box</span><span class="p">(</span>
+        <span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">question</span><span class="p">,</span> <span class="s2">"Question"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Yes</span> <span class="o">|</span> <span class="n">box</span><span class="o">.</span><span class="n">No</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">answer</span> <span class="o">==</span> <span class="n">box</span><span class="o">.</span><span class="n">Yes</span>
+
+
 <span class="k">def</span><span class="w"> </span><span class="nf">base_letter</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">master</span><span class="p">):</span>
-    <span class="n">rich</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+    <span class="n">rich</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
     <span class="n">found</span> <span class="o">=</span> <span class="n">parts</span><span class="o">.</span><span class="n">components</span><span class="p">(</span><span class="n">layer_of</span><span class="p">(</span><span class="n">rich</span><span class="o">.</span><span class="n">fl</span><span class="p">,</span> <span class="n">master</span><span class="p">))</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">found</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">rich</span><span class="o">.</span><span class="n">contours</span><span class="p">(</span><span class="n">master</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">None</span>
@@ -5449,7 +5465,7 @@
     <span class="k">for</span> <span class="n">master</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">side</span><span class="p">,</span> <span class="n">old</span><span class="p">,</span> <span class="n">new</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">glyph_name</span> <span class="ow">in</span> <span class="n">new</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">glyph_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">old</span><span class="p">:</span>
-                <span class="n">rich</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">glyph_name</span><span class="p">])</span>
+                <span class="n">rich</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">glyph_name</span><span class="p">])</span>
                 <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">layer_of</span><span class="p">(</span><span class="n">rich</span><span class="o">.</span><span class="n">fl</span><span class="p">,</span> <span class="n">master</span><span class="p">))</span>
                 <span class="n">owners</span><span class="p">[</span><span class="n">glyph_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">rich</span><span class="o">.</span><span class="n">fl</span>
     <span class="n">container</span> <span class="o">=</span> <span class="n">package</span><span class="o">.</span><span class="n">kerningContainer</span><span class="p">()</span>
@@ -5474,7 +5490,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">font</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">package</span> <span class="o">=</span> <span class="n">scripting</span><span class="o">.</span><span class="n">current_package</span><span class="p">()</span>
     <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
@@ -5484,7 +5500,7 @@
         <span class="n">added</span> <span class="o">=</span> <span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">glyph_name</span> <span class="k">for</span> <span class="n">glyph_name</span> <span class="ow">in</span> <span class="n">new</span> <span class="k">if</span> <span class="n">glyph_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">old</span><span class="p">])</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">master</span><span class="si">:</span><span class="s2">&lt;9</span><span class="si">}{</span><span class="n">name</span><span class="si">:</span><span class="s2">&lt;10</span><span class="si">}{</span><span class="n">PLACE</span><span class="p">[</span><span class="n">side</span><span class="p">]</span><span class="si">:</span><span class="s2">&lt;8</span><span class="si">}{</span><span class="nb">len</span><span class="p">(</span><span class="n">old</span><span class="p">)</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">new</span><span class="p">)</span><span class="si">}</span><span class="s2">   + </span><span class="si">{</span><span class="n">added</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span><span class="si">}</span><span class="s2"> classes to write."</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">rows</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">ask</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Write </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span><span class="si">}</span><span class="s2"> kerning classes?"</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">rows</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">ask</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Write </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span><span class="si">}</span><span class="s2"> kerning classes?"</span><span class="p">):</span>
         <span class="k">return</span>
     <span class="n">write</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">package</span><span class="p">,</span> <span class="n">rows</span><span class="p">)</span>
     <span class="n">still</span> <span class="o">=</span> <span class="p">[]</span>

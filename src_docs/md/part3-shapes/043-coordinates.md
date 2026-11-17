@@ -13,7 +13,7 @@ She could click on the top node of the `O`, read its position, write it down, cl
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py`, with `node_counts` from the last chapter.
+- The `node_counts` function from the last chapter, for the pattern it uses.
 
 The outputs below were computed from Plum's source file, not copied from FontLab's Output panel.
 
@@ -22,11 +22,11 @@ The outputs below were computed from Plum's source file, not copied from FontLab
 Start with the `H`. Collect the `y` of every node in the Regular master, and ask for the smallest and the largest:
 
 ```python
-import halfmoon
 from fly import fl
+from fly.tr.proxy.fl.objects.glyph import pGlyph
 
 font = fl.CurrentFont()
-nodes = halfmoon.rich(font, font["H"]).nodes("Regular")
+nodes = pGlyph(font, font["H"]).nodes("Regular")
 ys = [node.y for node in nodes]
 print(min(ys), max(ys))
 ```
@@ -70,26 +70,26 @@ A word of caution about what goes into the box. We used every node, handles too.
 
 ## Step 3: When there's nothing to measure
 
-Put it in the module, so that any script can ask for a glyph's box:
+Make it a function, so that a script can ask for any glyph's box. Define it in this script:
 
 ```python
 def box(font, glyph, master="Regular"):
-    nodes = rich(font, glyph).nodes(master)
+    nodes = pGlyph(font, glyph).nodes(master)
     xs = [node.x for node in nodes]
     ys = [node.y for node in nodes]
     return min(xs), min(ys), max(xs), max(ys)
 ```
 
-Reload the module as in the last chapter and try it on a glyph that's built from others:
+Run the definition and try it on a glyph that's built from others:
 
 ```python
-print(halfmoon.box(font, font["eacute"]))
+print(box(font, font["eacute"]))
 ```
 
 ```text
 Traceback (most recent call last):
   File "<string>", line 1, in <module>
-  File ".../site-packages/halfmoon.py", line 104, in box
+  File "<string>", line 5, in box
     return min(xs), min(ys), max(xs), max(ys)
 ValueError: min() arg is an empty sequence
 ```
@@ -100,7 +100,7 @@ What should `box` do with such a glyph? It can't invent four numbers. Zeros woul
 
 ```python
 def box(font, glyph, master="Regular"):
-    nodes = rich(font, glyph).nodes(master)
+    nodes = pGlyph(font, glyph).nodes(master)
     if not nodes:
         return None
     xs = [node.x for node in nodes]
@@ -111,7 +111,7 @@ def box(font, glyph, master="Regular"):
 Now the function gives either a tuple of four numbers or `None`, and every caller has to be ready for both. Chapter 39 made the same bargain when a dialog could be cancelled. The caller checks before it unpacks:
 
 ```python
-found = halfmoon.box(font, font["eacute"])
+found = box(font, font["eacute"])
 if found is None:
     print("no outline")
 else:
@@ -155,7 +155,7 @@ The cap height is 688, and the `H` reaches 688. Good. The x-height is 478. Try t
 Now you can say what overshoot is in numbers. It's the top of a glyph minus the height it's measured against:
 
 ```python
-left, bottom, right, top = halfmoon.box(font, font["O"])
+left, bottom, right, top = box(font, font["O"])
 print(top - metrics.getCapsHeight("Regular"))
 ```
 
@@ -188,7 +188,7 @@ CAPITALS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 cap_height = metrics.getCapsHeight("Regular")
 groups = {}
 for letter in CAPITALS:
-    found = halfmoon.box(font, font[letter])
+    found = box(font, font[letter])
     if found is None:
         print(letter, "has no outline")
     else:
@@ -222,18 +222,27 @@ You'll see this again and again. A script finds what's different, and a person h
 
 ## The whole script
 
-`bounds.py` puts the pieces together and does the same for the lowercase against the x-height. `halfmoon.py` gains `box` from Step 3.
+`bounds.py` puts the pieces together and does the same for the lowercase against the x-height. It defines `box` from Step 3 near the top, so it runs by itself.
 
 ```python
 # Groups letters by how far their tops end above or below a font height.
 # Reads only.
-import halfmoon
 from fly import fl
 from fly.tr.proxy.fl.objects.font import pFont
+from fly.tr.proxy.fl.objects.glyph import pGlyph
 
 MASTER = "Regular"
 CAPITALS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 SMALL = "acemnorsuvwxz"
+
+
+def box(font, glyph, master="Regular"):
+    nodes = pGlyph(font, glyph).nodes(master)
+    if not nodes:
+        return None
+    xs = [node.x for node in nodes]
+    ys = [node.y for node in nodes]
+    return min(xs), min(ys), max(xs), max(ys)
 
 
 def groups_by_top(font, letters, height):
@@ -243,7 +252,7 @@ def groups_by_top(font, letters, height):
         if glyph is None:
             print(f"  {letter} is not in the font")
         else:
-            found = halfmoon.box(font, glyph, MASTER)
+            found = box(font, glyph, MASTER)
             if found is None:
                 print(f"  {letter} has no outline")
             else:

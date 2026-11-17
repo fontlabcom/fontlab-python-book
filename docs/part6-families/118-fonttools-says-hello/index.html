@@ -5268,7 +5268,7 @@
 <p>There's a Python package that reads font files with no font editor involved. It's called fontTools, and most of the type trade's checking tools are built on it, very likely the publisher's too. Today you open the exported files with it and hold what they say against what the open font says.</p>
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>Plum-practice</code> open in FontLab 9, with Fly installed, and <code>halfmoon.py</code> with chapter 116's <code>latest_export</code>.</li>
+<li><code>Plum-practice</code> open in FontLab 9, with Fly installed.</li>
 <li>The export folder for version 1.002 with five OTF files in it.</li>
 </ul>
 <p>I couldn't run the code in FontLab 9, and I don't have files that FontLab exported. I built five small OTF files with fontTools itself, with the reader's glyph names, characters and features, and ran the script on those in plain Python. So the fontTools calls below ran for real. What FontLab's export puts in a file is the part I haven't seen.</p>
@@ -5287,7 +5287,7 @@
 <p><code>try</code> and <code>except</code> are chapter 19's, and <code>ImportError</code> is the error chapter 4 showed you when a name couldn't be imported. Put together they say: use your own copy if there is one, and FontLab's if not. If you see <code>fontlab_private</code> in the printed line, you're on FontLab's copy, and that's fine for everything in this chapter.</p>
 <div class="admonition note">
 <p class="admonition-title">Installing your own</p>
-<p>FontLab's copy is an older one, kept for FontLab, and "private" is a fair warning that it may change. A newer copy goes into the <code>site-packages</code> folder where <code>halfmoon.py</code> lives (chapter 33), and the usual tool for that is <code>pip</code>, run in a terminal with its <code>--target</code> option pointing at that folder. I haven't done this with FontLab 9, so I'm not printing a command I can't vouch for. Nothing here needs it.</p>
+<p>FontLab's copy is an older one, kept for FontLab, and "private" is a fair warning that it may change. A newer copy goes into the <code>site-packages</code> folder in your user folder, where Fly lives (chapter 33), and the usual tool for that is <code>pip</code>, run in a terminal with its <code>--target</code> option pointing at that folder. I haven't done this with FontLab 9, so I'm not printing a command I can't vouch for. Nothing here needs it.</p>
 </div>
 <h2 id="step-2-open-a-file">Step 2: Open a file<a class="headerlink" href="#step-2-open-a-file" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
@@ -5344,14 +5344,36 @@
 <div class="highlight"><pre><span></span><code><span class="c1">#FLM: Inspect Export</span>
 <span class="c1"># Opens every exported .otf of the current version with fontTools and</span>
 <span class="c1"># holds what the file says against the open font. Changes nothing.</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span>
+
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Halfmoon"</span>
+
+
+<span class="c1"># Chapter 39's tell, written out again so this script runs by itself.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">fontTools.ttLib</span><span class="w"> </span><span class="kn">import</span> <span class="n">TTFont</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">fontlab_private.fontTools.ttLib</span><span class="w"> </span><span class="kn">import</span> <span class="n">TTFont</span>
+
+
+<span class="c1"># Chapter 115's latest_export, written out again so this script runs by itself.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">latest_export</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">package</span><span class="p">):</span>
+    <span class="n">info</span> <span class="o">=</span> <span class="n">package</span><span class="o">.</span><span class="n">info</span>
+    <span class="n">ending</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"-v</span><span class="si">{</span><span class="n">info</span><span class="o">.</span><span class="n">versionMajor</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">info</span><span class="o">.</span><span class="n">versionMinor</span><span class="si">:</span><span class="s2">03d</span><span class="si">}</span><span class="s2">"</span>
+    <span class="n">exports</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">font</span><span class="o">.</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">"exports"</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">exports</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">folders</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">exports</span><span class="o">.</span><span class="n">iterdir</span><span class="p">())</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">ending</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="n">folders</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">folders</span> <span class="k">else</span> <span class="kc">None</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">features</span><span class="p">(</span><span class="n">ttfont</span><span class="p">):</span>
@@ -5387,12 +5409,12 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">font</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">package</span> <span class="o">=</span> <span class="n">scripting</span><span class="o">.</span><span class="n">current_package</span><span class="p">()</span>
-    <span class="n">folder</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">latest_export</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">package</span><span class="p">)</span>
+    <span class="n">folder</span> <span class="o">=</span> <span class="n">latest_export</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">package</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">folder</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"No export folder for this version. Export first."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"No export folder for this version. Export first."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">info</span> <span class="o">=</span> <span class="n">package</span><span class="o">.</span><span class="n">info</span>
     <span class="n">wanted</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Version </span><span class="si">{</span><span class="n">info</span><span class="o">.</span><span class="n">versionMajor</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">info</span><span class="o">.</span><span class="n">versionMinor</span><span class="si">:</span><span class="s2">03d</span><span class="si">}</span><span class="s2">"</span>

@@ -13,7 +13,7 @@ A contour is supposed to come back to where it started. One that doesn't is call
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py` with `box` from yesterday, and `anatomy.py` from chapter 41.
+- `anatomy.py` from chapter 41.
 - The seven small-cap glyphs you added in chapter 40. They're still empty.
 
 Plum's source file has no open contours. So in Step 1 you'll plant one. The outputs below were computed from Plum's source file, not copied from FontLab's Output panel.
@@ -37,18 +37,24 @@ Now there's one open contour in a font of 220 glyphs, in one master of three. Le
 
 ## Step 2: On to the next
 
-First, a helper for the module. For two chapters we've asked for a layer's nodes. Today we need its contours, since `closed` belongs to a contour and not to a node:
+First, a helper. Define it in this script. For two chapters we've asked for a layer's nodes. Today we need its contours, since `closed` belongs to a contour and not to a node:
 
 ```python
+from fly import fl
+from fly.tr.proxy.fl.objects.glyph import pGlyph
+
+font = fl.CurrentFont()
+
+
 def contours_of(font, glyph, master="Regular"):
-    return rich(font, glyph).contours(master)
+    return pGlyph(font, glyph).contours(master)
 ```
 
 Now walk the font. Most glyphs will have nothing for us: the ones built from other glyphs and the empty ones have no contours at all. Yesterday we handled cases like that with an `if` and an `else`, and the real work ended up three levels deep, like a staircase. Here's another way to write it:
 
 ```python
 for glyph in font.glyphs:
-    contours = halfmoon.contours_of(font, glyph)
+    contours = contours_of(font, glyph)
     if not contours:
         continue
     print(glyph.name, len(contours))
@@ -79,7 +85,7 @@ There's no loop there to continue. It's a `SyntaxError`, so Python found it whil
 For each glyph that has contours, we want to know whether at least one of them is open. You can already write that, with a switch like `DRY_RUN` from chapter 31, only this one is flipped by the loop:
 
 ```python
-contours = halfmoon.contours_of(font, font["d.sc"])
+contours = contours_of(font, font["d.sc"])
 has_open = False
 for contour in contours:
     if not contour.closed:
@@ -141,7 +147,7 @@ MASTERS = ["Light", "Regular", "Bold"]
 
 for glyph in font.glyphs:
     for master in MASTERS:
-        contours = halfmoon.contours_of(font, glyph, master)
+        contours = contours_of(font, glyph, master)
         if any([not contour.closed for contour in contours]):
             print(glyph.name, master)
 ```
@@ -166,15 +172,19 @@ If `loose` is empty, the layer is fine. If it isn't, its length is the count, an
 
 ## The whole script
 
-Here is `find_open.py`. `halfmoon.py` gains `contours_of` from Step 2.
+Here is `find_open.py`. It defines `contours_of` from Step 2 at the top, so it runs by itself.
 
 ```python
 # Lists every open contour in the font, in every master.
 # Reads only.
-import halfmoon
 from fly import fl
+from fly.tr.proxy.fl.objects.glyph import pGlyph
 
 MASTERS = ["Light", "Regular", "Bold"]
+
+
+def contours_of(font, glyph, master="Regular"):
+    return pGlyph(font, glyph).contours(master)
 
 
 def main():
@@ -186,7 +196,7 @@ def main():
     found = 0
     for glyph in font.glyphs:
         for master in MASTERS:
-            contours = halfmoon.contours_of(font, glyph, master)
+            contours = contours_of(font, glyph, master)
             loose = [contour for contour in contours if not contour.closed]
             if not loose:
                 continue

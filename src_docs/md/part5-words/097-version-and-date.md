@@ -15,7 +15,7 @@ Today's script raises the version by one step, writes the version name to match,
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py`.
+- The `tell` function from [chapter 39](../part2-a-toolbox/039-ask-the-user.md). The script below defines it again, so it runs by itself.
 
 I couldn't run the code in FontLab 9. I ran the script in plain Python against a stand-in that holds Plum's version fields and empty notes. The plan it builds has the same shape as the plan Fly's own version tool builds. I read that tool's source to see what the writer accepts. The dates below are from my run. Yours will be today's.
 
@@ -144,9 +144,17 @@ def note_changes(package, line):
 # and adds a dated line to each master's note.
 from datetime import date
 
-import halfmoon
-from fly import fl
+from fly import fl, qt
 import fly.ap.core.scripting as scripting
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
+
+
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
 
 DRY_RUN = True
 STEP = "minor"
@@ -181,7 +189,7 @@ def note_changes(package, line):
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     package = scripting.current_package()
     info = package.info

@@ -5311,7 +5311,7 @@
 <p>Every script so far worked on the font you had open. Today's script opens fonts itself, one after another, asks each a question, and closes it. Opening is the simple half. The closing needs care, because a script that closes fonts can close the wrong one, and it can throw work away without asking.</p>
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
-<li>FontLab 9 with Fly installed, and <code>halfmoon.py</code> with <code>tell</code>.</li>
+<li>FontLab 9 with Fly installed.</li>
 <li>A folder of FontLab files to try it on. Three copies of <code>Plum-practice</code> under different names will do.</li>
 <li>Chapter 95's <code>try</code> and <code>finally</code>, and chapter 112's <code>rglob</code>.</li>
 </ul>
@@ -5389,8 +5389,17 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">pr</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">pr</span><span class="p">,</span> <span class="n">qt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span>
+
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Halfmoon"</span>
+
+
+<span class="c1"># Chapter 39's tell, written out again so this script runs by itself.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+
 
 <span class="n">ARCHIVE</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span> <span class="o">/</span> <span class="s2">"Halfmoon"</span> <span class="o">/</span> <span class="s2">"archive"</span>
 <span class="n">KINDS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">".vfc"</span><span class="p">,</span> <span class="s2">".vfj"</span><span class="p">]</span>
@@ -5432,7 +5441,7 @@
 
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">ARCHIVE</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="sa">f</span><span class="s2">"No folder </span><span class="si">{</span><span class="n">ARCHIVE</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="sa">f</span><span class="s2">"No folder </span><span class="si">{</span><span class="n">ARCHIVE</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">files</span> <span class="o">=</span> <span class="n">font_files</span><span class="p">(</span><span class="n">ARCHIVE</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Font files in </span><span class="si">{</span><span class="n">ARCHIVE</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">files</span><span class="p">)</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>

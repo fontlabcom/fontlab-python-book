@@ -13,7 +13,7 @@ For five chapters your scripts have read outlines. Today one draws. The tool for
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py` as it stands, and `anatomy.py` and `check_direction.py`.
+- `anatomy.py` and `check_direction.py`.
 - The empty `e.sc` open in a Glyph window. Its width is 500 in each master, from chapter 40.
 
 The outputs below were computed from Plum's source file, not copied from FontLab's Output panel. The pen commands themselves ran in plain Python, with a pen that draws nowhere, and you'll meet that pen in Step 1.
@@ -126,14 +126,13 @@ def rect(pen, left, bottom, right, top):
     pen.closePath()
 ```
 
-Put it in `halfmoon.py`. It needs no import, because it doesn't care what kind of pen it gets. Anything that understands `moveTo`, `lineTo` and `closePath` will do. Test it on the pen that only listens:
+Define it in this script. It needs no import, because it doesn't care what kind of pen it gets. Anything that understands `moveTo`, `lineTo` and `closePath` will do. Test it on the pen that only listens:
 
 ```python
-import halfmoon
 from fly.pens import RecordingPen
 
 pen = RecordingPen()
-halfmoon.rect(pen, 60, 0, 440, 478)
+rect(pen, 60, 0, 440, 478)
 print(len(pen.value))
 ```
 
@@ -149,7 +148,7 @@ Now the three masters. Each has its own layer, and a pen writes to one layer, so
 for master in MASTERS:
     layer = layer_of(glyph.fl, master)
     with FlPen(layer, notify="Draw box") as pen:
-        halfmoon.rect(pen, 60, 0, 440, 478)
+        rect(pen, 60, 0, 440, 478)
 ```
 
 There's one danger left, and it's a new kind for us. Run the script twice and you get two boxes, one on top of the other. They look like one. `anatomy.py` would say two contours, and a font with doubled outlines prints badly. A script that reads can be run a hundred times without harm. A script that draws can't, unless you make it check first. So before it draws into a layer, it should look whether anything is there:
@@ -164,17 +163,24 @@ That guard also means the script can never draw a box over a drawn letter. A gly
 
 ## The whole script
 
-Here is `draw_box.py`. `halfmoon.py` gains `rect` from Step 4.
+Here is `draw_box.py`. It defines `rect` from Step 4 at the top, so it runs by itself.
 
 ```python
 # Draws a placeholder box in every empty master of the current glyph.
-import halfmoon
 from fly.pens import FlPen, layer_of
 from fly.tr.proxy.fl.objects.glyph import pGlyph
 
 MASTERS = ["Light", "Regular", "Bold"]
 SIDE = 60
 TOP = 478
+
+
+def rect(pen, left, bottom, right, top):
+    pen.moveTo((left, bottom))
+    pen.lineTo((right, bottom))
+    pen.lineTo((right, top))
+    pen.lineTo((left, top))
+    pen.closePath()
 
 
 def main():
@@ -187,7 +193,7 @@ def main():
         layer = layer_of(glyph.fl, master)
         width = layer.advanceWidth
         with FlPen(layer, notify="Draw box") as pen:
-            halfmoon.rect(pen, SIDE, 0, width - SIDE, TOP)
+            rect(pen, SIDE, 0, width - SIDE, TOP)
         drawn = drawn + 1
     print(f"{glyph.name}: {drawn} boxes drawn")
 
@@ -223,8 +229,8 @@ A pen draws by orders: `moveTo`, `lineTo` and `closePath`, each place given as a
 ## Try it yourself
 
 1. Change `rect` so that it goes round clockwise, draw a box in an empty glyph and run `check_direction.py`. Then change it back and undo. How many layers were wrong?
-2. Make `draw_box.py` work on the whole font: loop over `font.glyphs`, keep the names that end in `.sc`, and use `halfmoon.rich(font, glyph)` in place of `pGlyph()`. Print one line per glyph. Run it twice and check that the second run draws nothing. Then undo the run, so that `e.sc` is again the only small cap with a box. Chapter 51 counts on that.
-3. Draw a box into a `RecordingPen` with `halfmoon.rect`, then print only the points, one per line, by taking them out of `pen.value`. Each order is a tuple of a name and a tuple of points. You'll need two indexes, as in chapter 35.
+2. Make `draw_box.py` work on the whole font: loop over `font.glyphs`, keep the names that end in `.sc`, and use `pGlyph(font, glyph)` in place of `pGlyph()`. Print one line per glyph. Run it twice and check that the second run draws nothing. Then undo the run, so that `e.sc` is again the only small cap with a box. Chapter 51 counts on that.
+3. Draw a box into a `RecordingPen` with `rect`, then print only the points, one per line, by taking them out of `pen.value`. Each order is a tuple of a name and a tuple of points. You'll need two indexes, as in chapter 35.
 
 ## Next
 

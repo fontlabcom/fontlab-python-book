@@ -10,7 +10,7 @@ Eleven steps is eleven places to go wrong, and Rita will go wrong at step three,
 
 ## What you need
 
-`halfmoon.py`, `shift_tool.py` and the two launchers from chapter 132, and `suffix_picker.py` with its launcher, from chapter 132's first exercise. If you skipped that exercise, leave those two files out, and your output will have no Suffix Picker lines. You also need a copy of `install.vfpy`. It comes with Fly: it's in the folder you downloaded in chapter 4, next to Fly's own `pyproject.toml`.
+`shift_tool.py` and the two launchers from chapter 132, and `suffix_picker.py` with its launcher, from chapter 132's first exercise. If you skipped that exercise, leave those two files out, and your output will have no Suffix Picker lines. You also need a copy of `install.vfpy`. It comes with Fly: it's in the folder you downloaded in chapter 4, next to Fly's own `pyproject.toml`.
 
 I haven't run this chapter in FontLab 9. The checking script is plain Python and I ran it as printed, on a folder built the way this chapter describes. I also loaded the real `install.vfpy` in plain Python and asked its own checks about the same folder; they agreed with the script every time. What the installer does once it starts copying, I've read in its source and haven't watched.
 
@@ -27,10 +27,10 @@ Open it in FontLab 9 (double-click it, or drop it on FontLab's window) and it do
 Then it asks for a restart. So the folder you send needs four things in it:
 
 ```text
-halfmoon-tools/
+spacing-tools/
     install.vfpy
     pyproject.toml
-    halfmoon/
+    spacing_tools/
         __init__.py
         shift_tool.py
         suffix_picker.py
@@ -40,30 +40,45 @@ halfmoon-tools/
             Suffix Picker.py
 ```
 
-Two of those are new to you: the folder called `halfmoon` with a file called `__init__.py`, and `pyproject.toml`.
+Two of those are new to you: the folder called `spacing_tools` with a file called `__init__.py`, and `pyproject.toml`. The names say what's inside: tools for spacing. The folder you send has a hyphen in its name, like a file name; the package inside has an underscore, because the package's name is what a script writes after `import`, and Python reads a hyphen there as a minus sign.
 
 ## Step 2: A module that is a folder
 
 The installer doesn't place loose `.py` files where Python looks. It places packages. A **package** is a folder that Python treats as a module, and what makes a folder a package is one file inside it with a fixed name: `__init__.py`, with two underscores each side.
 
-When a script says `import halfmoon`, Python searches its folders for `halfmoon.py` or for a folder `halfmoon` that holds an `__init__.py`. If it finds the folder, it runs `__init__.py`, and what that file defines is what `halfmoon.tell` and `halfmoon.keep` reach. So the move is small:
+When a script says `import spacing_tools`, Python searches its folders for `spacing_tools.py` or for a folder `spacing_tools` that holds an `__init__.py`. If it finds the folder, it runs `__init__.py`, and what that file defines is what `spacing_tools.` followed by a name reaches. Your tools don't need anything defined there. Each of them carries its own helpers, so the file only has to exist. One line saying what the package is will do. Here is all of `__init__.py`:
 
-1. Make a folder `halfmoon` inside `halfmoon-tools`.
-2. Copy your `halfmoon.py` into it and rename the copy `__init__.py`.
+```python
+"""Halfmoon Type's spacing tools: the Shift tool and the Suffix Picker."""
+```
+
+A string on a line of its own at the top of a file is a **docstring**. Python keeps it as the module's description and does nothing else with it. So the move is small:
+
+1. Make a folder `spacing_tools` inside `spacing-tools`.
+2. Save that one line in it as `__init__.py`.
 3. Copy `shift_tool.py` and `suffix_picker.py` in beside it.
 
-Every script in this book that says `import halfmoon` goes on working, because the name hasn't changed. Only its shape has. The other modules now live inside the package, and a module inside a package is reached through it:
+The two modules now live inside the package, and a module inside a package is reached through it:
 
 ```python
 #FLM: Shift Sidebearings
-from halfmoon import shift_tool
+from spacing_tools import shift_tool
 
 shift_tool.open_tool()
 ```
 
-That's the launcher from chapter 132 with one line changed: `import shift_tool` has become `from halfmoon import shift_tool`. Inside `shift_tool.py`, the line `import halfmoon` stays as it is. Change both launchers and save them into `halfmoon-tools/Scripts/Halfmoon`.
+That's the launcher from chapter 132 with one line changed: `import shift_tool` has become `from spacing_tools import shift_tool`. The Suffix Picker's launcher changes the same way:
 
-One thing to do on your own machine first. Your loose `halfmoon.py` and `shift_tool.py` are still in `site-packages`, and a loose `halfmoon.py` left in that folder can be found before the new package, so you'd be running the old one. Move them somewhere safe before you try the installer yourself. Rita's machine has neither, so she has nothing to move.
+```python
+#FLM: Suffix Picker
+from spacing_tools import suffix_picker
+
+suffix_picker.open_tool()
+```
+
+Nothing inside `shift_tool.py` or `suffix_picker.py` changes. Save both launchers into `spacing-tools/Scripts/Halfmoon`.
+
+One thing to do on your own machine first. Your loose `shift_tool.py` and `suffix_picker.py` are still in `site-packages`, and a loose `shift_tool.py` left in that folder is what `import shift_tool` finds, so an old launcher would go on running the old one. Move them somewhere safe before you try the installer yourself. Rita's machine has neither, so she has nothing to move.
 
 ## Step 3: The file that says what's what
 
@@ -71,14 +86,14 @@ One thing to do on your own machine first. Your loose `halfmoon.py` and `shift_t
 
 ```text
 [project]
-name = "halfmoon-tools"
+name = "spacing-tools"
 
 [tool.fontlab-install]
-id = "studio.halfmoon.tools"
-packages = ["halfmoon"]
+id = "com.example.spacing-tools"
+packages = ["spacing_tools"]
 ```
 
-`[project]` holds the name the tools go by. `[tool.fontlab-install]` is the installer's own table. Its `id` is how FontLab's data folder will tell your tools from everyone else's, so it has to be yours alone, and the custom is to write it backwards from the general to the particular, with dots: kind of outfit, its name, the thing. Small letters, digits and hyphens only. `packages` lists the package folders. There's no line for the Scripts folder, because the installer looks for a folder called `Scripts`, with that capital, by itself.
+`[project]` holds the name the tools go by. `[tool.fontlab-install]` is the installer's own table. Its `id` is how FontLab's data folder will tell your tools from everyone else's, so it has to be yours alone, and the custom is to write it backwards from the general to the particular, with dots: kind of outfit, its name, the thing. `com.example` is the stand-in this book uses; put your own studio's web address there, backwards. Small letters, digits and hyphens only. `packages` lists the package folders. There's no line for the Scripts folder, because the installer looks for a folder called `Scripts`, with that capital, by itself.
 
 Python can read TOML with a module that comes with it:
 
@@ -87,25 +102,25 @@ import tomllib
 
 text = """
 [project]
-name = "halfmoon-tools"
+name = "spacing-tools"
 
 [tool.fontlab-install]
-id = "studio.halfmoon.tools"
-packages = ["halfmoon"]
+id = "com.example.spacing-tools"
+packages = ["spacing_tools"]
 """
 project = tomllib.loads(text)
 print(project["tool"]["fontlab-install"]["packages"])
 ```
 
 ```text
-['halfmoon']
+['spacing_tools']
 ```
 
 `tomllib.loads` takes text and gives a dictionary, as `json.load` gave you one from a file. A table is a dictionary, and the dot in `[tool.fontlab-install]` makes one inside another, so you go down through three keys to reach the list.
 
 ## Step 4: The mistake that looks like a tidy-up
 
-Here's the one I'd have made. The folder `halfmoon` holds three files, and one of them has an odd name and looks like clutter. Rename `__init__.py` back to `halfmoon.py`, because that's what it is, and send the folder.
+Here's the one I'd have made. The folder `spacing_tools` holds three files, and one of them has an odd name, holds one line that does nothing and looks like clutter. Delete `__init__.py`, and send the folder.
 
 On Rita's machine the installer stops with this:
 
@@ -124,7 +139,7 @@ That's the installer's real sentence, and it's a fair one once you know what it 
 import tomllib
 from pathlib import Path
 
-FOLDER = Path.home() / "halfmoon-tools"
+FOLDER = Path.home() / "spacing-tools"
 
 
 def id_problem(text):
@@ -197,7 +212,7 @@ def main():
 main()
 ```
 
-Save it as `check_package.py`, and set `FOLDER` to where your `halfmoon-tools` is.
+Save it as `check_package.py`, and set `FOLDER` to where your `spacing-tools` is.
 
 `check` asks the cheap questions first, as chapter 131's tool did: if either of the two files is missing there's nothing to read, so it says so and stops. `read_text()` is new: it opens the file, reads it all and closes it, the three lines of chapter 27 in one. `is_dir()` is the sibling of chapter 111's `is_file()`, true for a folder. The two `.get` calls with `{}` walk down the tables without tripping when one is absent, which is chapter 22's trick used twice in a row.
 
@@ -208,8 +223,8 @@ Save it as `check_package.py`, and set `FOLDER` to where your `halfmoon-tools` i
 ## Run it
 
 ```text
-halfmoon-tools
-  package   halfmoon
+spacing-tools
+  package   spacing_tools
   menu      Halfmoon > Shift Sidebearings
   menu      Halfmoon > Suffix Picker
 Ready to send.
@@ -221,7 +236,7 @@ Now zip the folder and send it, with a note of three lines, not eleven:
 
 ```text
 1. Install Fly first, from its own folder, the same way.
-2. Unzip halfmoon-tools and double-click install.vfpy.
+2. Unzip spacing-tools and double-click install.vfpy.
 3. Restart FontLab. The tools are in Scripts > Halfmoon.
 ```
 
@@ -231,22 +246,22 @@ There's a difference between your copy and hers that's worth knowing. For a fold
 
 ## Break it on purpose
 
-Make the tidy-up from step 4: rename `halfmoon/__init__.py` to `halfmoon/halfmoon.py`, and run the check.
+Make the tidy-up from step 4: delete `spacing_tools/__init__.py`, and run the check.
 
 ```text
-halfmoon-tools
+spacing-tools
   menu      Halfmoon > Shift Sidebearings
   menu      Halfmoon > Suffix Picker
-  PROBLEM   halfmoon/__init__.py is missing, so halfmoon isn't a package.
+  PROBLEM   spacing_tools/__init__.py is missing, so spacing_tools isn't a package.
 1 to fix before you send it.
 ```
 
-The same fault, caught on your side, in a sentence that says which file and why. Rename it back.
+The same fault, caught on your side, in a sentence that says which file and why. Put it back.
 
-Then change the `id` line to `id = "Halfmoon Tools"`:
+Then change the `id` line to `id = "Spacing Tools"`:
 
 ```text
-  PROBLEM   id is 'Halfmoon Tools'. It needs two or more words joined by dots.
+  PROBLEM   id is 'Spacing Tools'. It needs two or more words joined by dots.
 ```
 
 The installer refuses that id too, with `pyproject.toml needs [tool.fontlab-install] id = "com.example.name".` Put it right. Last, delete the closing bracket of the `packages` line:

@@ -5335,7 +5335,6 @@
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>Plum-practice</code> open in FontLab 9, with Fly installed, and saved.</li>
-<li><code>halfmoon.py</code> with <code>tell</code>.</li>
 <li><code>list_instances.py</code> from chapter 107.</li>
 </ul>
 <p>I couldn't run the code in FontLab 9. The planning is plain Python and I ran it. What FontLab does with the result I describe from the User Guide, and I say where I'm guessing.</p>
@@ -5416,8 +5415,17 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span>
+
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Halfmoon"</span>
+
+
+<span class="c1"># Chapter 39's tell, written out again so this script runs by itself.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+
 
 <span class="n">WANTED</span> <span class="o">=</span> <span class="p">[</span>
     <span class="p">(</span><span class="s2">"Thin"</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span>
@@ -5467,7 +5475,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">font</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">package</span> <span class="o">=</span> <span class="n">scripting</span><span class="o">.</span><span class="n">current_package</span><span class="p">()</span>
     <span class="n">axis</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">package</span><span class="o">.</span><span class="n">axes</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
@@ -5504,7 +5512,7 @@ Saved as instances-plan.txt.
 </code></pre></div>
 <p>If yesterday's report listed three instances in your font, the rows for Light, Regular and Bold say <code>already there</code> and the count is 2. The line is the same either way.</p>
 <p>Notes on the listing.</p>
-<p><code>on_axis</code> is yesterday's function, copied. Two scripts now carry it, and by chapter 33's rule that's one too many: it belongs in <code>halfmoon.py</code>. Move it there if you like, and import it in both. I've left the listing whole so that it runs as printed.</p>
+<p><code>on_axis</code> is yesterday's function, copied. You wrote it in chapter 107; here it is again so this script runs by itself. Two copies of one small function is a fair price for a script you can open, read and run without hunting for anything else.</p>
 <p><code>min(spots)</code> and <code>max(spots)</code> find the outer masters without sorting anything. Yesterday needed the order, to find neighbors. Today only the two ends matter.</p>
 <p>The file is written the way chapter 26 wrote one, next to the font. A plan on paper outlives the Output panel, and Mira can attach it to her reply.</p>
 <h2 id="the-last-step-by-hand">The last step, by hand<a class="headerlink" href="#the-last-step-by-hand" title="Permanent link">&para;</a></h2>

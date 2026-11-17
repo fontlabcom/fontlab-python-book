@@ -5357,7 +5357,7 @@
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>Plum-practice</code> open in FontLab 9, with Fly installed.</li>
-<li><code>halfmoon.py</code> with <code>tell</code>.</li>
+<li>The <code>tell</code> function from <a href="../../part2-a-toolbox/039-ask-the-user/">chapter 39</a>. The script below defines it again, so it runs by itself.</li>
 </ul>
 <p>I couldn't run the code in FontLab 9. I ran the text handling in plain Python on the feature text stored in Plum's source file, and the output below comes from that. I'm assuming Fly's reader hands back that same text, wrapper lines included. If your first printout looks different from mine, trust yours and adjust the tests in Step 4.</p>
 <p>This chapter changes nothing in the font.</p>
@@ -5498,9 +5498,17 @@ cpsp  6 lines, 1 rules: 1 move
 <div class="highlight"><pre><span></span><code><span class="c1">#FLM: List Features</span>
 <span class="c1"># Prints a summary of the font's feature text: classes and declarations</span>
 <span class="c1"># in the prefix, then each feature with its rules. Changes nothing.</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span>
+
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Halfmoon"</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+
 
 <span class="n">MEANING</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"sub"</span><span class="p">:</span> <span class="s2">"replace"</span><span class="p">,</span> <span class="s2">"pos"</span><span class="p">:</span> <span class="s2">"move"</span><span class="p">}</span>
 <span class="n">SHOW_RULES</span> <span class="o">=</span> <span class="kc">True</span>
@@ -5549,7 +5557,7 @@ cpsp  6 lines, 1 rules: 1 move
 
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="k">if</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">package</span> <span class="o">=</span> <span class="n">scripting</span><span class="o">.</span><span class="n">current_package</span><span class="p">()</span>
     <span class="n">blocks</span> <span class="o">=</span> <span class="n">scripting</span><span class="o">.</span><span class="n">read_feature_blocks</span><span class="p">(</span><span class="n">package</span><span class="p">)</span>

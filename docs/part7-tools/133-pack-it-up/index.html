@@ -5310,7 +5310,7 @@
 <p>Thursday, 31 December. The studio shuts at one. At ten Oskar's cousin Rita rings again from Porto: she has FontLab 9, she has two people who space type all day, and she would like the Shift tool and the Suffix Picker before the year is out. Ines starts writing her an email. It has eleven steps by the time she stops: find this folder, make that folder, copy these two files here and those two there, mind the capital letters.</p>
 <p>Eleven steps is eleven places to go wrong, and Rita will go wrong at step three, as anyone would. Today you put the tools in one folder, laid out so that one file in it can do all eleven steps. Then you write a short script that checks the folder before it leaves the building.</p>
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
-<p><code>halfmoon.py</code>, <code>shift_tool.py</code> and the two launchers from chapter 132, and <code>suffix_picker.py</code> with its launcher, from chapter 132's first exercise. If you skipped that exercise, leave those two files out, and your output will have no Suffix Picker lines. You also need a copy of <code>install.vfpy</code>. It comes with Fly: it's in the folder you downloaded in chapter 4, next to Fly's own <code>pyproject.toml</code>.</p>
+<p><code>shift_tool.py</code> and the two launchers from chapter 132, and <code>suffix_picker.py</code> with its launcher, from chapter 132's first exercise. If you skipped that exercise, leave those two files out, and your output will have no Suffix Picker lines. You also need a copy of <code>install.vfpy</code>. It comes with Fly: it's in the folder you downloaded in chapter 4, next to Fly's own <code>pyproject.toml</code>.</p>
 <p>I haven't run this chapter in FontLab 9. The checking script is plain Python and I ran it as printed, on a folder built the way this chapter describes. I also loaded the real <code>install.vfpy</code> in plain Python and asked its own checks about the same folder; they agreed with the script every time. What the installer does once it starts copying, I've read in its source and haven't watched.</p>
 <h2 id="step-1-what-the-installer-wants">Step 1: What the installer wants<a class="headerlink" href="#step-1-what-the-installer-wants" title="Permanent link">&para;</a></h2>
 <p><code>install.vfpy</code> is one file, the same file in every FontLab tool that uses it. You don't edit it. You put a copy in your folder, and it reads what to do from a second file beside it, <code>pyproject.toml</code>.</p>
@@ -5321,10 +5321,10 @@
 <li>It writes a log of every file it made, and adds two lines to <strong>Scripts &gt; Extensions</strong>: one that lists what's installed and one that uninstalls yours.</li>
 </ul>
 <p>Then it asks for a restart. So the folder you send needs four things in it:</p>
-<div class="highlight"><pre><span></span><code>halfmoon-tools/
+<div class="highlight"><pre><span></span><code>spacing-tools/
     install.vfpy
     pyproject.toml
-    halfmoon/
+    spacing_tools/
         __init__.py
         shift_tool.py
         suffix_picker.py
@@ -5333,52 +5333,61 @@
             Shift Sidebearings.py
             Suffix Picker.py
 </code></pre></div>
-<p>Two of those are new to you: the folder called <code>halfmoon</code> with a file called <code>__init__.py</code>, and <code>pyproject.toml</code>.</p>
+<p>Two of those are new to you: the folder called <code>spacing_tools</code> with a file called <code>__init__.py</code>, and <code>pyproject.toml</code>. The names say what's inside: tools for spacing. The folder you send has a hyphen in its name, like a file name; the package inside has an underscore, because the package's name is what a script writes after <code>import</code>, and Python reads a hyphen there as a minus sign.</p>
 <h2 id="step-2-a-module-that-is-a-folder">Step 2: A module that is a folder<a class="headerlink" href="#step-2-a-module-that-is-a-folder" title="Permanent link">&para;</a></h2>
 <p>The installer doesn't place loose <code>.py</code> files where Python looks. It places packages. A <strong>package</strong> is a folder that Python treats as a module, and what makes a folder a package is one file inside it with a fixed name: <code>__init__.py</code>, with two underscores each side.</p>
-<p>When a script says <code>import halfmoon</code>, Python searches its folders for <code>halfmoon.py</code> or for a folder <code>halfmoon</code> that holds an <code>__init__.py</code>. If it finds the folder, it runs <code>__init__.py</code>, and what that file defines is what <code>halfmoon.tell</code> and <code>halfmoon.keep</code> reach. So the move is small:</p>
+<p>When a script says <code>import spacing_tools</code>, Python searches its folders for <code>spacing_tools.py</code> or for a folder <code>spacing_tools</code> that holds an <code>__init__.py</code>. If it finds the folder, it runs <code>__init__.py</code>, and what that file defines is what <code>spacing_tools.</code> followed by a name reaches. Your tools don't need anything defined there. Each of them carries its own helpers, so the file only has to exist. One line saying what the package is will do. Here is all of <code>__init__.py</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="sd">"""Halfmoon Type's spacing tools: the Shift tool and the Suffix Picker."""</span>
+</code></pre></div>
+<p>A string on a line of its own at the top of a file is a <strong>docstring</strong>. Python keeps it as the module's description and does nothing else with it. So the move is small:</p>
 <ol>
-<li>Make a folder <code>halfmoon</code> inside <code>halfmoon-tools</code>.</li>
-<li>Copy your <code>halfmoon.py</code> into it and rename the copy <code>__init__.py</code>.</li>
+<li>Make a folder <code>spacing_tools</code> inside <code>spacing-tools</code>.</li>
+<li>Save that one line in it as <code>__init__.py</code>.</li>
 <li>Copy <code>shift_tool.py</code> and <code>suffix_picker.py</code> in beside it.</li>
 </ol>
-<p>Every script in this book that says <code>import halfmoon</code> goes on working, because the name hasn't changed. Only its shape has. The other modules now live inside the package, and a module inside a package is reached through it:</p>
+<p>The two modules now live inside the package, and a module inside a package is reached through it:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">#FLM: Shift Sidebearings</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">halfmoon</span><span class="w"> </span><span class="kn">import</span> <span class="n">shift_tool</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">spacing_tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">shift_tool</span>
 
 <span class="n">shift_tool</span><span class="o">.</span><span class="n">open_tool</span><span class="p">()</span>
 </code></pre></div>
-<p>That's the launcher from chapter 132 with one line changed: <code>import shift_tool</code> has become <code>from halfmoon import shift_tool</code>. Inside <code>shift_tool.py</code>, the line <code>import halfmoon</code> stays as it is. Change both launchers and save them into <code>halfmoon-tools/Scripts/Halfmoon</code>.</p>
-<p>One thing to do on your own machine first. Your loose <code>halfmoon.py</code> and <code>shift_tool.py</code> are still in <code>site-packages</code>, and a loose <code>halfmoon.py</code> left in that folder can be found before the new package, so you'd be running the old one. Move them somewhere safe before you try the installer yourself. Rita's machine has neither, so she has nothing to move.</p>
+<p>That's the launcher from chapter 132 with one line changed: <code>import shift_tool</code> has become <code>from spacing_tools import shift_tool</code>. The Suffix Picker's launcher changes the same way:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">#FLM: Suffix Picker</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">spacing_tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">suffix_picker</span>
+
+<span class="n">suffix_picker</span><span class="o">.</span><span class="n">open_tool</span><span class="p">()</span>
+</code></pre></div>
+<p>Nothing inside <code>shift_tool.py</code> or <code>suffix_picker.py</code> changes. Save both launchers into <code>spacing-tools/Scripts/Halfmoon</code>.</p>
+<p>One thing to do on your own machine first. Your loose <code>shift_tool.py</code> and <code>suffix_picker.py</code> are still in <code>site-packages</code>, and a loose <code>shift_tool.py</code> left in that folder is what <code>import shift_tool</code> finds, so an old launcher would go on running the old one. Move them somewhere safe before you try the installer yourself. Rita's machine has neither, so she has nothing to move.</p>
 <h2 id="step-3-the-file-that-says-whats-what">Step 3: The file that says what's what<a class="headerlink" href="#step-3-the-file-that-says-whats-what" title="Permanent link">&para;</a></h2>
 <p><code>pyproject.toml</code> is a settings file that Python tools agree to read. The format is called TOML. It looks like the JSON of chapter 129 with the brackets taken off: names in square brackets start a table, and under each one come lines of <code>name = value</code>.</p>
 <div class="highlight"><pre><span></span><code>[project]
-name = "halfmoon-tools"
+name = "spacing-tools"
 
 [tool.fontlab-install]
-id = "studio.halfmoon.tools"
-packages = ["halfmoon"]
+id = "com.example.spacing-tools"
+packages = ["spacing_tools"]
 </code></pre></div>
-<p><code>[project]</code> holds the name the tools go by. <code>[tool.fontlab-install]</code> is the installer's own table. Its <code>id</code> is how FontLab's data folder will tell your tools from everyone else's, so it has to be yours alone, and the custom is to write it backwards from the general to the particular, with dots: kind of outfit, its name, the thing. Small letters, digits and hyphens only. <code>packages</code> lists the package folders. There's no line for the Scripts folder, because the installer looks for a folder called <code>Scripts</code>, with that capital, by itself.</p>
+<p><code>[project]</code> holds the name the tools go by. <code>[tool.fontlab-install]</code> is the installer's own table. Its <code>id</code> is how FontLab's data folder will tell your tools from everyone else's, so it has to be yours alone, and the custom is to write it backwards from the general to the particular, with dots: kind of outfit, its name, the thing. <code>com.example</code> is the stand-in this book uses; put your own studio's web address there, backwards. Small letters, digits and hyphens only. <code>packages</code> lists the package folders. There's no line for the Scripts folder, because the installer looks for a folder called <code>Scripts</code>, with that capital, by itself.</p>
 <p>Python can read TOML with a module that comes with it:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">tomllib</span>
 
 <span class="n">text</span> <span class="o">=</span> <span class="s2">"""</span>
 <span class="s2">[project]</span>
-<span class="s2">name = "halfmoon-tools"</span>
+<span class="s2">name = "spacing-tools"</span>
 
 <span class="s2">[tool.fontlab-install]</span>
-<span class="s2">id = "studio.halfmoon.tools"</span>
-<span class="s2">packages = ["halfmoon"]</span>
+<span class="s2">id = "com.example.spacing-tools"</span>
+<span class="s2">packages = ["spacing_tools"]</span>
 <span class="s2">"""</span>
 <span class="n">project</span> <span class="o">=</span> <span class="n">tomllib</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">project</span><span class="p">[</span><span class="s2">"tool"</span><span class="p">][</span><span class="s2">"fontlab-install"</span><span class="p">][</span><span class="s2">"packages"</span><span class="p">])</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>['halfmoon']
+<div class="highlight"><pre><span></span><code>['spacing_tools']
 </code></pre></div>
 <p><code>tomllib.loads</code> takes text and gives a dictionary, as <code>json.load</code> gave you one from a file. A table is a dictionary, and the dot in <code>[tool.fontlab-install]</code> makes one inside another, so you go down through three keys to reach the list.</p>
 <h2 id="step-4-the-mistake-that-looks-like-a-tidy-up">Step 4: The mistake that looks like a tidy-up<a class="headerlink" href="#step-4-the-mistake-that-looks-like-a-tidy-up" title="Permanent link">&para;</a></h2>
-<p>Here's the one I'd have made. The folder <code>halfmoon</code> holds three files, and one of them has an odd name and looks like clutter. Rename <code>__init__.py</code> back to <code>halfmoon.py</code>, because that's what it is, and send the folder.</p>
+<p>Here's the one I'd have made. The folder <code>spacing_tools</code> holds three files, and one of them has an odd name, holds one line that does nothing and looks like clutter. Delete <code>__init__.py</code>, and send the folder.</p>
 <p>On Rita's machine the installer stops with this:</p>
 <div class="highlight"><pre><span></span><code>RuntimeError: pyproject.toml must list the wheel packages, each with __init__.py.
 </code></pre></div>
@@ -5390,7 +5399,7 @@ packages = ["halfmoon"]
 <span class="kn">import</span><span class="w"> </span><span class="nn">tomllib</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="n">FOLDER</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span> <span class="o">/</span> <span class="s2">"halfmoon-tools"</span>
+<span class="n">FOLDER</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span> <span class="o">/</span> <span class="s2">"spacing-tools"</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">id_problem</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
@@ -5462,13 +5471,13 @@ packages = ["halfmoon"]
 
 <span class="n">main</span><span class="p">()</span>
 </code></pre></div>
-<p>Save it as <code>check_package.py</code>, and set <code>FOLDER</code> to where your <code>halfmoon-tools</code> is.</p>
+<p>Save it as <code>check_package.py</code>, and set <code>FOLDER</code> to where your <code>spacing-tools</code> is.</p>
 <p><code>check</code> asks the cheap questions first, as chapter 131's tool did: if either of the two files is missing there's nothing to read, so it says so and stops. <code>read_text()</code> is new: it opens the file, reads it all and closes it, the three lines of chapter 27 in one. <code>is_dir()</code> is the sibling of chapter 111's <code>is_file()</code>, true for a folder. The two <code>.get</code> calls with <code>{}</code> walk down the tables without tripping when one is absent, which is chapter 22's trick used twice in a row.</p>
 <p><code>id_problem</code> gives back a sentence, or an empty string for "no problem". It tests what the installer tests, more loosely: two or more parts between dots, none of them empty, nothing but small letters, digits and hyphens. The installer's own test is stricter in ways that rarely bite, such as refusing an id that starts with a digit.</p>
 <p><code>launchers</code> walks the Scripts folder two levels down, a loop inside a loop, because that's how deep the menu goes: categories, then scripts. For each launcher, <code>check</code> reads the first line and looks for <code>#FLM:</code>. <code>splitlines()[:1]</code> gives a list holding the first line, or an empty list for an empty file, so the test can't trip over a file with nothing in it. <code>path.parent</code> is the folder a path sits in, and <code>.name</code> of that is the category.</p>
 <h2 id="run-it">Run it<a class="headerlink" href="#run-it" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>halfmoon-tools
-  package   halfmoon
+<div class="highlight"><pre><span></span><code>spacing-tools
+  package   spacing_tools
   menu      Halfmoon &gt; Shift Sidebearings
   menu      Halfmoon &gt; Suffix Picker
 Ready to send.
@@ -5476,22 +5485,22 @@ Ready to send.
 <p>Three lines say what Rita will get: one module to import and two lines in her menu. Read them as she would. If a tool you meant to send isn't in the list, it isn't in the folder.</p>
 <p>Now zip the folder and send it, with a note of three lines, not eleven:</p>
 <div class="highlight"><pre><span></span><code>1. Install Fly first, from its own folder, the same way.
-2. Unzip halfmoon-tools and double-click install.vfpy.
+2. Unzip spacing-tools and double-click install.vfpy.
 3. Restart FontLab. The tools are in Scripts &gt; Halfmoon.
 </code></pre></div>
 <p>Line one matters. Your tools import <code>fly</code>, and the installer can fetch what a package depends on from the public package index, where Fly isn't. So Fly goes in first, by hand, with its own <code>install.vfpy</code>.</p>
 <p>There's a difference between your copy and hers that's worth knowing. For a folder that's a plain unzipped copy, the installer copies the package into FontLab's data folder, and Rita's tools stay as they were on the day you sent them. To change them you send a new folder and she opens the new <code>install.vfpy</code>, which replaces the launchers at the same paths. The installer will call your tools version 0.0.0, because it reads version numbers from a place this book doesn't go. Put a date in the zip's name instead.</p>
 <h2 id="break-it-on-purpose">Break it on purpose<a class="headerlink" href="#break-it-on-purpose" title="Permanent link">&para;</a></h2>
-<p>Make the tidy-up from step 4: rename <code>halfmoon/__init__.py</code> to <code>halfmoon/halfmoon.py</code>, and run the check.</p>
-<div class="highlight"><pre><span></span><code>halfmoon-tools
+<p>Make the tidy-up from step 4: delete <code>spacing_tools/__init__.py</code>, and run the check.</p>
+<div class="highlight"><pre><span></span><code>spacing-tools
   menu      Halfmoon &gt; Shift Sidebearings
   menu      Halfmoon &gt; Suffix Picker
-  PROBLEM   halfmoon/__init__.py is missing, so halfmoon isn't a package.
+  PROBLEM   spacing_tools/__init__.py is missing, so spacing_tools isn't a package.
 1 to fix before you send it.
 </code></pre></div>
-<p>The same fault, caught on your side, in a sentence that says which file and why. Rename it back.</p>
-<p>Then change the <code>id</code> line to <code>id = "Halfmoon Tools"</code>:</p>
-<div class="highlight"><pre><span></span><code>  PROBLEM   id is 'Halfmoon Tools'. It needs two or more words joined by dots.
+<p>The same fault, caught on your side, in a sentence that says which file and why. Put it back.</p>
+<p>Then change the <code>id</code> line to <code>id = "Spacing Tools"</code>:</p>
+<div class="highlight"><pre><span></span><code>  PROBLEM   id is 'Spacing Tools'. It needs two or more words joined by dots.
 </code></pre></div>
 <p>The installer refuses that id too, with <code>pyproject.toml needs [tool.fontlab-install] id = "com.example.name".</code> Put it right. Last, delete the closing bracket of the <code>packages</code> line:</p>
 <div class="highlight"><pre><span></span><code>TOMLDecodeError: Unclosed array (at end of document)

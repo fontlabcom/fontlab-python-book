@@ -13,7 +13,7 @@ Legal text is the one kind of text in a font that nobody at the studio is allowe
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py`.
+- The `tell` function from [chapter 39](../part2-a-toolbox/039-ask-the-user.md). The script below defines it again, so it runs by itself.
 
 I couldn't run the code in FontLab 9. I ran the script in plain Python against a stand-in with Plum's legal fields, which are all empty except the designer's web address. The copyright field is one that Fly's guarded writer accepts. I haven't seen FontLab store the line.
 
@@ -141,9 +141,17 @@ These fields belong to the whole font, so there's no master to visit and no `fin
 #FLM: Legal Fields
 # Reports the legal fields of Font Info and writes the copyright line
 # from the text at the top of this script.
-import halfmoon
-from fly import fl
+from fly import fl, qt
 import fly.ap.core.scripting as scripting
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
+
+
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
 
 DRY_RUN = True
 
@@ -171,7 +179,7 @@ def one_line(text):
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     package = scripting.current_package()
     info = package.info

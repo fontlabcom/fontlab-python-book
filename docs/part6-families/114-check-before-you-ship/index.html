@@ -5274,14 +5274,14 @@
 <p>You've already written a script for most of those lines. Chapter 100 put five checks of a single font into one list, and Part 6 has taught you what goes wrong between masters. Today the two meet: one script, nine checks, run before every export.</p>
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>Plum-practice</code> open in FontLab 9, with Fly installed, and <code>halfmoon.py</code>.</li>
+<li><code>Plum-practice</code> open in FontLab 9, with Fly installed.</li>
 <li><code>preflight.py</code> from chapter 100.</li>
 <li>The <code>exports</code> folder from chapters 111 and 112.</li>
 </ul>
 <p>I couldn't run the code in FontLab 9. I ran the script in plain Python against a stand-in for the reader's font, with the kerning this book has made and the two export folders from this week.</p>
 <h2 id="step-1-borrow-the-old-checks">Step 1: Borrow the old checks<a class="headerlink" href="#step-1-borrow-the-old-checks" title="Permanent link">&para;</a></h2>
-<p>Chapter 100's five checks are good and you don't want a second copy of them. A copy is two things to mend when one changes. Since chapter 33 you've borrowed from <code>halfmoon.py</code> with <code>import</code>. <code>preflight.py</code> is a Python file too, and it has a list named <code>CHECKS</code>.</p>
-<p>Python has to be able to find it. Move <code>preflight.py</code> out of the Scripts folder and into the folder where <code>halfmoon.py</code> lives. It'll leave FontLab's menu, and that's all right, because today's script does its job and more.</p>
+<p>Chapter 100's five checks are good and you don't want a second copy of them. A copy is two things to mend when one changes. You've used <code>import</code> since chapter 4 to borrow from Fly. <code>preflight.py</code> is a Python file too, and it has a list named <code>CHECKS</code>.</p>
+<p>Python has to be able to find it. Move <code>preflight.py</code> out of the Scripts folder and into the <code>site-packages</code> folder inside your user folder, the one where Fly lives. <code>sys.path</code> lists it. It'll leave FontLab's menu, and that's all right, because today's script does its job and more.</p>
 <p>Then, in a new script:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">preflight</span>
 
@@ -5299,7 +5299,7 @@ Version 1.001: ready for the hand tests.
 5
 </code></pre></div>
 <p>You asked for a list and got a whole report, and then the list.</p>
-<p><code>import</code> doesn't fetch names from a file. It runs the file, top to bottom, and keeps whatever names exist at the end. For <code>halfmoon.py</code> you never saw the difference, since that file holds only <code>def</code> lines and constants, and running a <code>def</code> makes a function without calling it. But the last line of <code>preflight.py</code> is <code>main()</code>. Running the file runs the report.</p>
+<p><code>import</code> doesn't fetch names from a file. It runs the file, top to bottom, and keeps whatever names exist at the end. For a file that holds only <code>def</code> lines and constants you'd never see the difference, since running a <code>def</code> makes a function without calling it. But the last line of <code>preflight.py</code> is <code>main()</code>. Running the file runs the report.</p>
 <p>Here it's a nuisance. In a script whose last line changes the font, it would be worse: importing the file would change the font.</p>
 <p>Chapter 33 showed the cure in a side note and said you could leave it alone for now. Now you need it. Open <code>preflight.py</code> and change the last line from this:</p>
 <div class="highlight"><pre><span></span><code><span class="n">main</span><span class="p">()</span>
@@ -5373,9 +5373,18 @@ Version 1.001: ready for the hand tests.
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.masters.inspect.model</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">masters_model</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">preflight</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span>
+
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Halfmoon"</span>
+
+
+<span class="c1"># Chapter 39's tell, written out again so this script runs by itself.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+
 
 <span class="n">TABULAR</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"zero"</span><span class="p">,</span> <span class="s2">"one"</span><span class="p">,</span> <span class="s2">"two"</span><span class="p">,</span> <span class="s2">"three"</span><span class="p">,</span> <span class="s2">"four"</span><span class="p">,</span>
            <span class="s2">"five"</span><span class="p">,</span> <span class="s2">"six"</span><span class="p">,</span> <span class="s2">"seven"</span><span class="p">,</span> <span class="s2">"eight"</span><span class="p">,</span> <span class="s2">"nine"</span><span class="p">]</span>
@@ -5447,7 +5456,7 @@ Version 1.001: ready for the hand tests.
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">font</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">package</span> <span class="o">=</span> <span class="n">scripting</span><span class="o">.</span><span class="n">current_package</span><span class="p">()</span>
     <span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>

@@ -13,7 +13,7 @@ Nobody at Halfmoon knows the answer. To find it, a script has to open every glyp
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py` from Part 2, in the folder where chapter 33 put it.
+- The functions and loops from Part 2.
 - Yesterday's idea of layer, contour and node.
 
 The outputs below were computed from Plum's source file, not copied from FontLab's Output panel. Treat what the calls return as what the helpers' source says they return.
@@ -87,39 +87,37 @@ Put the parentheses in:
 
 ## Step 3: A function with two answers
 
-This belongs in `halfmoon.py`, because we'll want it again. Add it under `metrics_rows`:
+We'll want this again, so make it a function. Define it in this script:
 
 ```python
+from fly.tr.proxy.fl.objects.glyph import pGlyph
+
+
 def node_counts(font, glyph, master="Regular"):
-    nodes = rich(font, glyph).nodes(master)
+    nodes = pGlyph(font, glyph).nodes(master)
     on = len([node for node in nodes if node.isOn()])
     return on, len(nodes) - on
 ```
 
 There are three things to notice.
 
-The first line uses `rich`, the helper from chapter 33 that puts a plain glyph into the well-equipped box. Then it calls `nodes(master)`, with something in the slot this time. Yesterday `pGlyph()` and `nodes()` with empty parentheses meant "the glyph on screen, the layer that's showing". That's fine for one glyph you're looking at. A script that walks the whole font isn't looking at anything, so it should say which layer it wants by name: `"Regular"`. The name goes in as a default argument, the way chapter 34 showed, so you can ask for another master when you need to.
+The first line uses `pGlyph` again, but this time you hand it the font and the glyph, so it doesn't depend on what's on screen. Then it calls `nodes(master)`, with something in the slot this time. Yesterday `pGlyph()` and `nodes()` with empty parentheses meant "the glyph on screen, the layer that's showing". That's fine for one glyph you're looking at. A script that walks the whole font isn't looking at anything, so it should say which layer it wants by name: `"Regular"`. The name goes in as a default argument, the way chapter 34 showed, so you can ask for another master when you need to.
 
 The second line is a comprehension with a filter, from chapter 37: collect the nodes that are on the line, and take the length of the collection.
 
 The third line returns two values with a comma between them. You've seen this from the other side. In chapter 35 you unpacked a row with `name, lsb, width, rsb = row`. A comma between values makes a tuple, with or without parentheses around it, so `return on, len(nodes) - on` hands back one tuple of two numbers. The caller unpacks it the same way:
 
 ```python
-import importlib
-import halfmoon
 from fly import fl
 
-importlib.reload(halfmoon)
 font = fl.CurrentFont()
-on, off = halfmoon.node_counts(font, font["o"])
+on, off = node_counts(font, font["o"])
 print(on, off)
 ```
 
 ```text
 8 16
 ```
-
-The `reload` line is there because you've edited the module, and FontLab may still be holding the old copy, as chapter 33 explained. Take it out once the function works.
 
 Try a few more by hand. `H` gives `12 0`: it's all straight lines. `l` gives `4 0`, a plain rectangle. `n` gives `12 8`, which is four curved pieces with two handles each, and the rest straight.
 
@@ -130,7 +128,7 @@ Now walk the font. For each glyph we want a row with its name and its counts, as
 ```python
 rows = []
 for glyph in font.glyphs:
-    on, off = halfmoon.node_counts(font, glyph)
+    on, off = node_counts(font, glyph)
     rows.append((glyph.name, on, off, on + off))
 print(len(rows))
 print(rows[1])
@@ -156,7 +154,7 @@ Many of the rows are all zeros: glyphs built from other glyphs, like `eacute`, a
 ```python
 rows = []
 for glyph in font.glyphs:
-    on, off = halfmoon.node_counts(font, glyph)
+    on, off = node_counts(font, glyph)
     if on + off > 0:
         rows.append((glyph.name, on, off, on + off))
 print(len(rows))
@@ -213,7 +211,7 @@ That works for every row, because we kept only glyphs with nodes. But suppose yo
 
 ```python
 for glyph in font.glyphs:
-    on, off = halfmoon.node_counts(font, glyph)
+    on, off = node_counts(font, glyph)
     print(glyph.name, off / on)
 ```
 
@@ -243,11 +241,17 @@ Here is `node_count.py`:
 ```python
 # Lists the glyphs with the most nodes in one master, and the font's totals.
 # Reads only.
-import halfmoon
 from fly import fl
+from fly.tr.proxy.fl.objects.glyph import pGlyph
 
 MASTER = "Regular"
 HOW_MANY = 5
+
+
+def node_counts(font, glyph, master="Regular"):
+    nodes = pGlyph(font, glyph).nodes(master)
+    on = len([node for node in nodes if node.isOn()])
+    return on, len(nodes) - on
 
 
 def by_total(row):
@@ -262,7 +266,7 @@ def main():
 
     rows = []
     for glyph in font.glyphs:
-        on, off = halfmoon.node_counts(font, glyph, MASTER)
+        on, off = node_counts(font, glyph, MASTER)
         if on + off > 0:
             rows.append((glyph.name, on, off, on + off))
 

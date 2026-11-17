@@ -13,7 +13,7 @@ That's two rules, one inside the other. In chapter 36 you sorted a table by one 
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed. The font must be saved, because the script writes a text file next to it.
-- `halfmoon.py` with `tell`.
+- The `tell` function from [chapter 39](../part2-a-toolbox/039-ask-the-user.md). The script below defines it again, so it runs by itself.
 
 I couldn't run the code in FontLab 9. The sorting is plain Python, and I ran it on the glyph names and code points in Plum's source file. The numbers below are for Plum as it ships, 205 glyphs. Yours will be higher: by the small caps and alternates from Part 2, which have no code points, and by the letters Part 3 built, which have. Part 3's two stand-in accents land in odd places too, as the notes below say.
 
@@ -212,8 +212,16 @@ One line in the count is odd: one "other letter" in a font of plain Latin. It's 
 import unicodedata
 from pathlib import Path
 
-import halfmoon
-from fly import fl
+from fly import fl, qt
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
+
+
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
 
 KINDS = ["special", "capitals", "small letters", "other letters", "figures",
          "punctuation", "symbols", "spaces", "unknown"]
@@ -263,7 +271,7 @@ def count_kinds(codes):
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     codes = {glyph.name: glyph.unicode for glyph in font.glyphs}
     now = list(codes)

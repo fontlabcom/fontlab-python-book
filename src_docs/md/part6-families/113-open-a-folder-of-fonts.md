@@ -10,7 +10,7 @@ Every script so far worked on the font you had open. Today's script opens fonts 
 
 ## What you need
 
-- FontLab 9 with Fly installed, and `halfmoon.py` with `tell`.
+- FontLab 9 with Fly installed.
 - A folder of FontLab files to try it on. Three copies of `Plum-practice` under different names will do.
 - Chapter 95's `try` and `finally`, and chapter 112's `rglob`.
 
@@ -128,8 +128,17 @@ import shutil
 import tempfile
 from pathlib import Path
 
-import halfmoon
-from fly import fl, pr
+from fly import fl, pr, qt
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
+
+
+# Chapter 39's tell, written out again so this script runs by itself.
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
 
 ARCHIVE = Path.home() / "Halfmoon" / "archive"
 KINDS = [".vfc", ".vfj"]
@@ -171,7 +180,7 @@ def look_at(path, scratch):
 
 def main():
     if not ARCHIVE.exists():
-        halfmoon.tell(f"No folder {ARCHIVE}.")
+        tell(f"No folder {ARCHIVE}.")
         return
     files = font_files(ARCHIVE)
     print(f"Font files in {ARCHIVE.name}: {len(files)}.")

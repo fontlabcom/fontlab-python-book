@@ -5291,7 +5291,7 @@
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>Plum-practice</code> open in FontLab 9, with Fly installed.</li>
-<li><code>halfmoon.py</code> with <code>rich</code>.</li>
+<li>The helper <code>tell</code> from chapter 39. The scripts below write it out again, so each one runs by itself.</li>
 <li>The font as chapters 68, 72 and 73 left it. If you skipped one of them, your numbers will differ from mine, and the method won't. The Bold table in step 3 also assumes you ran <code>copy_sb.py</code> on the Bold's accented letters, as chapter 68 suggested.</li>
 </ul>
 <p>I couldn't run the code in FontLab 9. The tables below are worked out from Plum's source file, with the changes of the earlier chapters applied by hand.</p>
@@ -5343,12 +5343,12 @@ quoteright    g             -112
 <p>In the Bold it's the same picture, with −124 in place of −112 and ten such pairs at the top. The pair she mended yesterday stood at −69, far down the list, and it was the one that collided.</p>
 <p>That's today's mistake, and it was in the question. The size of a pair says how far the second glyph moves. It doesn't say where the glyph ends up. The apostrophe has a lot of white beside it and the pair takes most of it away, which is the pair doing its job. The <code>A</code> and the <code>V</code> in the Bold had no white to give, and a middling pair pushed them together.</p>
 <p>So measure each pair against the space it acts on. Chapter 61 gave you that: the right side of the first glyph plus the left side of the second. Add the pair's value, and you have what's left:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
 
 <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
-<span class="n">a</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"quoteright"</span><span class="p">])</span>
-<span class="n">b</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"e"</span><span class="p">])</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"quoteright"</span><span class="p">])</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="s2">"e"</span><span class="p">])</span>
 <span class="n">space</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">getRSB</span><span class="p">(</span><span class="s2">"Regular"</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span><span class="o">.</span><span class="n">getLSB</span><span class="p">(</span><span class="s2">"Regular"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">space</span> <span class="o">+</span> <span class="n">pairs</span><span class="p">[(</span><span class="s2">"quoteright"</span><span class="p">,</span> <span class="s2">"e"</span><span class="p">)])</span>
 </code></pre></div>
@@ -5385,15 +5385,23 @@ quoteright    g             -112
 <div class="highlight"><pre><span></span><code><span class="c1">#FLM: Top Pairs</span>
 <span class="c1"># For each master, lists the kerning pairs that leave the least room</span>
 <span class="c1"># between the two glyphs, and counts the ones that go deeper than DEEP.</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
+
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Halfmoon"</span>
 
 <span class="n">MASTERS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Light"</span><span class="p">,</span> <span class="s2">"Regular"</span><span class="p">,</span> <span class="s2">"Bold"</span><span class="p">]</span>
 <span class="n">HOW_MANY</span> <span class="o">=</span> <span class="mi">8</span>
 <span class="n">DEEP</span> <span class="o">=</span> <span class="o">-</span><span class="mi">70</span>
 <span class="c1"># Glyphs that sit above the lowercase and pass over it.</span>
 <span class="n">HIGH</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"quoteright"</span><span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">stand_in</span><span class="p">(</span><span class="n">side</span><span class="p">,</span> <span class="n">classes</span><span class="p">):</span>
@@ -5417,7 +5425,7 @@ quoteright    g             -112
         <span class="n">b</span> <span class="o">=</span> <span class="n">stand_in</span><span class="p">(</span><span class="n">second</span><span class="p">,</span> <span class="n">classes</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">HIGH</span> <span class="ow">or</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">HIGH</span><span class="p">:</span>
             <span class="k">continue</span>
-        <span class="n">space</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">a</span><span class="p">])</span><span class="o">.</span><span class="n">getRSB</span><span class="p">(</span><span class="n">master</span><span class="p">)</span> <span class="o">+</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">b</span><span class="p">])</span><span class="o">.</span><span class="n">getLSB</span><span class="p">(</span><span class="n">master</span><span class="p">)</span>
+        <span class="n">space</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">a</span><span class="p">])</span><span class="o">.</span><span class="n">getRSB</span><span class="p">(</span><span class="n">master</span><span class="p">)</span> <span class="o">+</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">b</span><span class="p">])</span><span class="o">.</span><span class="n">getLSB</span><span class="p">(</span><span class="n">master</span><span class="p">)</span>
         <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">first</span><span class="p">,</span> <span class="n">second</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">space</span><span class="p">,</span> <span class="n">space</span> <span class="o">+</span> <span class="n">value</span><span class="p">))</span>
     <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">by_left</span><span class="p">)</span>
 
@@ -5425,7 +5433,7 @@ quoteright    g             -112
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">font</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">package</span> <span class="o">=</span> <span class="n">scripting</span><span class="o">.</span><span class="n">current_package</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">master</span> <span class="ow">in</span> <span class="n">MASTERS</span><span class="p">:</span>

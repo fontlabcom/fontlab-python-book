@@ -15,7 +15,7 @@ Today's script looks for three kinds of loose end and changes nothing.
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py` with `tell`.
+- The helper `tell` from chapter 39. The scripts below write it out again, so each one runs by itself.
 - The kerning as chapter 75 left it: 101, 104 and 102 pairs.
 
 I couldn't run the code in FontLab 9. The outputs below are worked out from Plum's source file. I also haven't seen what FontLab 9 does to kerning when you rename or delete a glyph in the Font window. It may tidy up after you. A check like this one is how you'd find out.
@@ -150,11 +150,18 @@ The upright bar joins two sets into one that holds everything from both. That's 
 #FLM: Orphan Pairs
 # Reports kerning that points at nothing: pairs for missing glyphs or classes,
 # class members that are gone, and pairs that some masters lack.
-import halfmoon
 import fly.ap.core.scripting as scripting
-from fly import fl
+from fly import fl, qt
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
 
 MASTERS = ["Light", "Regular", "Bold"]
+
+
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
 
 
 def orphans(pairs, classes, have):
@@ -192,7 +199,7 @@ def uneven(tables):
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     package = scripting.current_package()
     have = {glyph.name for glyph in font.glyphs}

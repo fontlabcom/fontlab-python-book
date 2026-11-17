@@ -13,7 +13,6 @@ Looking at it needs a table with two directions: glyphs down the side, masters a
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py`.
 - The figures as chapter 66 left them.
 
 I couldn't run the code in FontLab 9. The widths below are read from Plum's source file, with the four currency signs at the widths chapter 66 gave them. The widths of `period` and `hyphen` in step 3 are the shipped ones. If you've changed those, your numbers differ and the lesson doesn't.
@@ -144,9 +143,19 @@ It's the grouping from chapter 100: a dictionary of lists, with a new empty list
 #FLM: Master Widths
 # Prints the widths of the tabular glyphs in every master and says
 # whether each master keeps them on one width. Changes nothing.
-import halfmoon
 import fly.ap.core.scripting as scripting
 import fly.ap.masters.inspect.model as masters_model
+from fly import fl, qt
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
+
+
+# Chapter 39's tell, written out again so this script runs by itself.
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
 
 TABULAR = ["zero", "one", "two", "three", "four",
            "five", "six", "seven", "eight", "nine",
@@ -184,7 +193,7 @@ def usual_width(found):
 def main():
     package = scripting.current_package()
     if package is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     masters = masters_model.master_order(package)
     table = width_table(package, TABULAR, masters)

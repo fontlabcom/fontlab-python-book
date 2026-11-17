@@ -5309,55 +5309,75 @@
 <h1 id="38-read-the-traceback">38. Read the traceback<a class="headerlink" href="#38-read-the-traceback" title="Permanent link">&para;</a></h1>
 <p>Tuesday. On Monday evening Mira did exercise 1 of chapter 35. She added a fifth field to every row, the width of the black shape, and she was pleased with it. This morning she runs <code>widest_first.py</code>, and after the table the panel fills with a traceback:</p>
 <div class="highlight"><pre><span></span><code>Traceback (most recent call last):
-  File "&lt;string&gt;", line 23, in &lt;module&gt;
-  File "&lt;string&gt;", line 12, in report
-  File "&lt;string&gt;", line 17, in print_lopsided
-  File "/Users/mira/Library/Application Support/FontLab/FontLab 9/python/3.11/site-packages/halfmoon.py", line 58, in lopsided
-    name, lsb, width, rsb = row
-    ^^^^^^^^^^^^^^^^^^^^^
+  File "&lt;string&gt;", line 51, in &lt;module&gt;
+  File "&lt;string&gt;", line 40, in report
+  File "&lt;string&gt;", line 45, in print_lopsided
+  File "&lt;string&gt;", line 33, in lopsided
 ValueError: too many values to unpack (expected 4)
 </code></pre></div>
-<p>In chapter 3 an error message was three lines long, and you learned to read the last one. This one has eight lines, counting the row of little arrows, and mentions two files and four line numbers. Mira's first instinct is to open line 58 of <code>halfmoon.py</code> and stare at it, and line 58 is fine. It hasn't changed since Friday.</p>
-<p>Error messages got longer when you started writing functions and modules, and they got longer for a good reason. Today you learn to read all of one. It tells you a story if you read it in the right order.</p>
+<p>In chapter 3 an error message was three lines long, and you learned to read the last one. This one has six lines and four line numbers. Mira's first instinct is to scroll to line 33 and stare at it, and line 33 is fine. It hasn't changed since Friday.</p>
+<p>Error messages got longer when you started writing functions, and they got longer for a good reason. Today you learn to read all of one. It tells you a story if you read it in the right order.</p>
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li>FontLab 9 with Fly installed, and <code>Plum-practice</code> open.</li>
-<li><code>halfmoon.py</code> and <code>widest_first.py</code> from <a href="../036-sort-by-anything/">chapter 36</a>.</li>
-<li>Step 1 below changes both files. Do it whether or not you did the exercise in chapter 35, so that your files match mine.</li>
+<li><code>widest_first.py</code> from <a href="../036-sort-by-anything/">chapter 36</a>.</li>
+<li>Step 1 below replaces it. Do it whether or not you did the exercise in chapter 35, so that your script matches mine line for line.</li>
 </ul>
 <h2 id="step-1-break-it-the-way-mira-did">Step 1: Break it the way Mira did<a class="headerlink" href="#step-1-break-it-the-way-mira-did" title="Permanent link">&para;</a></h2>
-<p>In <code>halfmoon.py</code>, change <code>metrics_rows</code> so that each row has a fifth field, the width of the black shape. Two lines change: the width gets a box of its own, and the <code>append</code> line uses it.</p>
-<div class="highlight"><pre><span></span><code>            <span class="n">lsb</span> <span class="o">=</span> <span class="n">measured</span><span class="o">.</span><span class="n">getLSB</span><span class="p">()</span>
-            <span class="n">rsb</span> <span class="o">=</span> <span class="n">measured</span><span class="o">.</span><span class="n">getRSB</span><span class="p">()</span>
-            <span class="n">width</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">glyph</span><span class="o">.</span><span class="n">width</span><span class="p">)</span>
-            <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">glyph</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">lsb</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">rsb</span><span class="p">,</span> <span class="n">width</span> <span class="o">-</span> <span class="n">lsb</span> <span class="o">-</span> <span class="n">rsb</span><span class="p">))</span>
-</code></pre></div>
-<p>Then replace <code>widest_first.py</code> with the listing below. It's the script as Mira has it this week. She split it into two functions so that each job has a name. I've left out the heading row and the check for an empty list, to keep today's trail short.</p>
+<p>Replace <code>widest_first.py</code> with the listing below. It's the script as Mira has it this week. <code>metrics_rows</code> now gives each row a fifth field, the width of the black shape: the width gets a box of its own, and the <code>append</code> line uses it. She also split the printing into two functions so that each job has a name. I've left out the heading row and the check for an empty list, to keep today's trail short. Paste it exactly, blank lines included, so that the line numbers match mine.</p>
 <div class="highlight"><pre><span></span><code><span class="c1">#FLM: Widest First</span>
 <span class="c1"># Prints the metrics of the selected glyphs, widest first.</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
 
 <span class="n">HOW_MANY</span> <span class="o">=</span> <span class="mi">3</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">glyphs_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">only_selected</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">font</span><span class="o">.</span><span class="n">glyphs</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">scripting</span><span class="o">.</span><span class="n">names_selected_names</span><span class="p">()]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">metrics_rows</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">glyph</span> <span class="ow">in</span> <span class="n">glyphs_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="p">):</span>
+        <span class="n">measured</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">measured</span><span class="o">.</span><span class="n">isEmpty</span><span class="p">():</span>
+            <span class="n">lsb</span> <span class="o">=</span> <span class="n">measured</span><span class="o">.</span><span class="n">getLSB</span><span class="p">()</span>
+            <span class="n">rsb</span> <span class="o">=</span> <span class="n">measured</span><span class="o">.</span><span class="n">getRSB</span><span class="p">()</span>
+            <span class="n">width</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">glyph</span><span class="o">.</span><span class="n">width</span><span class="p">)</span>
+            <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">glyph</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">lsb</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">rsb</span><span class="p">,</span> <span class="n">width</span> <span class="o">-</span> <span class="n">lsb</span> <span class="o">-</span> <span class="n">rsb</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">rows</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">by_width</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">lopsided</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+    <span class="n">name</span><span class="p">,</span> <span class="n">lsb</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">rsb</span> <span class="o">=</span> <span class="n">row</span>
+    <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="n">lsb</span> <span class="o">-</span> <span class="n">rsb</span><span class="p">)</span>
+
+
 <span class="k">def</span><span class="w"> </span><span class="nf">report</span><span class="p">(</span><span class="n">rows</span><span class="p">):</span>
-    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">lsb</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">rsb</span><span class="p">,</span> <span class="n">black</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">halfmoon</span><span class="o">.</span><span class="n">by_width</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">lsb</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">rsb</span><span class="p">,</span> <span class="n">black</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">by_width</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">:</span><span class="s2">&lt;8</span><span class="si">}{</span><span class="n">lsb</span><span class="si">:</span><span class="s2">&gt;5</span><span class="si">}{</span><span class="n">width</span><span class="si">:</span><span class="s2">&gt;7</span><span class="si">}{</span><span class="n">rsb</span><span class="si">:</span><span class="s2">&gt;5</span><span class="si">}{</span><span class="n">black</span><span class="si">:</span><span class="s2">&gt;7</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="n">print_lopsided</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">print_lopsided</span><span class="p">(</span><span class="n">rows</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">"Most lopsided:"</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">halfmoon</span><span class="o">.</span><span class="n">lopsided</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)[:</span><span class="n">HOW_MANY</span><span class="p">]:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">&lt;6</span><span class="si">}{</span><span class="n">halfmoon</span><span class="o">.</span><span class="n">lopsided</span><span class="p">(</span><span class="n">row</span><span class="p">)</span><span class="si">:</span><span class="s2">&gt;3</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">lopsided</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)[:</span><span class="n">HOW_MANY</span><span class="p">]:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">&lt;6</span><span class="si">}{</span><span class="n">lopsided</span><span class="p">(</span><span class="n">row</span><span class="p">)</span><span class="si">:</span><span class="s2">&gt;3</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
 
 <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
-<span class="n">rows</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">metrics_rows</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">rows</span> <span class="o">=</span> <span class="n">metrics_rows</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">report</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
 </code></pre></div>
-<p>She remembered to unpack five names in <code>report</code>. Select a few glyphs, reload the module and run it. You get the table, the words <code>Most lopsided:</code>, and then the traceback from the top of this chapter. Your line number in <code>halfmoon.py</code> won't be 58, and the path will have your name in it. FontLab's Output panel may also lay the lines out a little differently. The parts are the same.</p>
+<p>She remembered to unpack five names in <code>report</code>. Select a few glyphs and run it. You get the table, the words <code>Most lopsided:</code>, and then the traceback from the top of this chapter. FontLab's Output panel may lay the lines out a little differently. The parts are the same.</p>
 <h2 id="step-2-the-last-line-first">Step 2: The last line first<a class="headerlink" href="#step-2-the-last-line-first" title="Permanent link">&para;</a></h2>
 <p>You already know this part. The last line is the complaint itself:</p>
 <div class="highlight"><pre><span></span><code>ValueError: too many values to unpack (expected 4)
@@ -5366,35 +5386,34 @@ ValueError: too many values to unpack (expected 4)
 <p>Always read this line first, and read all of it. It's tempting to see the word <code>Error</code> and start changing things. Often the last line is enough.</p>
 <h2 id="step-3-the-lines-above-are-a-trail">Step 3: The lines above are a trail<a class="headerlink" href="#step-3-the-lines-above-are-a-trail" title="Permanent link">&para;</a></h2>
 <p>Now the middle. Each line that begins with <code>File</code> is one step on the way to the accident, and they're in the order things happened. Read them from the top down:</p>
-<div class="highlight"><pre><span></span><code>  File "&lt;string&gt;", line 23, in &lt;module&gt;
+<div class="highlight"><pre><span></span><code>  File "&lt;string&gt;", line 51, in &lt;module&gt;
 </code></pre></div>
-<p>"In the script you ran, at line 23, at the top level." <code>&lt;string&gt;</code> is the name you saw in chapter 3: it stands for the script in the Scripting panel's window. <code>&lt;module&gt;</code> means the line isn't inside any function. Line 23 is <code>report(rows)</code>. So the script called <code>report</code>.</p>
-<div class="highlight"><pre><span></span><code>  File "&lt;string&gt;", line 12, in report
+<p>"In the script you ran, at line 51, at the top level." <code>&lt;string&gt;</code> is the name you saw in chapter 3: it stands for the script in the Scripting panel's window. <code>&lt;module&gt;</code> means the line isn't inside any function. Line 51 is <code>report(rows)</code>. So the script called <code>report</code>.</p>
+<div class="highlight"><pre><span></span><code>  File "&lt;string&gt;", line 40, in report
 </code></pre></div>
-<p>"In the same script, line 12, inside the function <code>report</code>." Line 12 is <code>print_lopsided(rows)</code>. So <code>report</code> called <code>print_lopsided</code>.</p>
-<div class="highlight"><pre><span></span><code>  File "&lt;string&gt;", line 17, in print_lopsided
+<p>"In the same script, line 40, inside the function <code>report</code>." Line 40 is <code>print_lopsided(rows)</code>. So <code>report</code> called <code>print_lopsided</code>.</p>
+<div class="highlight"><pre><span></span><code>  File "&lt;string&gt;", line 45, in print_lopsided
 </code></pre></div>
-<p>Line 17, inside <code>print_lopsided</code>. That's the <code>sorted</code> line with <code>key=halfmoon.lopsided</code>. So <code>print_lopsided</code> asked <code>sorted</code> to do its work, and <code>sorted</code> called the key function.</p>
-<div class="highlight"><pre><span></span><code>  File "/Users/mira/.../site-packages/halfmoon.py", line 58, in lopsided
-    name, lsb, width, rsb = row
+<p>Line 45, inside <code>print_lopsided</code>. That's the <code>sorted</code> line with <code>key=lopsided</code>. So <code>print_lopsided</code> asked <code>sorted</code> to do its work, and <code>sorted</code> called the key function.</p>
+<div class="highlight"><pre><span></span><code>  File "&lt;string&gt;", line 33, in lopsided
 </code></pre></div>
-<p>"In the file <code>halfmoon.py</code>, line 58, inside the function <code>lopsided</code>." Here Python can show you the line itself, because the file is on disk where it can read it. That's where it fell over.</p>
+<p>"Line 33, inside the function <code>lopsided</code>." That's <code>name, lsb, width, rsb = row</code>, and that's where it fell over. Python doesn't print the line for you here, because <code>&lt;string&gt;</code> isn't a file on disk that it can read back. Count down in the Scripting panel's window, or turn on its line numbers if your version has them. Later in this chapter you'll see a trail through a file that is on disk, and there Python shows the line.</p>
 <p>So the story reads: the script called <code>report</code>, which called <code>print_lopsided</code>, which had <code>sorted</code> call <code>lopsided</code>, and inside <code>lopsided</code> a row wouldn't fit into four boxes. Each function was waiting for the next one to finish when the last one failed. That chain of waiting functions is what the first line, <code>Traceback (most recent call last)</code>, announces. It says the calls are listed in order, with the newest at the bottom.</p>
 <p>In chapter 3 I called an error message a letter of complaint. A traceback is the same letter with the route on the envelope. Picture a relay team. The baton passes from runner to runner, and the fourth runner drops it. The traceback names all four in order, so that you can ask whether the fourth was clumsy or was handed a baton too slippery to hold.</p>
 <h2 id="step-4-where-it-fell-isnt-where-the-mistake-is">Step 4: Where it fell isn't where the mistake is<a class="headerlink" href="#step-4-where-it-fell-isnt-where-the-mistake-is" title="Permanent link">&para;</a></h2>
-<p>In this case the baton was slippery. Line 58 is the place where Python noticed the problem. It isn't the place where the problem was made.</p>
-<p>Line 58 says "unpack a row into four boxes". That was correct on Friday and it's correct in itself today. What changed is the rows. <code>metrics_rows</code> now makes them with five fields. Mira changed the maker and forgot one of the users.</p>
+<p>In this case the baton was slippery. Line 33 is the place where Python noticed the problem. It isn't the place where the problem was made.</p>
+<p>Line 33 says "unpack a row into four boxes". That was correct on Friday and it's correct in itself today. What changed is the rows. <code>metrics_rows</code> now makes them with five fields. Mira changed the maker and forgot one of the users.</p>
 <p>The traceback can't tell you that directly, because <code>metrics_rows</code> isn't in it. It ran and finished long before the error. It handed back a perfectly good list of rows with five fields, and by the time <code>lopsided</code> choked on one, <code>metrics_rows</code> was no longer waiting for anything. A traceback only lists the functions that were still in the middle of their work.</p>
-<p>What the traceback does give you is the right question: where did this row come from? Walk the trail backward. <code>lopsided</code> got the row from <code>sorted</code>. <code>sorted</code> got its rows from <code>print_lopsided</code>, which got them from <code>report</code>, which got them from line 21 of the script: <code>rows = halfmoon.metrics_rows(font, only_selected=True)</code>. That's the maker. Open it, and the fifth field is there to see.</p>
+<p>What the traceback does give you is the right question: where did this row come from? Walk the trail backward. <code>lopsided</code> got the row from <code>sorted</code>. <code>sorted</code> got its rows from <code>print_lopsided</code>, which got them from <code>report</code>, which got them from line 50 of the script: <code>rows = metrics_rows(font, only_selected=True)</code>. That's the maker. Scroll up to it, and the fifth field is there to see on line 24.</p>
 <p>You met this pattern in chapter 19, in a smaller form. A box was filled with <code>None</code> on one line, and the complaint came from a later line that tried to use it. "Don't stare at the line it points to. Look upward for the box that was filled with nothing." This is the same rule on a larger scale: when the line it points to looks innocent, follow the data back to where it was made.</p>
 <p>The fix is one line in <code>lopsided</code>:</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">lopsided</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
     <span class="n">name</span><span class="p">,</span> <span class="n">lsb</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">rsb</span><span class="p">,</span> <span class="n">black</span> <span class="o">=</span> <span class="n">row</span>
     <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="n">lsb</span> <span class="o">-</span> <span class="n">rsb</span><span class="p">)</span>
 </code></pre></div>
-<p>There's a habit that would have saved the morning, too. When you change what a function hands back, look for everybody who uses it before you run anything. In chapter 35, exercise 1 asked "which other lines, in which files, have to change?" Now you know why I asked.</p>
+<p>There's a habit that would have saved the morning, too. When you change what a function hands back, look for everybody who uses it before you run anything. In chapter 35, exercise 1 asked "which other lines of the script have to change?" Now you know why I asked.</p>
 <h2 id="step-5-whose-file-is-it">Step 5: Whose file is it?<a class="headerlink" href="#step-5-whose-file-is-it" title="Permanent link">&para;</a></h2>
-<p>Your scripts now stand on a stack of other people's work. A script calls <code>halfmoon</code>, which calls Fly's helpers, which call FontLab. When something fails low in the stack, the trail runs through files you didn't write. Close every font, and run these three lines:</p>
+<p>Your scripts now stand on a stack of other people's work. Your functions call Fly's helpers, which call FontLab. When something fails low in the stack, the trail runs through files you didn't write. Close every font, and run these three lines:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.glyphs.names.model</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">names</span>
 
 <span class="n">facts</span> <span class="o">=</span> <span class="n">names</span><span class="o">.</span><span class="n">scan</span><span class="p">()</span>
@@ -5490,8 +5509,8 @@ ValueError: Open a font first.
 <h2 id="try-it-yourself">Try it yourself<a class="headerlink" href="#try-it-yourself" title="Permanent link">&para;</a></h2>
 <ol>
 <li>In <code>widest_first.py</code>, change <code>HOW_MANY = 3</code> to <code>HOW_MANY = "3"</code>, with quotes. Before you run it, predict the kind of error, and how many <code>File</code> lines the trail will have. Then run it and compare. Put the number back.</li>
-<li>In <code>widest_first.py</code>, change <code>only_selected=True</code> to <code>only_selected=False</code>. Close every font and run it. I expect a trail that ends inside <code>halfmoon.py</code> with an <code>AttributeError</code> about <code>NoneType</code>, though I haven't seen FontLab print it. Read whatever you get aloud as a story, in the manner of Step 3: who called whom, and where did it fall? Then say where the fix belongs. It isn't in the line the trail ends on. Put <code>True</code> back.</li>
-<li>Open <code>halfmoon.py</code>, take the colon off the end of any <code>def</code> line and save it. Put a <code>print("start")</code> above the <code>import halfmoon</code> line of a script that reloads the module, and run it. Does <code>start</code> print? Put the colon back. Now take a colon off a <code>def</code> in the script itself and run again. Does <code>start</code> print this time? Why the difference? Put that colon back too.</li>
+<li>In <code>widest_first.py</code>, change <code>only_selected=True</code> to <code>only_selected=False</code>. Close every font and run it. I expect a trail that ends inside <code>glyphs_of</code> with an <code>AttributeError</code> about <code>NoneType</code>, though I haven't seen FontLab print it. Read whatever you get aloud as a story, in the manner of Step 3: who called whom, and where did it fall? Then say where the fix belongs. It isn't in the line the trail ends on. Put <code>True</code> back.</li>
+<li>Put a <code>print("start")</code> as the first line of <code>widest_first.py</code>, below the <code>#FLM:</code> line. Take the colon off the end of any <code>def</code> line and run it. Does <code>start</code> print? Put the colon back. Now misspell <code>lopsided</code> as <code>lopsidded</code> in the <code>sorted</code> line of <code>print_lopsided</code> and run again. Does <code>start</code> print this time? Why the difference? Put the spelling back.</li>
 </ol>
 <h2 id="next">Next<a class="headerlink" href="#next" title="Permanent link">&para;</a></h2>
 <p>Mira's scripts refuse when something's wrong, and they print when something's right. What they can't do yet is ask. Chapter 39 puts a question on the screen and waits for the answer.</p>

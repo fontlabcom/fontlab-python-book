@@ -78,7 +78,7 @@ Two cautions for FontLab's own objects. I expect `dir` to work on them, since it
 
 Chapter 135 was a reading lesson: twenty lines by a stranger, taken a line at a time. That skill is now worth more to you than any single helper, because the fastest way to do something new in FontLab is to find a script that does something near it.
 
-You have more to read than you may think. Everything Fly routes to is Python, in files on your disk, in the folder chapter 4 had you make. The `fontlab-fontlabapp` folder alone holds the code behind most of the helpers you've called since chapter 7. When a chapter said "`halfmoon.tell` wraps a helper", the helper is in there, and you can open it.
+You have more to read than you may think. Everything Fly routes to is Python, in files on your disk, in the folder chapter 4 had you make. The `fontlab-fontlabapp` folder alone holds the code behind most of the helpers you've called since chapter 7. When a chapter said that `tell` wraps a helper, `run_standard_message_box`, the helper is in there, and you can open it.
 
 Read as chapter 135 did. First the imports, which say what the script depends on. Then the bottom, which says where it starts. Then follow one call inward, and stop as soon as you know what you came to learn. You don't have to understand a file to borrow one idea from it.
 

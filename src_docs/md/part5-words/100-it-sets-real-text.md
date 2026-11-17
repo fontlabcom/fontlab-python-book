@@ -13,7 +13,7 @@ So the last script of Part 5 adds nothing new to the font. It asks the old quest
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py`.
+- The `tell` function from [chapter 39](../part2-a-toolbox/039-ask-the-user.md). The script below defines it again, so it runs by itself.
 - The work of chapters 81 to 99 done. If you skipped some, the pre-flight will tell you which.
 
 I couldn't run the code in FontLab 9. I ran the script in plain Python against a stand-in built from Plum's source file plus the glyphs and features this part added, and then against the same font with five faults put in. Your counts will differ from mine wherever your font does.
@@ -122,9 +122,17 @@ Catching `Exception` is right in this one place, a loop whose job is to keep goi
 #FLM: Preflight
 # Five read-only checks before a font leaves the building:
 # names, Unicode, features, Font Info, metrics. Changes nothing.
-import halfmoon
-from fly import fl
+from fly import fl, qt
 import fly.ap.core.scripting as scripting
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
+
+
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
 
 ALLOWED = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._"
 TEXT_FIELDS = ["familyName", "openTypeNameDesigner", "copyright", "openTypeNameVersion"]
@@ -215,7 +223,7 @@ CHECKS = [
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     package = scripting.current_package()
     total = 0

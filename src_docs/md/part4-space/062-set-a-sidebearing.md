@@ -13,7 +13,7 @@ Two numbers to set. The first takes one line you already know. The second takes 
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed. Keep the Font window in front, as in chapter 53.
-- `halfmoon.py` with `rich`, `box`, `ask`, `tell` and `set_width` from chapter 49.
+- The helpers `box`, `ask` and `tell` from chapters 39 and 43, and `set_width` from chapter 49. The scripts below write them out again, so each one runs by itself.
 - `sb_report.py` from chapter 61, to look at the result.
 
 This chapter changes the font. Every change is one Undo step. I couldn't run it in FontLab 9, so the outputs are worked out from Plum's source file and from the code of the tools.
@@ -25,12 +25,12 @@ Chapter 61 said it in passing: the right sidebearing is what's left of the width
 Start with the numbers as they are:
 
 ```python
-import halfmoon
 from fly import fl
 from fly.pens import layer_of
+from fly.tr.proxy.fl.objects.glyph import pGlyph
 
 font = fl.CurrentFont()
-rich = halfmoon.rich(font, font["m"])
+rich = pGlyph(font, font["m"])
 print(rich.getLSB("Bold"), rich.getAdvance("Bold"), rich.getRSB("Bold"))
 ```
 
@@ -50,11 +50,24 @@ print(width)
 806
 ```
 
-Now set it. `halfmoon.set_width` from chapter 49 takes the rich glyph, the layer, the new width and a name for the Undo step:
+Now set it. `set_width` from chapter 49 takes the rich glyph, the layer, the new width and a name for the Undo step. Here it is again, so this runs by itself:
 
 ```python
+import fly.ap.core.history.glyphs as history
+import fly.ap.core.scripting as scripting
+
+
+def set_width(glyph, layer, width, title="Set width"):
+    def change():
+        layer.advanceWidth = width
+
+    package = scripting.current_package()
+    facts = history.scan_auto_facts(package)
+    history.commit(title, [layer], [glyph.fl], change, operation="geometry", facts=facts)
+
+
 layer = layer_of(rich.fl, "Bold")
-halfmoon.set_width(rich, layer, width, "Set right sidebearing")
+set_width(rich, layer, width, "Set right sidebearing")
 print(rich.getLSB("Bold"), rich.getAdvance("Bold"), rich.getRSB("Bold"))
 ```
 
@@ -68,7 +81,7 @@ That last `print` isn't decoration. Chapter 29 had you print before and after a 
 
 ## Step 2: The mistake
 
-Now the `i`. It has 46 on the left and should have 56. Ten more. The same recipe, then, with one thing to settle first. The `i` is borrowed by `ij`, which FontLab builds itself, and chapter 55 showed what follows: the change is refused with `Refused. i: base of auto ij.` unless `history.commit` hears `allow_bases=True`. So `set_width` in `halfmoon.py` gets a fifth parameter and passes it on:
+Now the `i`. It has 46 on the left and should have 56. Ten more. The same recipe, then, with one thing to settle first. The `i` is borrowed by `ij`, which FontLab builds itself, and chapter 55 showed what follows: the change is refused with `Refused. i: base of auto ij.` unless `history.commit` hears `allow_bases=True`. So `set_width` gets a fifth parameter and passes it on:
 
 ```python
 def set_width(glyph, layer, width, title="Set width", allow_bases=False):
@@ -84,11 +97,11 @@ def set_width(glyph, layer, width, title="Set width", allow_bases=False):
 The default is `False`, so every call you've written so far behaves as before. Save the font, as chapter 55 asked, and then:
 
 ```python
-rich = halfmoon.rich(font, font["i"])
+rich = pGlyph(font, font["i"])
 layer = layer_of(rich.fl, "Bold")
 print(rich.getLSB("Bold"), rich.getAdvance("Bold"), rich.getRSB("Bold"))
 
-halfmoon.set_width(rich, layer, rich.getAdvance("Bold") + 10, "Set left sidebearing",
+set_width(rich, layer, rich.getAdvance("Bold") + 10, "Set left sidebearing",
                    allow_bases=True)
 print(rich.getLSB("Bold"), rich.getAdvance("Bold"), rich.getRSB("Bold"))
 ```
@@ -177,7 +190,7 @@ There's one more thing that moved, and it isn't on the `i`'s layer. Chapter 52 e
 import fly.ap.components.writer as parts
 
 for glyph in font.glyphs:
-    found = parts.components(layer_of(halfmoon.rich(font, glyph).fl, "Bold"))
+    found = parts.components(layer_of(pGlyph(font, glyph).fl, "Bold"))
     if "i" in [parts.base_of(part) for part in found]:
         print(glyph.name, [(parts.base_of(part), parts.offset(part)) for part in found])
 ```
@@ -200,18 +213,42 @@ The script sets one or both sidebearings of one glyph in one master. `None` for 
 #FLM: Set Sidebearings
 # Sets the left and right sidebearing of one glyph in one master.
 # None for a side leaves it alone. One Undo step.
-import halfmoon
 import fly.ap.components.writer as parts
 import fly.ap.core.history.glyphs as history
 import fly.ap.core.scripting as scripting
 import fly.ap.metrics.panel.model as metrics
-from fly import fl
+from fly import fl, qt
+from fly.ap.ui.dialogs import run_standard_message_box
 from fly.pens import layer_of
+from fly.tr.proxy.fl.objects.glyph import pGlyph
 
+TITLE = "Halfmoon"
 GLYPH = "i"
 MASTER = "Bold"
 LEFT = 56
 RIGHT = None
+
+
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
+
+def ask(question):
+    box = qt.QtGui.QMessageBox
+    answer = run_standard_message_box(
+        qt, fl.MainWindow(), TITLE, question, "Question", box.Yes | box.No
+    )
+    return answer == box.Yes
+
+
+def box(font, glyph, master="Regular"):
+    nodes = pGlyph(font, glyph).nodes(master)
+    if not nodes:
+        return None
+    xs = [node.x for node in nodes]
+    ys = [node.y for node in nodes]
+    return min(xs), min(ys), max(xs), max(ys)
 
 
 def plan(rich, master, left, right):
@@ -228,7 +265,7 @@ def plan(rich, master, left, right):
 def borrowers(font, name, master):
     found = []
     for glyph in font.glyphs:
-        layer = layer_of(halfmoon.rich(font, glyph).fl, master)
+        layer = layer_of(pGlyph(font, glyph).fl, master)
         if name in [parts.base_of(part) for part in parts.components(layer)]:
             found.append(glyph.name)
     return found
@@ -241,12 +278,12 @@ def numbers(rich, master):
 def main():
     font = fl.CurrentFont()
     if font is None or font[GLYPH] is None:
-        halfmoon.tell(f"Open a font that has a glyph named {GLYPH}.")
+        tell(f"Open a font that has a glyph named {GLYPH}.")
         return
-    if halfmoon.box(font, font[GLYPH], MASTER) is None:
-        halfmoon.tell(f"{GLYPH} has no outline in {MASTER}, so it has no sidebearings to set.")
+    if box(font, font[GLYPH], MASTER) is None:
+        tell(f"{GLYPH} has no outline in {MASTER}, so it has no sidebearings to set.")
         return
-    rich = halfmoon.rich(font, font[GLYPH])
+    rich = pGlyph(font, font[GLYPH])
     layer = layer_of(rich.fl, MASTER)
     dx, width = plan(rich, MASTER, LEFT, RIGHT)
     if dx == 0 and width == rich.getAdvance(MASTER):
@@ -260,7 +297,7 @@ def main():
         print(f"The shape also moves inside: {' '.join(users)}")
     elif users:
         print(f"Borrowed by: {' '.join(users)}")
-    if not halfmoon.ask(f"Change {GLYPH} in {MASTER}?"):
+    if not ask(f"Change {GLYPH} in {MASTER}?"):
         return
 
     def change():
@@ -298,7 +335,7 @@ A few things in it are worth a second look.
 
 `change` is written inside `main`, after the question. It's the function-in-a-function from chapter 49, and it sees `layer`, `dx` and `width` because it was written where those boxes live.
 
-The guard with `halfmoon.box` keeps the script away from glyphs with no outline of their own. A `space` has a width and no shape, so "left sidebearing" means nothing for it. A glyph made only of components is a different case, and chapter 63 takes it up.
+The guard with `box` keeps the script away from glyphs with no outline of their own. A `space` has a width and no shape, so "left sidebearing" means nothing for it. A glyph made only of components is a different case, and chapter 63 takes it up.
 
 Mira runs the script for the `i` and, with three constants changed, for the `m`. Then she runs `sb_report.py` on `minimum` again:
 
@@ -316,7 +353,7 @@ The right sidebearing changes when the width changes, and nothing moves. The lef
 
 1. Oskar once left a note that said "Give the H 60 on each side." Do it in the Bold: set `GLYPH = "H"`, `LEFT = 60` and `RIGHT = 60`. The Bold `H` starts at left 56, width 672, right 40. Work out the plan on paper before you run the script. You should get a move of 4 and a width of 696.
 2. Set the right sidebearing of the Bold `n` to 40, with `LEFT = None`. Then print the three numbers of the Bold `ntilde`. Its width is still 523. In one sentence: why does the script not warn you about `ntilde`, and should it?
-3. Set `GLYPH = "ij"` and run the script. It stops at the guard and says the glyph has no outline, since `ij` is two borrowed shapes. Now try the width alone, in the Scripting panel: `halfmoon.set_width(rich, layer, 470, allow_bases=True)` for the Bold layer of `ij`. By Fly's code that should stop with a refusal that begins `Refused: auto layer`. Why does `allow_bases=True` not help here? Chapter 55 has the answer.
+3. Set `GLYPH = "ij"` and run the script. It stops at the guard and says the glyph has no outline, since `ij` is two borrowed shapes. Now try the width alone, in the Scripting panel: `set_width(rich, layer, 470, allow_bases=True)` for the Bold layer of `ij`. By Fly's code that should stop with a refusal that begins `Refused: auto layer`. Why does `allow_bases=True` not help here? Chapter 55 has the answer.
 
 ## Next
 

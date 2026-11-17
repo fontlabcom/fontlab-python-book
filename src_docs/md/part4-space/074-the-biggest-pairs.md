@@ -13,7 +13,7 @@ It's a fair way to check a hundred pairs when you have time for ten. This chapte
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py` with `rich`.
+- The helper `tell` from chapter 39. The scripts below write it out again, so each one runs by itself.
 - The font as chapters 68, 72 and 73 left it. If you skipped one of them, your numbers will differ from mine, and the method won't. The Bold table in step 3 also assumes you ran `copy_sb.py` on the Bold's accented letters, as chapter 68 suggested.
 
 I couldn't run the code in FontLab 9. The tables below are worked out from Plum's source file, with the changes of the earlier chapters applied by hand.
@@ -87,12 +87,12 @@ That's today's mistake, and it was in the question. The size of a pair says how 
 So measure each pair against the space it acts on. Chapter 61 gave you that: the right side of the first glyph plus the left side of the second. Add the pair's value, and you have what's left:
 
 ```python
-import halfmoon
 from fly import fl
+from fly.tr.proxy.fl.objects.glyph import pGlyph
 
 font = fl.CurrentFont()
-a = halfmoon.rich(font, font["quoteright"])
-b = halfmoon.rich(font, font["e"])
+a = pGlyph(font, font["quoteright"])
+b = pGlyph(font, font["e"])
 space = a.getRSB("Regular") + b.getLSB("Regular")
 print(space, space + pairs[("quoteright", "e")])
 ```
@@ -151,15 +151,23 @@ HIGH = ["quoteright"]
 #FLM: Top Pairs
 # For each master, lists the kerning pairs that leave the least room
 # between the two glyphs, and counts the ones that go deeper than DEEP.
-import halfmoon
 import fly.ap.core.scripting as scripting
-from fly import fl
+from fly import fl, qt
+from fly.ap.ui.dialogs import run_standard_message_box
+from fly.tr.proxy.fl.objects.glyph import pGlyph
+
+TITLE = "Halfmoon"
 
 MASTERS = ["Light", "Regular", "Bold"]
 HOW_MANY = 8
 DEEP = -70
 # Glyphs that sit above the lowercase and pass over it.
 HIGH = ["quoteright"]
+
+
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
 
 
 def stand_in(side, classes):
@@ -183,7 +191,7 @@ def pair_rows(font, package, master):
         b = stand_in(second, classes)
         if a in HIGH or b in HIGH:
             continue
-        space = halfmoon.rich(font, font[a]).getRSB(master) + halfmoon.rich(font, font[b]).getLSB(master)
+        space = pGlyph(font, font[a]).getRSB(master) + pGlyph(font, font[b]).getLSB(master)
         rows.append((first, second, value, space, space + value))
     return sorted(rows, key=by_left)
 
@@ -191,7 +199,7 @@ def pair_rows(font, package, master):
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     package = scripting.current_package()
     for master in MASTERS:

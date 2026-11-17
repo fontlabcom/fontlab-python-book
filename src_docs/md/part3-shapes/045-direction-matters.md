@@ -13,7 +13,7 @@ The answer is a property of a contour that you can't see in the finished letter.
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py` with `box` and `contours_of`.
+- `box` and `contours_of` from the last two chapters. You'll write them out again here.
 - The `o` open in a Glyph window, Regular master.
 
 The outputs below were computed from Plum's source file, not copied from FontLab's Output panel. The directions quoted for Plum were worked out the same way. The drawer that reports direction, `clockwise`, is taken from FontLab's list of names.
@@ -83,9 +83,12 @@ Leave your `o` reversed for now. We'll use it to test the script.
 
 To check a glyph, a script has to know which contour is the outside one, and nothing in the contour says so. But there's a simple test that's right nearly always: the outside is the biggest. The contour whose bounding box covers the most ground is an outer contour, and it should run counter-clockwise.
 
-In chapter 43, `box` worked out the box of all the nodes in a layer. Now we need the box of the nodes in one contour. It's the same arithmetic on a different list, so split the function in two. In `halfmoon.py`, replace `box` with this pair:
+In chapter 43, `box` worked out the box of all the nodes in a layer. Now we need the box of the nodes in one contour. It's the same arithmetic on a different list, so split the function in two. Define this pair in this script, in place of the old `box`:
 
 ```python
+from fly.tr.proxy.fl.objects.glyph import pGlyph
+
+
 def box_of(nodes):
     if not nodes:
         return None
@@ -95,10 +98,10 @@ def box_of(nodes):
 
 
 def box(font, glyph, master="Regular"):
-    return box_of(rich(font, glyph).nodes(master))
+    return box_of(pGlyph(font, glyph).nodes(master))
 ```
 
-`box` still does what it did, and every script that calls it still works. All of its arithmetic has moved into `box_of`, which will take any list of nodes. This is how a module should grow. When you need half of a function somewhere else, cut that half out and give it a name, and let the old function call it. Don't copy the lines.
+`box` still does what it did, and every call to it still works. All of its arithmetic has moved into `box_of`, which will take any list of nodes. This is how your code should grow. When you need half of a function somewhere else, cut that half out and give it a name, and let the old function call it. Don't copy the lines.
 
 Add one more, for the ground a contour covers:
 
@@ -111,13 +114,18 @@ def box_area(contour):
 A width times a height. Try it on the `o`:
 
 ```python
-import halfmoon
 from fly import fl
+from fly.tr.proxy.fl.objects.glyph import pGlyph
+
+
+def contours_of(font, glyph, master="Regular"):
+    return pGlyph(font, glyph).contours(master)
+
 
 font = fl.CurrentFont()
-contours = halfmoon.contours_of(font, font["o"])
+contours = contours_of(font, font["o"])
 for contour in contours:
-    print(halfmoon.box_area(contour))
+    print(box_area(contour))
 ```
 
 ```text
@@ -128,7 +136,7 @@ for contour in contours:
 The outer oval's box is 444 by 498, and the inner one's is 264 by 366. Now pick the biggest, with `max` and a key as in chapter 36:
 
 ```python
-outer = max(contours, key=halfmoon.box_area)
+outer = max(contours, key=box_area)
 print(outer.clockwise)
 ```
 
@@ -138,19 +146,36 @@ True
 
 `max` hands back the contour itself, the one for which `box_area` gave the largest number. And since you left your `o` reversed, its outside runs clockwise. That's the check, in two lines.
 
-Notice `key=halfmoon.box_area`, with no parentheses. It's the "function is a value" idea, put to work this time: you're handing `max` the function, for it to call on each contour.
+Notice `key=box_area`, with no parentheses. It's the "function is a value" idea, put to work this time: you're handing `max` the function, for it to call on each contour.
 
 ## The whole script
 
-Here is `check_direction.py`. `halfmoon.py` gains `box_of` and `box_area`, and its `box` gets shorter.
+Here is `check_direction.py`. It writes out `contours_of`, `box_of` and `box_area` at the top, so it runs by itself. It doesn't need `box`.
 
 ```python
 # Reports layers whose largest contour runs clockwise.
 # Reads only.
-import halfmoon
 from fly import fl
+from fly.tr.proxy.fl.objects.glyph import pGlyph
 
 MASTERS = ["Light", "Regular", "Bold"]
+
+
+def contours_of(font, glyph, master="Regular"):
+    return pGlyph(font, glyph).contours(master)
+
+
+def box_of(nodes):
+    if not nodes:
+        return None
+    xs = [node.x for node in nodes]
+    ys = [node.y for node in nodes]
+    return min(xs), min(ys), max(xs), max(ys)
+
+
+def box_area(contour):
+    left, bottom, right, top = box_of(contour.nodes())
+    return (right - left) * (top - bottom)
 
 
 def main():
@@ -163,11 +188,11 @@ def main():
     wrong = 0
     for glyph in font.glyphs:
         for master in MASTERS:
-            contours = halfmoon.contours_of(font, glyph, master)
+            contours = contours_of(font, glyph, master)
             if not contours:
                 continue
             checked = checked + 1
-            outer = max(contours, key=halfmoon.box_area)
+            outer = max(contours, key=box_area)
             if outer.clockwise:
                 wrong = wrong + 1
                 print(f"{glyph.name:<12}{master:<9}outside runs clockwise")

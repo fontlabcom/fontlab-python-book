@@ -13,7 +13,7 @@ Chapter 25 saw this coming. Its script compared the characters a language needs 
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py` with `rich` and `box`.
+- `box` from chapter 43. You'll write it out again here.
 - The Font window in front when you run the last two steps. The tool that adds glyphs refuses to work while a Glyph window is the active one.
 
 The outputs below were computed from Plum's source file, not copied from FontLab's Output panel. The two refusals you'll read are quoted from the tool's own code.
@@ -60,14 +60,23 @@ If you can't type an `ń` on your keyboard, write `chr(324)` in its place. Chapt
 
 ## Step 2: A first guess
 
-Where does the acute go? The plain answer is "in the middle, over the letter". You can work that out. `halfmoon.box` gives the left and right edge of anything with an outline, and the middle is halfway between them:
+Where does the acute go? The plain answer is "in the middle, over the letter". You can work that out. `box` from chapter 43 gives the left and right edge of anything with an outline, and the middle is halfway between them:
 
 ```python
-import halfmoon
+from fly.tr.proxy.fl.objects.glyph import pGlyph
+
+
+def box(font, glyph, master="Regular"):
+    nodes = pGlyph(font, glyph).nodes(master)
+    if not nodes:
+        return None
+    xs = [node.x for node in nodes]
+    ys = [node.y for node in nodes]
+    return min(xs), min(ys), max(xs), max(ys)
 
 
 def center(font, name, master):
-    left, bottom, right, top = halfmoon.box(font, font[name], master)
+    left, bottom, right, top = box(font, font[name], master)
     return (left + right) / 2
 
 
@@ -89,7 +98,7 @@ import fly.ap.components.writer as parts
 from fly.pens import layer_of
 
 print(center(font, "o", "Regular") - center(font, "acute", "Regular"))
-layer = layer_of(halfmoon.rich(font, font["oacute"]).fl, "Regular")
+layer = layer_of(fl.flGlyph(font["oacute"], font), "Regular")
 for part in parts.components(layer):
     print(parts.base_of(part), parts.offset(part))
 ```
@@ -116,7 +125,7 @@ Here's that as two functions. The second has five inputs. That's a lot, and each
 
 ```python
 def mark_shift(font, composite, mark, master):
-    layer = layer_of(halfmoon.rich(font, font[composite]).fl, master)
+    layer = layer_of(fl.flGlyph(font[composite], font), master)
     for part in parts.components(layer):
         if parts.base_of(part) == mark:
             return parts.offset(part)
@@ -231,9 +240,9 @@ import fly.ap.components.writer as parts
 import fly.ap.core.history.glyphs as history
 import fly.ap.core.scripting as scripting
 import fly.ap.glyphs.creation as creation
-import halfmoon
 from fly import fl
 from fly.pens import layer_of
+from fly.tr.proxy.fl.objects.glyph import pGlyph
 
 MASTERS = ["Light", "Regular", "Bold"]
 BASE = "n"
@@ -242,13 +251,22 @@ MODEL = "o"
 CHARACTER = "ń"
 
 
+def box(font, glyph, master="Regular"):
+    nodes = pGlyph(font, glyph).nodes(master)
+    if not nodes:
+        return None
+    xs = [node.x for node in nodes]
+    ys = [node.y for node in nodes]
+    return min(xs), min(ys), max(xs), max(ys)
+
+
 def center(font, name, master):
-    left, bottom, right, top = halfmoon.box(font, font[name], master)
+    left, bottom, right, top = box(font, font[name], master)
     return (left + right) / 2
 
 
 def mark_shift(font, composite, mark, master):
-    layer = layer_of(halfmoon.rich(font, font[composite]).fl, master)
+    layer = layer_of(fl.flGlyph(font[composite], font), master)
     for part in parts.components(layer):
         if parts.base_of(part) == mark:
             return parts.offset(part)
@@ -262,7 +280,7 @@ def shift_like(font, base, model, mark, master):
 
 
 def width_of(font, name, master):
-    layer = layer_of(halfmoon.rich(font, font[name]).fl, master)
+    layer = layer_of(fl.flGlyph(font[name], font), master)
     return round(layer.advanceWidth)
 
 

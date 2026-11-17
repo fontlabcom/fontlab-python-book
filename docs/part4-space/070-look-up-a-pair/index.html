@@ -5313,7 +5313,7 @@
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>Plum-practice</code> open in FontLab 9, with Fly installed.</li>
-<li><code>halfmoon.py</code> with <code>ask_text</code> and <code>tell</code>.</li>
+<li>The helpers <code>ask_text</code> and <code>tell</code> from chapter 39. The scripts below write them out again, so each one runs by itself.</li>
 </ul>
 <p>Nothing is changed today. I couldn't run the code in FontLab 9. The values come from Plum's source file, with the classes worked out by hand, so today's outputs lean on one assumption: that FontLab looks a pair up the way step 2 describes: the two glyphs first, then their classes.</p>
 <h2 id="step-1-a-quiet-wrong-answer">Step 1: A quiet wrong answer<a class="headerlink" href="#step-1-a-quiet-wrong-answer" title="Permanent link">&para;</a></h2>
@@ -5399,11 +5399,22 @@ T O 0 not kerned
 <h2 id="the-whole-script">The whole script<a class="headerlink" href="#the-whole-script" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><span class="c1">#FLM: Pair Value</span>
 <span class="c1"># Says what kerning applies between the glyphs you name, in every master.</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span><span class="p">,</span> <span class="n">run_text_dialog</span>
+
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Halfmoon"</span>
 
 <span class="n">MASTERS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Light"</span><span class="p">,</span> <span class="s2">"Regular"</span><span class="p">,</span> <span class="s2">"Bold"</span><span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">ask_text</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="s2">""</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">run_text_dialog</span><span class="p">(</span><span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">TITLE</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">source</span><span class="p">(</span><span class="n">written</span><span class="p">,</span> <span class="n">applies</span><span class="p">):</span>
@@ -5425,18 +5436,18 @@ T O 0 not kerned
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">font</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
         <span class="k">return</span>
-    <span class="n">text</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">ask_text</span><span class="p">(</span><span class="s2">"Glyph names, with spaces between:"</span><span class="p">,</span> <span class="s2">"T o"</span><span class="p">)</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">ask_text</span><span class="p">(</span><span class="s2">"Glyph names, with spaces between:"</span><span class="p">,</span> <span class="s2">"T o"</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">text</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span>
     <span class="n">names</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
     <span class="n">unknown</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span> <span class="k">if</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">unknown</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="sa">f</span><span class="s2">"No glyph named </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">unknown</span><span class="p">)</span><span class="si">}</span><span class="s2">. Use glyph names, as in oacute."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="sa">f</span><span class="s2">"No glyph named </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">unknown</span><span class="p">)</span><span class="si">}</span><span class="s2">. Use glyph names, as in oacute."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"I need at least two glyph names."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"I need at least two glyph names."</span><span class="p">)</span>
         <span class="k">return</span>
 
     <span class="n">package</span> <span class="o">=</span> <span class="n">scripting</span><span class="o">.</span><span class="n">current_package</span><span class="p">()</span>

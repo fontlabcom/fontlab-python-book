@@ -5357,7 +5357,7 @@
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>Plum-practice</code> open in FontLab 9, with Fly installed. Chapter 82's three planted names should be mended, so that the font has <code>asciicircum</code>, <code>bar</code> and <code>numbersign</code> again.</li>
-<li><code>halfmoon.py</code> with <code>tell</code>.</li>
+<li>The <code>tell</code> function from <a href="../../part2-a-toolbox/039-ask-the-user/">chapter 39</a>. The script below defines it again, so it runs by itself.</li>
 <li>The Font window in front, and no Glyph window or glyph tab open. Fly refuses to write code points while a glyph is open for editing.</li>
 </ul>
 <p>I couldn't run the code in FontLab 9. The plans and counts below were computed in plain Python from Plum's source file and from Fly's own planning code. I haven't seen the write happen, and I haven't seen what Fly says when a glyph tab is open.</p>
@@ -5487,13 +5487,21 @@ bar           U+005E    U+007C  AGL      assign
 <span class="c1"># Finds glyphs whose name implies a code point they don't have.</span>
 <span class="c1"># Prints a plan. With DRY_RUN = True it stops there.</span>
 <span class="c1"># OVERWRITE = True also replaces a code point that disagrees with the name.</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.glyphs.names.model</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">names</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.glyphs.identity_tools.glyph_identity.unicode_from_names</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">apply_unicodes</span><span class="p">,</span>
     <span class="n">plan_unicodes</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span>
+
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Halfmoon"</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+
 
 <span class="n">DRY_RUN</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="n">OVERWRITE</span> <span class="o">=</span> <span class="kc">False</span>
@@ -5508,7 +5516,7 @@ bar           U+005E    U+007C  AGL      assign
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">font</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">facts</span> <span class="o">=</span> <span class="n">names</span><span class="o">.</span><span class="n">scan</span><span class="p">()</span>
     <span class="n">everyone</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">facts</span><span class="o">.</span><span class="n">entries</span><span class="p">)</span>

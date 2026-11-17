@@ -5335,7 +5335,6 @@
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>Plum-practice</code> open in FontLab 9, with Fly installed.</li>
-<li><code>halfmoon.py</code>.</li>
 <li>The figures as chapter 66 left them.</li>
 </ul>
 <p>I couldn't run the code in FontLab 9. The widths below are read from Plum's source file, with the four currency signs at the widths chapter 66 gave them. The widths of <code>period</code> and <code>hyphen</code> in step 3 are the shipped ones. If you've changed those, your numbers differ and the lesson doesn't.</p>
@@ -5423,9 +5422,19 @@ hyphen {'Light': 348.0, 'Regular': 348.0, 'Bold': 348.0}
 <div class="highlight"><pre><span></span><code><span class="c1">#FLM: Master Widths</span>
 <span class="c1"># Prints the widths of the tabular glyphs in every master and says</span>
 <span class="c1"># whether each master keeps them on one width. Changes nothing.</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.masters.inspect.model</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">masters_model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span>
+
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Halfmoon"</span>
+
+
+<span class="c1"># Chapter 39's tell, written out again so this script runs by itself.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+
 
 <span class="n">TABULAR</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"zero"</span><span class="p">,</span> <span class="s2">"one"</span><span class="p">,</span> <span class="s2">"two"</span><span class="p">,</span> <span class="s2">"three"</span><span class="p">,</span> <span class="s2">"four"</span><span class="p">,</span>
            <span class="s2">"five"</span><span class="p">,</span> <span class="s2">"six"</span><span class="p">,</span> <span class="s2">"seven"</span><span class="p">,</span> <span class="s2">"eight"</span><span class="p">,</span> <span class="s2">"nine"</span><span class="p">,</span>
@@ -5463,7 +5472,7 @@ hyphen {'Light': 348.0, 'Regular': 348.0, 'Bold': 348.0}
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">package</span> <span class="o">=</span> <span class="n">scripting</span><span class="o">.</span><span class="n">current_package</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">package</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">masters</span> <span class="o">=</span> <span class="n">masters_model</span><span class="o">.</span><span class="n">master_order</span><span class="p">(</span><span class="n">package</span><span class="p">)</span>
     <span class="n">table</span> <span class="o">=</span> <span class="n">width_table</span><span class="p">(</span><span class="n">package</span><span class="p">,</span> <span class="n">TABULAR</span><span class="p">,</span> <span class="n">masters</span><span class="p">)</span>

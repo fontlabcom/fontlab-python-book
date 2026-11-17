@@ -15,7 +15,6 @@ Those marks are **anchors**. Today you read them, learn what the names mean, and
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py` with `rich`.
 - The `nacute` from chapter 53. If you skipped it, the last script still runs. It finds one glyph less to complain about.
 - Nothing in the font changes today.
 
@@ -27,12 +26,11 @@ An anchor is a named point in a layer. It has no outline and doesn't print. Fly 
 
 ```python
 import fly.ap.anchors.writer as anchors
-import halfmoon
 from fly import fl
 from fly.pens import layer_of
 
 font = fl.CurrentFont()
-layer = layer_of(halfmoon.rich(font, font["n"]).fl, "Regular")
+layer = layer_of(fl.flGlyph(font["n"], font), "Regular")
 points = anchors.anchor_points(layer)
 for name in sorted(points):
     print(name, points[name])
@@ -65,7 +63,7 @@ Read the four anchors as notes the designer left on the letter. `top` says: an a
 An anchor on a letter says where an accent should go. It doesn't say which part of the accent should land there. The accent has to answer that itself:
 
 ```python
-layer = layer_of(halfmoon.rich(font, font["acute"]).fl, "Regular")
+layer = layer_of(fl.flGlyph(font["acute"], font), "Regular")
 marks = anchors.anchor_points(layer)
 for name in sorted(marks):
     print(name, marks[name])
@@ -130,7 +128,7 @@ Yesterday's lesson was to try a sum on a solved case before trusting it. The `oa
 
 ```python
 def points_of(font, name, master):
-    return anchors.anchor_points(layer_of(halfmoon.rich(font, font[name]).fl, master))
+    return anchors.anchor_points(layer_of(fl.flGlyph(font[name], font), master))
 
 
 print(shift_from_anchors(points_of(font, "o", "Regular"), marks, "acute"))
@@ -210,7 +208,6 @@ Here is `list_anchors.py`:
 # Reads only.
 import fly.ap.anchors.writer as anchors
 import fly.ap.components.writer as parts
-import halfmoon
 from fly import fl
 from fly.pens import layer_of
 
@@ -232,7 +229,7 @@ def main():
     layers = {}
     points = {}
     for glyph in font.glyphs:
-        layers[glyph.name] = layer_of(halfmoon.rich(font, glyph).fl, MASTER)
+        layers[glyph.name] = layer_of(fl.flGlyph(glyph, font), MASTER)
         points[glyph.name] = anchors.anchor_points(layers[glyph.name])
 
     tally = {}

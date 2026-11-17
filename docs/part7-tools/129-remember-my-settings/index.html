@@ -5308,19 +5308,19 @@
 
 <h1 id="129-remember-my-settings">129. Remember my settings<a class="headerlink" href="#129-remember-my-settings" title="Permanent link">&para;</a></h1>
 <p>Monday of week twenty-five, 28 December. The studio is half empty and Ines has the Light to herself. She opens the Shift tool, types 12 into <strong>Left</strong>, types 12 into <strong>Right</strong>, names three glyphs and clicks. She closes it to look at a proof. She opens it again, and both boxes say 0. By eleven she has typed 12 twenty times, and she has typed 21 once and not noticed until the <code>H</code> looked wrong.</p>
-<p>A window forgets everything when it closes, and so does a script when it ends. Chapter 127 kept a panel alive in <code>halfmoon</code>, but that box empties when FontLab quits. The only thing that outlasts FontLab is a file. Today the Shift tool gets one: a few lines of JSON that it reads when it opens and writes when Ines clicks.</p>
+<p>A window forgets everything when it closes, and so does a script when it ends. Chapter 127 kept a panel alive in a drawer of <code>sys</code>, but that drawer empties when FontLab quits. The only thing that outlasts FontLab is a file. Today the Shift tool gets one: a few lines of JSON that it reads when it opens and writes when Ines clicks.</p>
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
-<p><code>Plum-practice</code> open with the Light showing, Fly installed, <code>halfmoon.py</code>, and <code>shift_tool.py</code> from chapter 126.</p>
+<p><code>Plum-practice</code> open with the Light showing, Fly installed, and <code>shift_tool.py</code> from chapter 126.</p>
 <p>I haven't run this chapter in FontLab 9. The settings functions are plain Python, and I ran them as printed against a folder of my own, with good files and damaged ones. The whole script ran against the stand-in widgets and the stand-in font from chapter 123. The one line I couldn't check is the one that asks FontLab where its data folder is.</p>
 <h2 id="step-1-where-the-file-lives">Step 1: Where the file lives<a class="headerlink" href="#step-1-where-the-file-lives" title="Permanent link">&para;</a></h2>
-<p>A settings file needs a home that isn't the font's folder (the settings belong to Ines, not to Plum) and isn't the Scripts folder (which chapter 133 will replace wholesale). FontLab keeps a folder of its own for each person who uses it, and Fly knows where it is. In <code>halfmoon.py</code>, make sure the top has <code>import json</code> and that <code>ap</code> is among the names on the <code>from fly import</code> line, and then add:</p>
+<p>A settings file needs a home that isn't the font's folder (the settings belong to Ines, not to Plum) and isn't the Scripts folder (which chapter 133 will replace wholesale). FontLab keeps a folder of its own for each person who uses it, and Fly knows where it is. In <code>shift_tool.py</code>, make sure the top has <code>import json</code> and that <code>ap</code> is among the names on the <code>from fly import</code> line, and then add:</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">settings_path</span><span class="p">():</span>
-    <span class="k">return</span> <span class="n">ap</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">paths</span><span class="o">.</span><span class="n">userDataFolder</span> <span class="o">/</span> <span class="s2">"halfmoon.json"</span>
+    <span class="k">return</span> <span class="n">ap</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">paths</span><span class="o">.</span><span class="n">userDataFolder</span> <span class="o">/</span> <span class="s2">"tool-settings.json"</span>
 </code></pre></div>
-<p><code>userDataFolder</code> is a <code>Path</code>, and the <code>/</code> joins a file name to it, as it did in chapter 112. On a Mac I'd expect <code>FontLab/FontLab 9</code> inside your own <code>Library/Application Support</code>, though a FontLab preference can put it elsewhere. Print <code>halfmoon.settings_path()</code> once in the Scripting panel so that you know where to look.</p>
+<p><code>userDataFolder</code> is a <code>Path</code>, and the <code>/</code> joins a file name to it, as it did in chapter 112. On a Mac I'd expect <code>FontLab/FontLab 9</code> inside your own <code>Library/Application Support</code>, though a FontLab preference can put it elsewhere. Print <code>ap.app.paths.userDataFolder</code> once in the Scripting panel, after <code>from fly import ap</code>, so that you know where to look.</p>
 <p>One file will do for every tool you write. Inside, each tool has its own drawer, under the key it already has:</p>
 <div class="highlight"><pre><span></span><code>{
-    "halfmoon.shift": {
+    "tools.shift": {
         "left": 12,
         "right": 12
     }
@@ -5334,7 +5334,7 @@
         <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)[</span><span class="n">key</span><span class="p">]</span>
 </code></pre></div>
 <p>Call it from the tool and the tool doesn't open at all. The Output panel says:</p>
-<div class="highlight"><pre><span></span><code>FileNotFoundError: [Errno 2] No such file or directory: '/Users/ines/Library/Application Support/FontLab/FontLab 9/halfmoon.json'
+<div class="highlight"><pre><span></span><code>FileNotFoundError: [Errno 2] No such file or directory: '/Users/ines/Library/Application Support/FontLab/FontLab 9/tool-settings.json'
 </code></pre></div>
 <p>There is no file yet. Nobody has clicked, so nothing has been saved, and a tool that can't open until it has been used can never be used. This is the mistake that every settings reader makes once: it treats the file as something the script owns. The script doesn't own it. The file can be missing, because this is the first run or a new computer. It can be half written, because the laptop lid closed at the wrong moment. A person can have opened it in a text editor and changed 12 to "12". It can be a perfectly good file with no drawer for this tool in it.</p>
 <p>So a settings reader has one rule: <strong>the file may suggest, and the script decides.</strong> Whatever happens, the tool opens.</p>
@@ -5342,7 +5342,7 @@
 <p>The way to keep that rule is to start from values the script trusts and let the file replace them one at a time. In the tool:</p>
 <div class="highlight"><pre><span></span><code><span class="n">DEFAULTS</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"left"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"right"</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
 </code></pre></div>
-<p>And in <code>halfmoon.py</code>:</p>
+<p>And beside <code>settings_path</code>, in the same script:</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_settings_file</span><span class="p">():</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">settings_path</span><span class="p">(),</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -5382,18 +5382,55 @@
 <div class="highlight"><pre><span></span><code><span class="c1">#FLM: Shift Tool</span>
 <span class="c1"># Adds to the sidebearings of the glyphs you name, or of the ones</span>
 <span class="c1"># selected in the Font window, in the master that's showing.</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.history.glyphs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">history</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.metrics.panel.model</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">metrics</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">ap</span><span class="p">,</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly.pens</span><span class="w"> </span><span class="kn">import</span> <span class="n">layer_of</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
 
 <span class="n">core</span><span class="p">,</span> <span class="n">gui</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtCore</span><span class="p">,</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span>
-<span class="n">KEY</span> <span class="o">=</span> <span class="s2">"halfmoon.shift"</span>
+<span class="n">KEY</span> <span class="o">=</span> <span class="s2">"tools.shift"</span>
 <span class="n">LIMIT</span> <span class="o">=</span> <span class="mi">200</span>
 <span class="n">SHOWN</span> <span class="o">=</span> <span class="mi">8</span>
 <span class="n">DEFAULTS</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"left"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"right"</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">settings_path</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">ap</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">paths</span><span class="o">.</span><span class="n">userDataFolder</span> <span class="o">/</span> <span class="s2">"tool-settings.json"</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">read_settings_file</span><span class="p">():</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">settings_path</span><span class="p">(),</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">stored</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{}</span>
+    <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stored</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{}</span>
+    <span class="k">return</span> <span class="n">stored</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">load_settings</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">defaults</span><span class="p">):</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">defaults</span><span class="p">)</span>
+    <span class="n">mine</span> <span class="o">=</span> <span class="n">read_settings_file</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mine</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">values</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">defaults</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">mine</span> <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span><span class="n">mine</span><span class="p">[</span><span class="n">name</span><span class="p">])</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(</span><span class="n">defaults</span><span class="p">[</span><span class="n">name</span><span class="p">]):</span>
+            <span class="n">values</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">mine</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">values</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">save_settings</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+    <span class="n">stored</span> <span class="o">=</span> <span class="n">read_settings_file</span><span class="p">()</span>
+    <span class="n">stored</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">values</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">settings_path</span><span class="p">(),</span> <span class="s2">"w"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">stored</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="n">owner</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
@@ -5406,7 +5443,7 @@
     <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"No glyph called </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
-        <span class="n">rich</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+        <span class="n">rich</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
         <span class="n">old</span> <span class="o">=</span> <span class="p">(</span><span class="n">rich</span><span class="o">.</span><span class="n">getLSB</span><span class="p">(</span><span class="n">master</span><span class="p">),</span> <span class="n">rich</span><span class="o">.</span><span class="n">getAdvance</span><span class="p">(</span><span class="n">master</span><span class="p">),</span> <span class="n">rich</span><span class="o">.</span><span class="n">getRSB</span><span class="p">(</span><span class="n">master</span><span class="p">))</span>
         <span class="n">new</span> <span class="o">=</span> <span class="p">(</span><span class="n">old</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">left</span><span class="p">,</span> <span class="n">old</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">left</span> <span class="o">+</span> <span class="n">right</span><span class="p">,</span> <span class="n">old</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">right</span><span class="p">)</span>
         <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">rich</span><span class="p">,</span> <span class="n">layer_of</span><span class="p">(</span><span class="n">rich</span><span class="o">.</span><span class="n">fl</span><span class="p">,</span> <span class="n">master</span><span class="p">),</span> <span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">))</span>
@@ -5456,7 +5493,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">setRange</span><span class="p">(</span><span class="o">-</span><span class="n">LIMIT</span><span class="p">,</span> <span class="n">LIMIT</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">right</span> <span class="o">=</span> <span class="n">gui</span><span class="o">.</span><span class="n">QSpinBox</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">panel</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">right</span><span class="o">.</span><span class="n">setRange</span><span class="p">(</span><span class="o">-</span><span class="n">LIMIT</span><span class="p">,</span> <span class="n">LIMIT</span><span class="p">)</span>
-        <span class="n">saved</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">load_settings</span><span class="p">(</span><span class="n">KEY</span><span class="p">,</span> <span class="n">DEFAULTS</span><span class="p">)</span>
+        <span class="n">saved</span> <span class="o">=</span> <span class="n">load_settings</span><span class="p">(</span><span class="n">KEY</span><span class="p">,</span> <span class="n">DEFAULTS</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">saved</span><span class="p">[</span><span class="s2">"left"</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">right</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">saved</span><span class="p">[</span><span class="s2">"right"</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rehearse</span> <span class="o">=</span> <span class="n">gui</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">(</span><span class="s2">"Only show what would happen"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">panel</span><span class="p">)</span>
@@ -5492,7 +5529,7 @@
             <span class="n">right</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">right</span><span class="p">,</span> <span class="s2">"value"</span><span class="p">)</span>
             <span class="n">text</span> <span class="o">=</span> <span class="n">shift</span><span class="p">(</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">names</span><span class="p">,</span> <span class="s2">"text"</span><span class="p">),</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span>
                          <span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rehearse</span><span class="p">,</span> <span class="s2">"checked"</span><span class="p">))</span>
-            <span class="n">halfmoon</span><span class="o">.</span><span class="n">save_settings</span><span class="p">(</span><span class="n">KEY</span><span class="p">,</span> <span class="p">{</span><span class="s2">"left"</span><span class="p">:</span> <span class="n">left</span><span class="p">,</span> <span class="s2">"right"</span><span class="p">:</span> <span class="n">right</span><span class="p">})</span>
+            <span class="n">save_settings</span><span class="p">(</span><span class="n">KEY</span><span class="p">,</span> <span class="p">{</span><span class="s2">"left"</span><span class="p">:</span> <span class="n">left</span><span class="p">,</span> <span class="s2">"right"</span><span class="p">:</span> <span class="n">right</span><span class="p">})</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">runs</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="se">\n</span><span class="s2">Run </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">runs</span><span class="si">}</span><span class="s2"> in this window."</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">problem</span><span class="p">:</span>
@@ -5506,7 +5543,7 @@
 
 <span class="n">scripting</span><span class="o">.</span><span class="n">show_script_dialog</span><span class="p">(</span><span class="n">build</span><span class="p">,</span> <span class="n">KEY</span><span class="p">)</span>
 </code></pre></div>
-<p>Save it over <code>shift_tool.py</code>. Next to chapter 126's version, three places changed. <code>DEFAULTS</code> is new. <code>__init__</code> asks <code>halfmoon.load_settings</code> for the saved values and puts them in the two boxes with <code>setValue</code>, after <code>setRange</code>, so that the box already knows its limits when the number arrives. And <code>on_go</code> reads the two numbers into names of their own, because it now needs them twice: once for <code>shift</code> and once for <code>save_settings</code>, which sits after <code>shift</code> and so is skipped when <code>shift</code> raises.</p>
+<p>Save it over <code>shift_tool.py</code>. Next to chapter 126's version, four places changed. <code>import json</code> is new, and <code>ap</code> joins the <code>from fly import</code> line. <code>DEFAULTS</code> is new, with the four settings functions from steps 1 to 4 under it. <code>__init__</code> asks <code>load_settings</code> for the saved values and puts them in the two boxes with <code>setValue</code>, after <code>setRange</code>, so that the box already knows its limits when the number arrives. And <code>on_go</code> reads the two numbers into names of their own, because it now needs them twice: once for <code>shift</code> and once for <code>save_settings</code>, which sits after <code>shift</code> and so is skipped when <code>shift</code> raises.</p>
 <h2 id="run-it">Run it<a class="headerlink" href="#run-it" title="Permanent link">&para;</a></h2>
 <p>Open the tool. Both boxes say 0, since there's no file. Type <code>n o H</code>, set both boxes to 12 and click <strong>Shift</strong>:</p>
 <div class="highlight"><pre><span></span><code>n: 84 499 80 to 96 523 92
@@ -5515,7 +5552,7 @@ H: 88 612 84 to 100 636 96
 Light: 3 would change.
 Run 1 in this window.
 </code></pre></div>
-<p>That was a rehearsal, and it saved all the same: the numbers are what Ines chose, whether or not she has used them yet. Look in the folder from step 1. <code>halfmoon.json</code> is there, with the six lines shown above.</p>
+<p>That was a rehearsal, and it saved all the same: the numbers are what Ines chose, whether or not she has used them yet. Look in the folder from step 1. <code>tool-settings.json</code> is there, with the six lines shown above.</p>
 <p>Close the tool. Run the script again. Both boxes say 12, the tick box is ticked, the names field is empty. Quit FontLab, start it, open the font, run the script: 12 and 12.</p>
 <p>Then try a name that isn't in the font, with 30 in <strong>Left</strong>:</p>
 <div class="highlight"><pre><span></span><code>Didn't work.
@@ -5523,9 +5560,9 @@ ValueError: No glyph called zz.
 </code></pre></div>
 <p>Open the tool again and the box says 12. The 30 went nowhere, so it wasn't kept.</p>
 <h2 id="break-it-on-purpose">Break it on purpose<a class="headerlink" href="#break-it-on-purpose" title="Permanent link">&para;</a></h2>
-<p>The file is yours to damage. Open <code>halfmoon.json</code> in a text editor and put quotation marks round the first number and a silly value in the second:</p>
+<p>The file is yours to damage. Open <code>tool-settings.json</code> in a text editor and put quotation marks round the first number and a silly value in the second:</p>
 <div class="highlight"><pre><span></span><code>{
-    "halfmoon.shift": {
+    "tools.shift": {
         "left": "12",
         "right": 5000
     }
@@ -5538,7 +5575,7 @@ ValueError: No glyph called zz.
 <h2 id="try-it-yourself">Try it yourself<a class="headerlink" href="#try-it-yourself" title="Permanent link">&para;</a></h2>
 <ol>
 <li>Add a <strong>Forget</strong> button that saves <code>DEFAULTS</code> and sets both boxes back to 0. Which of the functions you already have does all the work?</li>
-<li>Give the Sidebearings panel from chapter 128 a drawer of its own, <code>halfmoon.sidebearings</code>, holding the number of milliseconds between looks. Change it in the file by hand, run the panel, and check with <code>EVERY</code> printed that it took. What should the panel do with 0?</li>
+<li>Give the Sidebearings panel from chapter 128 a drawer of its own under its key, <code>tools.sidebearings</code>, holding the number of milliseconds between looks. Change it in the file by hand, run the panel, and check with <code>EVERY</code> printed that it took. What should the panel do with 0?</li>
 <li>Change the 12 in the file to <code>true</code> and run the tool. The box says 0. Now change the test in <code>load_settings</code> to <code>isinstance(mine[name], type(defaults[name]))</code> and run it again. What does the box say, and what does that tell you about <code>True</code> and whole numbers?</li>
 </ol>
 <h2 id="next">Next<a class="headerlink" href="#next" title="Permanent link">&para;</a></h2>

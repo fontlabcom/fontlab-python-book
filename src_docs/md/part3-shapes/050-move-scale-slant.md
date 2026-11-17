@@ -13,7 +13,7 @@ Mira could draw three rectangles; she knows how since chapter 46. But the dashes
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py` with `box`, `rich` and `set_width`.
+- `box` from chapter 43 and `set_width` from chapter 49. You'll write them out again here.
 - Three new empty glyphs: `hyphen.case`, `endash.case` and `emdash.case`. Put the three names in a text file and run **Add Glyphs From List**.
 
 Steps 1 to 5 use no font at all, so you can see every number. They ran in plain Python. Step 6 and the section after it were not run in FontLab 9.
@@ -214,11 +214,11 @@ I don't trust myself to remember the direction. I try a chain on one point with 
 
 ## Step 6: Raise the dashes
 
-How far up? The art director said "in the middle", so work it out: the middle of the capitals minus the middle of the dash. `halfmoon.box` gives both.
+How far up? The art director said "in the middle", so work it out: the middle of the capitals minus the middle of the dash. `box` from chapter 43 gives both.
 
 ```python
-cap_top = halfmoon.box(font, font["H"], master)[3]
-left, bottom, right, top = halfmoon.box(font, font["hyphen"], master)
+cap_top = box(font, font["H"], master)[3]
+left, bottom, right, top = box(font, font["hyphen"], master)
 shift = round(cap_top / 2 - (bottom + top) / 2)
 ```
 
@@ -233,7 +233,7 @@ with FlPen(target_layer, notify="Raise dash") as pen:
     recording.replay(TransformPen(pen, Transform().translate(0, shift)))
 ```
 
-A pen doesn't carry the advance width, so the script copies that with `set_width` from chapter 49. The whole of it is below.
+A pen doesn't carry the advance width, so the script copies that with `set_width` from chapter 49. Both are written out in the whole script below, so it runs by itself.
 
 ## The whole script
 
@@ -242,24 +242,44 @@ Save this as `raise_dashes.py`.
 ```python
 # Makes raised copies of the dashes for setting between capitals.
 # The target glyphs must exist and be empty: hyphen.case and so on.
-import halfmoon
+import fly.ap.core.history.glyphs as history
+import fly.ap.core.scripting as scripting
 from fly import fl
 from fly.pens import FlPen, RecordingPen, Transform, TransformPen, layer_of
 from fly.pens.fontlab import draw
+from fly.tr.proxy.fl.objects.glyph import pGlyph
 
 MASTERS = ["Light", "Regular", "Bold"]
 DASHES = ["hyphen", "endash", "emdash"]
 SUFFIX = ".case"
 
 
+def box(font, glyph, master="Regular"):
+    nodes = pGlyph(font, glyph).nodes(master)
+    if not nodes:
+        return None
+    xs = [node.x for node in nodes]
+    ys = [node.y for node in nodes]
+    return min(xs), min(ys), max(xs), max(ys)
+
+
+def set_width(glyph, layer, width, title="Set width"):
+    def change():
+        layer.advanceWidth = width
+
+    package = scripting.current_package()
+    facts = history.scan_auto_facts(package)
+    history.commit(title, [layer], [glyph.fl], change, operation="geometry", facts=facts)
+
+
 def raise_copy(font, name, master):
-    source = halfmoon.rich(font, font[name])
-    target = halfmoon.rich(font, font[name + SUFFIX])
+    source = pGlyph(font, font[name])
+    target = pGlyph(font, font[name + SUFFIX])
     if target.contours(master):
         print(f"{target.name} {master}: already has outlines, skipped")
         return
-    cap_top = halfmoon.box(font, font["H"], master)[3]
-    left, bottom, right, top = halfmoon.box(font, font[name], master)
+    cap_top = box(font, font["H"], master)[3]
+    left, bottom, right, top = box(font, font[name], master)
     shift = round(cap_top / 2 - (bottom + top) / 2)
     source_layer = layer_of(source.fl, master)
     target_layer = layer_of(target.fl, master)
@@ -267,7 +287,7 @@ def raise_copy(font, name, master):
     draw(source_layer, recording)
     with FlPen(target_layer, notify="Raise dash") as pen:
         recording.replay(TransformPen(pen, Transform().translate(0, shift)))
-    halfmoon.set_width(target, target_layer, source_layer.advanceWidth, "Fit dash")
+    set_width(target, target_layer, source_layer.advanceWidth, "Fit dash")
     print(f"{target.name:<13}{master:<9}up {shift}")
 
 

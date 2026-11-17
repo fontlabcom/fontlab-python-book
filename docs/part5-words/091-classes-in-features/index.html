@@ -5335,7 +5335,7 @@
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>Plum-practice</code> open in FontLab 9, with Fly installed.</li>
-<li><code>halfmoon.py</code> with <code>tell</code> and <code>ask</code>, and <code>list_features.py</code> from chapter 87.</li>
+<li><code>list_features.py</code> from chapter 87. The script below defines <code>tell</code> and <code>ask</code> from <a href="../../part2-a-toolbox/039-ask-the-user/">chapter 39</a> again, so it runs by itself.</li>
 <li>The accented capitals you built in Part 3. If you built fewer than I did, your counts will be smaller than mine.</li>
 </ul>
 <p>I couldn't run the code in FontLab 9. I ran the reading, the comparing and the text building in plain Python on Plum's own prefix and glyph names, plus the fifteen capitals from Part 3. The write is the one from chapter 88, and I haven't seen it work.</p>
@@ -5448,9 +5448,25 @@ Abreve Gbreve Idotaccent Scedilla Cacute Nacute Sacute Zacute Uring Racute Zdota
 <span class="c1"># Does not compile: do that in the Features panel afterward.</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">unicodedata</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span>
+
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Halfmoon"</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">ask</span><span class="p">(</span><span class="n">question</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">answer</span> <span class="o">=</span> <span class="n">run_standard_message_box</span><span class="p">(</span>
+        <span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">question</span><span class="p">,</span> <span class="s2">"Question"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Yes</span> <span class="o">|</span> <span class="n">box</span><span class="o">.</span><span class="n">No</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">answer</span> <span class="o">==</span> <span class="n">box</span><span class="o">.</span><span class="n">Yes</span>
+
 
 <span class="n">WANTED</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"@cpsp"</span><span class="p">:</span> <span class="s2">"Lu"</span><span class="p">}</span>
 <span class="n">DRY_RUN</span> <span class="o">=</span> <span class="kc">True</span>
@@ -5507,7 +5523,7 @@ Abreve Gbreve Idotaccent Scedilla Cacute Nacute Sacute Zacute Uring Racute Zdota
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">font</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">package</span> <span class="o">=</span> <span class="n">scripting</span><span class="o">.</span><span class="n">current_package</span><span class="p">()</span>
     <span class="n">blocks</span> <span class="o">=</span> <span class="n">scripting</span><span class="o">.</span><span class="n">read_feature_blocks</span><span class="p">(</span><span class="n">package</span><span class="p">)</span>
@@ -5518,7 +5534,7 @@ Abreve Gbreve Idotaccent Scedilla Cacute Nacute Sacute Zacute Uring Racute Zdota
     <span class="k">if</span> <span class="n">DRY_RUN</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">"Dry run. Nothing written."</span><span class="p">)</span>
         <span class="k">return</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">ask</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Rewrite </span><span class="si">{</span><span class="n">changed</span><span class="si">}</span><span class="s2"> class lines in the prefix?"</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ask</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Rewrite </span><span class="si">{</span><span class="n">changed</span><span class="si">}</span><span class="s2"> class lines in the prefix?"</span><span class="p">):</span>
         <span class="k">return</span>
     <span class="n">updated</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"prefix"</span><span class="p">:</span> <span class="n">prefix</span><span class="p">,</span> <span class="s2">"features"</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">blocks</span><span class="p">[</span><span class="s2">"features"</span><span class="p">])}</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">scripting</span><span class="o">.</span><span class="n">write_feature_blocks</span><span class="p">(</span>

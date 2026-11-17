@@ -13,7 +13,7 @@ It can. A script can't judge how a line looks, but it can measure the white betw
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py` with `rich`, `box`, `tell` and `ask_text`.
+- The helpers `box`, `tell` and `ask_text` from chapters 39 and 43. The scripts below write them out again, so each one runs by itself.
 
 Nothing in this chapter changes the font. I couldn't run it in FontLab 9. The numbers come from Plum's source file.
 
@@ -24,11 +24,11 @@ You met the three numbers in chapter 35. A glyph stands in a box as wide as its 
 In chapter 35 you asked for them like this, and got the numbers of whichever master was showing:
 
 ```python
-import halfmoon
 from fly import fl
+from fly.tr.proxy.fl.objects.glyph import pGlyph
 
 font = fl.CurrentFont()
-rich = halfmoon.rich(font, font["n"])
+rich = pGlyph(font, font["n"])
 print(rich.getLSB(), rich.getAdvance(), rich.getRSB())
 ```
 
@@ -55,10 +55,19 @@ In the Bold the numbers are 56 and 32. The right side has little more than half 
 
 ## Step 2: Check the sum
 
-Three numbers that describe one box ought to add up. The width is the left sidebearing, plus the black part, plus the right sidebearing. `halfmoon.box` from chapter 43 gives the black part:
+Three numbers that describe one box ought to add up. The width is the left sidebearing, plus the black part, plus the right sidebearing. `box` from chapter 43 gives the black part. Here it is again, so these lines run by themselves:
 
 ```python
-left, bottom, right, top = halfmoon.box(font, font["n"], "Bold")
+def box(font, glyph, master="Regular"):
+    nodes = pGlyph(font, glyph).nodes(master)
+    if not nodes:
+        return None
+    xs = [node.x for node in nodes]
+    ys = [node.y for node in nodes]
+    return min(xs), min(ys), max(xs), max(ys)
+
+
+left, bottom, right, top = box(font, font["n"], "Bold")
 black = right - left
 print(left, black, rich.getLSB("Bold") + black + rich.getRSB("Bold"))
 ```
@@ -102,7 +111,7 @@ A reader never sees a sidebearing. What the eye sees between an `n` and an `i` i
 
 ```python
 def gap(font, first, second, master):
-    return halfmoon.rich(font, font[first]).getRSB(master) + halfmoon.rich(font, font[second]).getLSB(master)
+    return pGlyph(font, font[first]).getRSB(master) + pGlyph(font, font[second]).getLSB(master)
 
 
 print(gap(font, "n", "i", "Regular"), gap(font, "n", "i", "Bold"))
@@ -196,14 +205,25 @@ The script asks for a word and prints the gaps in each master, then the letters.
 #FLM: Sidebearing Report
 # Asks for a word, prints the white between its letters in each master,
 # then the sidebearings of each letter. Changes nothing.
-import halfmoon
-from fly import fl
+from fly import fl, qt
+from fly.ap.ui.dialogs import run_standard_message_box, run_text_dialog
+from fly.tr.proxy.fl.objects.glyph import pGlyph
 
+TITLE = "Halfmoon"
 MASTERS = ["Light", "Regular", "Bold"]
 
 
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
+
+def ask_text(label, start=""):
+    return run_text_dialog(qt.QtGui, label, start, TITLE)
+
+
 def gap(font, first, second, master):
-    return halfmoon.rich(font, font[first]).getRSB(master) + halfmoon.rich(font, font[second]).getLSB(master)
+    return pGlyph(font, font[first]).getRSB(master) + pGlyph(font, font[second]).getLSB(master)
 
 
 def spread(gaps):
@@ -219,7 +239,7 @@ def gap_line(font, word, master):
 def letter_lines(font, word, master):
     lines = []
     for letter in sorted(set(word)):
-        rich = halfmoon.rich(font, font[letter])
+        rich = pGlyph(font, font[letter])
         lines.append(f"{letter:<4}{rich.getLSB(master):>5}{rich.getAdvance(master):>6}{rich.getRSB(master):>6}")
     return lines
 
@@ -227,14 +247,14 @@ def letter_lines(font, word, master):
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
-    word = halfmoon.ask_text("Word to measure, in small letters:")
+    word = ask_text("Word to measure, in small letters:")
     if not word or len(word) < 2:
         return
     missing = [letter for letter in sorted(set(word)) if font[letter] is None]
     if missing:
-        halfmoon.tell(f"No glyph named: {' '.join(missing)}")
+        tell(f"No glyph named: {' '.join(missing)}")
         return
 
     print(word)

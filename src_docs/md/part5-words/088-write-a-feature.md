@@ -14,7 +14,7 @@ Yesterday you read feature text. Today a script writes some, and for the first t
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
 - The ten `.sc` glyphs your practice font has by now: `a.sc`, `b.sc` and `c.sc` from chapter 8, and `d.sc` to `h.sc`, `zero.sc` and `one.sc` from chapter 40. With fewer or more, your lists differ from mine in length and in nothing else.
-- `halfmoon.py` with `tell` and `ask`, and `list_features.py` from chapter 87.
+- `list_features.py` from chapter 87. The script below defines `tell` and `ask` from [chapter 39](../part2-a-toolbox/039-ask-the-user.md) again, so it runs by itself.
 
 I couldn't run the code in FontLab 9. The text building is plain Python and I ran all of it. The step that writes the text into the font follows Fly's source, and I haven't seen it work.
 
@@ -238,10 +238,26 @@ I'm describing this from the User Guide for FontLab 8, and haven't pressed that 
 #FLM: Make Small Caps Feature
 # Writes or replaces the smcp feature from the font's .sc glyphs.
 # Does not compile: do that in the Features panel afterward.
-import halfmoon
-from fly import fl
+from fly import fl, qt
 import fly.ap.core.scripting as scripting
 import fly.ap.features.code as fea_code
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
+
+
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
+
+def ask(question):
+    box = qt.QtGui.QMessageBox
+    answer = run_standard_message_box(
+        qt, fl.MainWindow(), TITLE, question, "Question", box.Yes | box.No
+    )
+    return answer == box.Yes
+
 
 TAG = "smcp"
 SUFFIX = "sc"
@@ -251,7 +267,7 @@ DRY_RUN = True
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     names = [glyph.name for glyph in font.glyphs]
     pairs = fea_code.suffix_pairs(names, SUFFIX)
@@ -272,7 +288,7 @@ def main():
     if DRY_RUN:
         print("Dry run. Nothing written.")
         return
-    if not halfmoon.ask(f"{verb} the {TAG} feature with {len(pairs)} rules?"):
+    if not ask(f"{verb} the {TAG} feature with {len(pairs)} rules?"):
         return
     updated = {"prefix": blocks["prefix"],
                "features": others + [(TAG, text)]}

@@ -12,7 +12,7 @@ They can. This chapter puts two numbers and a line into the Glyph window, drawn 
 
 ## What you need
 
-`Plum-practice` open, Fly installed at version 1.3.0 or later, and the app package that came with it. You need chapter 126 for classes and chapter 128 for the word *callback*. Nothing from `halfmoon` is used today.
+`Plum-practice` open, Fly installed at version 1.3.0 or later, and the app package that came with it. You need chapter 126 for classes and chapter 128 for the word *callback*. No helpers from earlier chapters are used today.
 
 I haven't run this chapter in FontLab 9. I loaded the finished folder with the same loader FontLab uses at start, and I called the class on hand-made glyph measurements in plain Python; the numbers below come from that. What I have not seen is the drawing itself: the line and the numbers appearing in a real Glyph window. The people who wrote the plugin system say the same about their own reporters, so treat the picture as the part to check first.
 
@@ -56,7 +56,7 @@ from fly.ap.plugins.reporter import Mark, Reporter
 
 
 class Sidebearings(Reporter):
-    name = "halfmoon_sidebearings"
+    name = "spacing_sidebearings"
     title = "Halfmoon Sidebearings"
 
     def compute(self, snapshot):
@@ -107,7 +107,7 @@ from fly.ap.plugins.reporter import Mark, Reporter
 
 
 class Sidebearings(Reporter):
-    name = "halfmoon_sidebearings"
+    name = "spacing_sidebearings"
     title = "Halfmoon Sidebearings"
 
     def compute(snapshot):
@@ -140,7 +140,7 @@ The folder's name ends in `.fontlabReporter` and sits in `reporters`; both say w
 
 ```json
 {
-  "id": "halfmoon_sidebearings",
+  "id": "spacing_sidebearings",
   "name": "Halfmoon Sidebearings",
   "kind": "reporter",
   "version": "1.0.0",
@@ -180,7 +180,7 @@ def edges(snapshot):
 
 
 class Sidebearings(Reporter):
-    name = "halfmoon_sidebearings"
+    name = "spacing_sidebearings"
     title = "Halfmoon Sidebearings"
     layer = "background"
     needs_bounds = True

@@ -13,7 +13,7 @@ It's also the first step toward writing features, which starts tomorrow. Nobody 
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py` with `tell`.
+- The `tell` function from [chapter 39](../part2-a-toolbox/039-ask-the-user.md). The script below defines it again, so it runs by itself.
 
 I couldn't run the code in FontLab 9. I ran the text handling in plain Python on the feature text stored in Plum's source file, and the output below comes from that. I'm assuming Fly's reader hands back that same text, wrapper lines included. If your first printout looks different from mine, trust yours and adjust the tests in Step 4.
 
@@ -234,9 +234,17 @@ The header was true once. Nothing kept it true. Your script counted what's there
 #FLM: List Features
 # Prints a summary of the font's feature text: classes and declarations
 # in the prefix, then each feature with its rules. Changes nothing.
-import halfmoon
-from fly import fl
+from fly import fl, qt
 import fly.ap.core.scripting as scripting
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
+
+
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
 
 MEANING = {"sub": "replace", "pos": "move"}
 SHOW_RULES = True
@@ -285,7 +293,7 @@ def show_feature(tag, code):
 
 def main():
     if fl.CurrentFont() is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     package = scripting.current_package()
     blocks = scripting.read_feature_blocks(package)

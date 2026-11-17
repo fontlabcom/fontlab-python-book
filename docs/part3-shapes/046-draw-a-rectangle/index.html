@@ -5269,7 +5269,7 @@
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>Plum-practice</code> open in FontLab 9, with Fly installed.</li>
-<li><code>halfmoon.py</code> as it stands, and <code>anatomy.py</code> and <code>check_direction.py</code>.</li>
+<li><code>anatomy.py</code> and <code>check_direction.py</code>.</li>
 <li>The empty <code>e.sc</code> open in a Glyph window. Its width is 500 in each master, from chapter 40.</li>
 </ul>
 <p>The outputs below were computed from Plum's source file, not copied from FontLab's Output panel. The pen commands themselves ran in plain Python, with a pen that draws nowhere, and you'll meet that pen in Step 1.</p>
@@ -5347,12 +5347,11 @@ fontlab_pens.base.PenError: Unfinished contour: call closePath() or endPath() be
     <span class="n">pen</span><span class="o">.</span><span class="n">lineTo</span><span class="p">((</span><span class="n">left</span><span class="p">,</span> <span class="n">top</span><span class="p">))</span>
     <span class="n">pen</span><span class="o">.</span><span class="n">closePath</span><span class="p">()</span>
 </code></pre></div>
-<p>Put it in <code>halfmoon.py</code>. It needs no import, because it doesn't care what kind of pen it gets. Anything that understands <code>moveTo</code>, <code>lineTo</code> and <code>closePath</code> will do. Test it on the pen that only listens:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly.pens</span><span class="w"> </span><span class="kn">import</span> <span class="n">RecordingPen</span>
+<p>Define it in this script. It needs no import, because it doesn't care what kind of pen it gets. Anything that understands <code>moveTo</code>, <code>lineTo</code> and <code>closePath</code> will do. Test it on the pen that only listens:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fly.pens</span><span class="w"> </span><span class="kn">import</span> <span class="n">RecordingPen</span>
 
 <span class="n">pen</span> <span class="o">=</span> <span class="n">RecordingPen</span><span class="p">()</span>
-<span class="n">halfmoon</span><span class="o">.</span><span class="n">rect</span><span class="p">(</span><span class="n">pen</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">440</span><span class="p">,</span> <span class="mi">478</span><span class="p">)</span>
+<span class="n">rect</span><span class="p">(</span><span class="n">pen</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">440</span><span class="p">,</span> <span class="mi">478</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pen</span><span class="o">.</span><span class="n">value</span><span class="p">))</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>5
@@ -5362,7 +5361,7 @@ fontlab_pens.base.PenError: Unfinished contour: call closePath() or endPath() be
 <div class="highlight"><pre><span></span><code><span class="k">for</span> <span class="n">master</span> <span class="ow">in</span> <span class="n">MASTERS</span><span class="p">:</span>
     <span class="n">layer</span> <span class="o">=</span> <span class="n">layer_of</span><span class="p">(</span><span class="n">glyph</span><span class="o">.</span><span class="n">fl</span><span class="p">,</span> <span class="n">master</span><span class="p">)</span>
     <span class="k">with</span> <span class="n">FlPen</span><span class="p">(</span><span class="n">layer</span><span class="p">,</span> <span class="n">notify</span><span class="o">=</span><span class="s2">"Draw box"</span><span class="p">)</span> <span class="k">as</span> <span class="n">pen</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">rect</span><span class="p">(</span><span class="n">pen</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">440</span><span class="p">,</span> <span class="mi">478</span><span class="p">)</span>
+        <span class="n">rect</span><span class="p">(</span><span class="n">pen</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">440</span><span class="p">,</span> <span class="mi">478</span><span class="p">)</span>
 </code></pre></div>
 <p>There's one danger left, and it's a new kind for us. Run the script twice and you get two boxes, one on top of the other. They look like one. <code>anatomy.py</code> would say two contours, and a font with doubled outlines prints badly. A script that reads can be run a hundred times without harm. A script that draws can't, unless you make it check first. So before it draws into a layer, it should look whether anything is there:</p>
 <div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="n">glyph</span><span class="o">.</span><span class="n">contours</span><span class="p">(</span><span class="n">master</span><span class="p">):</span>
@@ -5371,15 +5370,22 @@ fontlab_pens.base.PenError: Unfinished contour: call closePath() or endPath() be
 </code></pre></div>
 <p>That guard also means the script can never draw a box over a drawn letter. A glyph built from components has no contours of its own and would still get one, so keep to empty glyphs.</p>
 <h2 id="the-whole-script">The whole script<a class="headerlink" href="#the-whole-script" title="Permanent link">&para;</a></h2>
-<p>Here is <code>draw_box.py</code>. <code>halfmoon.py</code> gains <code>rect</code> from Step 4.</p>
+<p>Here is <code>draw_box.py</code>. It defines <code>rect</code> from Step 4 at the top, so it runs by itself.</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Draws a placeholder box in every empty master of the current glyph.</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly.pens</span><span class="w"> </span><span class="kn">import</span> <span class="n">FlPen</span><span class="p">,</span> <span class="n">layer_of</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
 
 <span class="n">MASTERS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Light"</span><span class="p">,</span> <span class="s2">"Regular"</span><span class="p">,</span> <span class="s2">"Bold"</span><span class="p">]</span>
 <span class="n">SIDE</span> <span class="o">=</span> <span class="mi">60</span>
 <span class="n">TOP</span> <span class="o">=</span> <span class="mi">478</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">rect</span><span class="p">(</span><span class="n">pen</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">bottom</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">top</span><span class="p">):</span>
+    <span class="n">pen</span><span class="o">.</span><span class="n">moveTo</span><span class="p">((</span><span class="n">left</span><span class="p">,</span> <span class="n">bottom</span><span class="p">))</span>
+    <span class="n">pen</span><span class="o">.</span><span class="n">lineTo</span><span class="p">((</span><span class="n">right</span><span class="p">,</span> <span class="n">bottom</span><span class="p">))</span>
+    <span class="n">pen</span><span class="o">.</span><span class="n">lineTo</span><span class="p">((</span><span class="n">right</span><span class="p">,</span> <span class="n">top</span><span class="p">))</span>
+    <span class="n">pen</span><span class="o">.</span><span class="n">lineTo</span><span class="p">((</span><span class="n">left</span><span class="p">,</span> <span class="n">top</span><span class="p">))</span>
+    <span class="n">pen</span><span class="o">.</span><span class="n">closePath</span><span class="p">()</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
@@ -5392,7 +5398,7 @@ fontlab_pens.base.PenError: Unfinished contour: call closePath() or endPath() be
         <span class="n">layer</span> <span class="o">=</span> <span class="n">layer_of</span><span class="p">(</span><span class="n">glyph</span><span class="o">.</span><span class="n">fl</span><span class="p">,</span> <span class="n">master</span><span class="p">)</span>
         <span class="n">width</span> <span class="o">=</span> <span class="n">layer</span><span class="o">.</span><span class="n">advanceWidth</span>
         <span class="k">with</span> <span class="n">FlPen</span><span class="p">(</span><span class="n">layer</span><span class="p">,</span> <span class="n">notify</span><span class="o">=</span><span class="s2">"Draw box"</span><span class="p">)</span> <span class="k">as</span> <span class="n">pen</span><span class="p">:</span>
-            <span class="n">halfmoon</span><span class="o">.</span><span class="n">rect</span><span class="p">(</span><span class="n">pen</span><span class="p">,</span> <span class="n">SIDE</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">width</span> <span class="o">-</span> <span class="n">SIDE</span><span class="p">,</span> <span class="n">TOP</span><span class="p">)</span>
+            <span class="n">rect</span><span class="p">(</span><span class="n">pen</span><span class="p">,</span> <span class="n">SIDE</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">width</span> <span class="o">-</span> <span class="n">SIDE</span><span class="p">,</span> <span class="n">TOP</span><span class="p">)</span>
         <span class="n">drawn</span> <span class="o">=</span> <span class="n">drawn</span> <span class="o">+</span> <span class="mi">1</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">glyph</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">drawn</span><span class="si">}</span><span class="s2"> boxes drawn"</span><span class="p">)</span>
 
@@ -5415,8 +5421,8 @@ e.sc: 2 boxes drawn
 <h2 id="try-it-yourself">Try it yourself<a class="headerlink" href="#try-it-yourself" title="Permanent link">&para;</a></h2>
 <ol>
 <li>Change <code>rect</code> so that it goes round clockwise, draw a box in an empty glyph and run <code>check_direction.py</code>. Then change it back and undo. How many layers were wrong?</li>
-<li>Make <code>draw_box.py</code> work on the whole font: loop over <code>font.glyphs</code>, keep the names that end in <code>.sc</code>, and use <code>halfmoon.rich(font, glyph)</code> in place of <code>pGlyph()</code>. Print one line per glyph. Run it twice and check that the second run draws nothing. Then undo the run, so that <code>e.sc</code> is again the only small cap with a box. Chapter 51 counts on that.</li>
-<li>Draw a box into a <code>RecordingPen</code> with <code>halfmoon.rect</code>, then print only the points, one per line, by taking them out of <code>pen.value</code>. Each order is a tuple of a name and a tuple of points. You'll need two indexes, as in chapter 35.</li>
+<li>Make <code>draw_box.py</code> work on the whole font: loop over <code>font.glyphs</code>, keep the names that end in <code>.sc</code>, and use <code>pGlyph(font, glyph)</code> in place of <code>pGlyph()</code>. Print one line per glyph. Run it twice and check that the second run draws nothing. Then undo the run, so that <code>e.sc</code> is again the only small cap with a box. Chapter 51 counts on that.</li>
+<li>Draw a box into a <code>RecordingPen</code> with <code>rect</code>, then print only the points, one per line, by taking them out of <code>pen.value</code>. Each order is a tuple of a name and a tuple of points. You'll need two indexes, as in chapter 35.</li>
 </ol>
 <h2 id="next">Next<a class="headerlink" href="#next" title="Permanent link">&para;</a></h2>
 <p>A box is one contour. The glyph that fonts show when a character is missing is a box with a hole in it, and you now know what makes a hole. Chapter 47 draws it from numbers.</p>

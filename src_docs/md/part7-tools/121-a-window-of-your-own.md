@@ -31,7 +31,7 @@ def build(parent):
     label.setWindowFlags(qt.QtCore.Qt.Tool)
     return label
 
-scripting.show_script_dialog(build, "halfmoon.hello")
+scripting.show_script_dialog(build, "tools.hello")
 ```
 
 A small window should appear over FontLab with the words `Hello, Ines.` in it. Click in the Font window behind it. Select a glyph. FontLab answers, and the small window is still there. That is the difference from chapter 39, where nothing else responded until you clicked OK. Close the small window with its close button when you've seen enough.
@@ -49,16 +49,16 @@ A widget with a parent is normally drawn inside that parent. You don't want your
 Look at the last line again:
 
 ```python
-scripting.show_script_dialog(build, "halfmoon.hello")
+scripting.show_script_dialog(build, "tools.hello")
 ```
 
 You wrote `build`, not `build()`. You're handing over the function, and Fly calls it when it's ready. Chapter 39 did this with the "recipe card" for the file box, and chapter 119 kept whole lists of functions that way.
 
-`show_script_dialog` does four things with it. It calls `build` with FontLab's main window. It asks for the window you returned to stay in front of other windows. It shows it. And it writes the window down in a list that lives as long as FontLab is open, under the name you gave as the second thing, `"halfmoon.hello"`.
+`show_script_dialog` does four things with it. It calls `build` with FontLab's main window. It asks for the window you returned to stay in front of other windows. It shows it. And it writes the window down in a list that lives as long as FontLab is open, under the name you gave as the second thing, `"tools.hello"`.
 
 Your script ends a moment after the window appears. Python tidies up after a script, and a window that nothing refers to any more can be thrown away with the rest. The list is what keeps yours. Chapter 127 looks at this properly.
 
-The name has a second use. Run the script again without closing the window. You don't get two windows. Fly finds the old one under `"halfmoon.hello"`, closes it, and opens the new one. In my stand-in run the list held one window after two runs.
+The name has a second use. Run the script again without closing the window. You don't get two windows. Fly finds the old one under `"tools.hello"`, closes it, and opens the new one. In my stand-in run the list held one window after two runs.
 
 ## Step 3: A program that waits
 
@@ -136,7 +136,7 @@ import fly.ap.core.scripting as scripting
 from fly import fl, qt
 
 core, gui = qt.QtCore, qt.QtGui
-KEY = "halfmoon.hello"
+KEY = "tools.hello"
 
 
 def font_text():
@@ -205,7 +205,7 @@ AttributeError: 'NoneType' object has no attribute 'setWindowFlags'
 
 Chapter 24 showed that a function with no `return` hands back `None`. `build` made a perfectly good window and then kept it to itself. Fly got `None`, tried to open one of its drawers, and Python refused. The traceback points into Fly's file, not yours, which is unhelpful, so remember the shape of this one: `'NoneType' object has no attribute` right after you call somebody else's function with a function of your own usually means your function forgot to return. Put the line back.
 
-Now change `KEY` to `"halfmoon.hello2"` and run the script without closing the window. You have two windows. Fly looked for an old window under the new name, found none, and left the first alone. Close both and change the name back.
+Now change `KEY` to `"tools.hello2"` and run the script without closing the window. You have two windows. Fly looked for an old window under the new name, found none, and left the first alone. Close both and change the name back.
 
 Last, with the window open, open another font and bring it to the front. The window still says GG Plum. It read the font once, while `build` ran, and a label doesn't know where its text came from. This is what the button is for.
 

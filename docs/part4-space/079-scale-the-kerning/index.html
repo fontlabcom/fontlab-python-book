@@ -5312,7 +5312,7 @@
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>Plum-practice</code> open in FontLab 9, with Fly installed.</li>
-<li><code>halfmoon.py</code> with <code>ask</code> and <code>tell</code>.</li>
+<li>The helpers <code>ask</code> and <code>tell</code> from chapter 39. The scripts below write them out again, so each one runs by itself.</li>
 <li>The kerning as chapter 78 left it: 102 pairs in each master.</li>
 </ul>
 <p>I couldn't run the code in FontLab 9. The numbers below were computed in plain Python from Plum's source file with the changes of chapters 72 to 78 applied.</p>
@@ -5390,15 +5390,30 @@ Bold 5988.0
 <div class="highlight"><pre><span></span><code><span class="c1">#FLM: Scale Kerning</span>
 <span class="c1"># Multiplies every kerning value of MASTER by PERCENT / 100.</span>
 <span class="c1"># Halves round away from zero. A pair that becomes 0 is removed.</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.kerning.batch</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">kerning_batch</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.kerning.edit.model</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">kerning_edit</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span>
+
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Halfmoon"</span>
 
 <span class="n">MASTER</span> <span class="o">=</span> <span class="s2">"Bold"</span>
 <span class="n">PERCENT</span> <span class="o">=</span> <span class="mi">85</span>
 <span class="n">SHOW</span> <span class="o">=</span> <span class="mi">7</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">ask</span><span class="p">(</span><span class="n">question</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">answer</span> <span class="o">=</span> <span class="n">run_standard_message_box</span><span class="p">(</span>
+        <span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">question</span><span class="p">,</span> <span class="s2">"Question"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Yes</span> <span class="o">|</span> <span class="n">box</span><span class="o">.</span><span class="n">No</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">answer</span> <span class="o">==</span> <span class="n">box</span><span class="o">.</span><span class="n">Yes</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">strength</span><span class="p">(</span><span class="n">pairs</span><span class="p">):</span>
@@ -5424,10 +5439,10 @@ Bold 5988.0
 
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="k">if</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="k">if</span> <span class="n">PERCENT</span> <span class="o">&lt;</span> <span class="mi">10</span> <span class="ow">or</span> <span class="n">PERCENT</span> <span class="o">&gt;</span> <span class="mi">300</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="sa">f</span><span class="s2">"PERCENT is </span><span class="si">{</span><span class="n">PERCENT</span><span class="si">}</span><span class="s2">. Write 85 for 85 per cent."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="sa">f</span><span class="s2">"PERCENT is </span><span class="si">{</span><span class="n">PERCENT</span><span class="si">}</span><span class="s2">. Write 85 for 85 per cent."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">package</span> <span class="o">=</span> <span class="n">scripting</span><span class="o">.</span><span class="n">current_package</span><span class="p">()</span>
     <span class="n">pairs</span> <span class="o">=</span> <span class="n">scripting</span><span class="o">.</span><span class="n">kerning_pairs</span><span class="p">(</span><span class="n">package</span><span class="p">,</span> <span class="n">MASTER</span><span class="p">)</span>
@@ -5441,7 +5456,7 @@ Bold 5988.0
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">plan</span><span class="p">)</span><span class="si">}</span><span class="s2"> pairs change, </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">gone</span><span class="p">)</span><span class="si">}</span><span class="s2"> would be removed."</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">plan</span><span class="p">:</span>
         <span class="k">return</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">ask</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Scale </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">plan</span><span class="p">)</span><span class="si">}</span><span class="s2"> pairs of the </span><span class="si">{</span><span class="n">MASTER</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">PERCENT</span><span class="si">}</span><span class="s2"> per cent?"</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ask</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Scale </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">plan</span><span class="p">)</span><span class="si">}</span><span class="s2"> pairs of the </span><span class="si">{</span><span class="n">MASTER</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">PERCENT</span><span class="si">}</span><span class="s2"> per cent?"</span><span class="p">):</span>
         <span class="k">return</span>
 
     <span class="n">before</span> <span class="o">=</span> <span class="n">strength</span><span class="p">(</span><span class="n">pairs</span><span class="p">)</span>

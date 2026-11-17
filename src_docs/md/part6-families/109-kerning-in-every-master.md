@@ -13,7 +13,6 @@ A pair that's missing in a master isn't an error to FontLab. It's a pair with no
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py` with `tell`.
 - Chapter 73's way of writing pairs, and chapter 76's sets.
 
 I couldn't run the code in FontLab 9. I ran the script on the kerning this book has built up since chapter 69, with Fly's own planning function doing the planning, and the output below comes from there.
@@ -136,8 +135,17 @@ So a copied value is a place to start. It beats a missing pair, since the font b
 import fly.ap.core.scripting as scripting
 import fly.ap.kerning.edit.model as kerning_edit
 import fly.ap.masters.inspect.model as masters_model
-import halfmoon
-from fly import fl
+from fly import fl, qt
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
+
+
+# Chapter 39's tell, written out again so this script runs by itself.
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
 
 TRUSTED = "Regular"
 PERCENT = {"Light": 100, "Bold": 85}
@@ -167,7 +175,7 @@ def show(pair, tables):
 
 def main():
     if fl.CurrentFont() is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     package = scripting.current_package()
     masters = masters_model.master_order(package)

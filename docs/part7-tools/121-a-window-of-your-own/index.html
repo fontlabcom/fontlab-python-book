@@ -5346,7 +5346,7 @@
     <span class="n">label</span><span class="o">.</span><span class="n">setWindowFlags</span><span class="p">(</span><span class="n">qt</span><span class="o">.</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Tool</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">label</span>
 
-<span class="n">scripting</span><span class="o">.</span><span class="n">show_script_dialog</span><span class="p">(</span><span class="n">build</span><span class="p">,</span> <span class="s2">"halfmoon.hello"</span><span class="p">)</span>
+<span class="n">scripting</span><span class="o">.</span><span class="n">show_script_dialog</span><span class="p">(</span><span class="n">build</span><span class="p">,</span> <span class="s2">"tools.hello"</span><span class="p">)</span>
 </code></pre></div>
 <p>A small window should appear over FontLab with the words <code>Hello, Ines.</code> in it. Click in the Font window behind it. Select a glyph. FontLab answers, and the small window is still there. That is the difference from chapter 39, where nothing else responded until you clicked OK. Close the small window with its close button when you've seen enough.</p>
 <p>Now the words. The whole of what you see on the screen, with its windows and buttons and menus, is called a graphical user interface, or GUI. Each thing in it is a <strong>widget</strong>: a piece of text is a widget, a button is a widget, the box you type a number into is a widget, and a window is a widget that holds other widgets. A widget is an object, so it's one more wardrobe with drawers, like the glyph in chapter 6. You make one, and then you open its drawers to tell it how to look and what to say.</p>
@@ -5355,12 +5355,12 @@
 <p>A widget with a parent is normally drawn inside that parent. You don't want your text painted in a corner of FontLab's main window, so the next line says otherwise. <code>setWindowFlags(qt.QtCore.Qt.Tool)</code> turns the label into a small window of its own that floats over its parent. <code>Tool</code> is Qt's word for a little helper window.</p>
 <h2 id="step-2-who-shows-it-and-who-keeps-it">Step 2: Who shows it, and who keeps it<a class="headerlink" href="#step-2-who-shows-it-and-who-keeps-it" title="Permanent link">&para;</a></h2>
 <p>Look at the last line again:</p>
-<div class="highlight"><pre><span></span><code><span class="n">scripting</span><span class="o">.</span><span class="n">show_script_dialog</span><span class="p">(</span><span class="n">build</span><span class="p">,</span> <span class="s2">"halfmoon.hello"</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="n">scripting</span><span class="o">.</span><span class="n">show_script_dialog</span><span class="p">(</span><span class="n">build</span><span class="p">,</span> <span class="s2">"tools.hello"</span><span class="p">)</span>
 </code></pre></div>
 <p>You wrote <code>build</code>, not <code>build()</code>. You're handing over the function, and Fly calls it when it's ready. Chapter 39 did this with the "recipe card" for the file box, and chapter 119 kept whole lists of functions that way.</p>
-<p><code>show_script_dialog</code> does four things with it. It calls <code>build</code> with FontLab's main window. It asks for the window you returned to stay in front of other windows. It shows it. And it writes the window down in a list that lives as long as FontLab is open, under the name you gave as the second thing, <code>"halfmoon.hello"</code>.</p>
+<p><code>show_script_dialog</code> does four things with it. It calls <code>build</code> with FontLab's main window. It asks for the window you returned to stay in front of other windows. It shows it. And it writes the window down in a list that lives as long as FontLab is open, under the name you gave as the second thing, <code>"tools.hello"</code>.</p>
 <p>Your script ends a moment after the window appears. Python tidies up after a script, and a window that nothing refers to any more can be thrown away with the rest. The list is what keeps yours. Chapter 127 looks at this properly.</p>
-<p>The name has a second use. Run the script again without closing the window. You don't get two windows. Fly finds the old one under <code>"halfmoon.hello"</code>, closes it, and opens the new one. In my stand-in run the list held one window after two runs.</p>
+<p>The name has a second use. Run the script again without closing the window. You don't get two windows. Fly finds the old one under <code>"tools.hello"</code>, closes it, and opens the new one. In my stand-in run the list held one window after two runs.</p>
 <h2 id="step-3-a-program-that-waits">Step 3: A program that waits<a class="headerlink" href="#step-3-a-program-that-waits" title="Permanent link">&para;</a></h2>
 <p>Add one line to the end of the script and run it:</p>
 <div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="s2">"The script has ended. The window hasn't."</span><span class="p">)</span>
@@ -5405,7 +5405,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
 
 <span class="n">core</span><span class="p">,</span> <span class="n">gui</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtCore</span><span class="p">,</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span>
-<span class="n">KEY</span> <span class="o">=</span> <span class="s2">"halfmoon.hello"</span>
+<span class="n">KEY</span> <span class="o">=</span> <span class="s2">"tools.hello"</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">font_text</span><span class="p">():</span>
@@ -5456,7 +5456,7 @@ Version 1.004
 <div class="highlight"><pre><span></span><code>AttributeError: 'NoneType' object has no attribute 'setWindowFlags'
 </code></pre></div>
 <p>Chapter 24 showed that a function with no <code>return</code> hands back <code>None</code>. <code>build</code> made a perfectly good window and then kept it to itself. Fly got <code>None</code>, tried to open one of its drawers, and Python refused. The traceback points into Fly's file, not yours, which is unhelpful, so remember the shape of this one: <code>'NoneType' object has no attribute</code> right after you call somebody else's function with a function of your own usually means your function forgot to return. Put the line back.</p>
-<p>Now change <code>KEY</code> to <code>"halfmoon.hello2"</code> and run the script without closing the window. You have two windows. Fly looked for an old window under the new name, found none, and left the first alone. Close both and change the name back.</p>
+<p>Now change <code>KEY</code> to <code>"tools.hello2"</code> and run the script without closing the window. You have two windows. Fly looked for an old window under the new name, found none, and left the first alone. Close both and change the name back.</p>
 <p>Last, with the window open, open another font and bring it to the front. The window still says GG Plum. It read the font once, while <code>build</code> ran, and a label doesn't know where its text came from. This is what the button is for.</p>
 <h2 id="what-you-learned">What you learned<a class="headerlink" href="#what-you-learned" title="Permanent link">&para;</a></h2>
 <p>A window is a widget that holds other widgets, and a layout arranges them so that you never write a position. Your script builds the window, hands it to <code>show_script_dialog</code> and ends, and from then on FontLab's event loop looks after it. The name you pass keeps the window alive and replaces an older window of the same tool. Inside FontLab, Qt widgets take their values by position only, never as <code>name=value</code>.</p>

@@ -5335,7 +5335,7 @@
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>Plum-practice</code> open in FontLab 9, with Fly installed.</li>
-<li><code>halfmoon.py</code>.</li>
+<li>The <code>tell</code> function from <a href="../../part2-a-toolbox/039-ask-the-user/">chapter 39</a>. The script below defines it again, so it runs by itself.</li>
 <li>The eight features the font has after chapter 92.</li>
 </ul>
 <p>I couldn't run the code in FontLab 9. I ran it in plain Python on Plum's glyph names and code points and on the feature text that chapters 88 to 92 produce. The counts are for the practice font with Part 3's glyphs in it. Without them you have 70 lowercase letters where I have 84, and 62 not covered where I have 76.</p>
@@ -5430,9 +5430,17 @@ ijklmnopqrstuvwxyzßàáâãäåæçèéêëìíîïñòóôõöøùúûüýÿă
 <span class="c1"># with the glyphs that ought to be replaced. Changes nothing.</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">unicodedata</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span>
+
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Halfmoon"</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+
 
 <span class="n">WANTED</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"smcp"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"Ll"</span><span class="p">],</span> <span class="s2">"numr"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"Nd"</span><span class="p">],</span> <span class="s2">"dnom"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"Nd"</span><span class="p">]}</span>
 <span class="n">WIDTH</span> <span class="o">=</span> <span class="mi">60</span>
@@ -5480,7 +5488,7 @@ ijklmnopqrstuvwxyzßàáâãäåæçèéêëìíîïñòóôõöøùúûüýÿă
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">font</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">package</span> <span class="o">=</span> <span class="n">scripting</span><span class="o">.</span><span class="n">current_package</span><span class="p">()</span>
     <span class="n">blocks</span> <span class="o">=</span> <span class="n">scripting</span><span class="o">.</span><span class="n">read_feature_blocks</span><span class="p">(</span><span class="n">package</span><span class="p">)</span>

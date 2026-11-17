@@ -5359,7 +5359,7 @@
 <p>It's the same font and the same function. The agreement says that looping over a font gives you every glyph. It doesn't say in what order, and the two disagree. One follows the font's glyph order; the other follows the order of its own storage.</p>
 <p>You would never have found this in FontLab alone. A script that runs in one place can lean on a hundred habits of that place without knowing it. The cure costs one word: return <code>sorted(empty)</code>. Whenever a portable script shows a list, it puts the list in an order of its own choosing.</p>
 <h2 id="the-whole-script">The whole script<a class="headerlink" href="#the-whole-script" title="Permanent link">&para;</a></h2>
-<p>There are three files today. The first does the work. Save it as <code>plum_report.py</code>, beside <code>halfmoon.py</code>:</p>
+<p>There are three files today. The first does the work. Save it as <code>plum_report.py</code> in the <code>site-packages</code> folder from chapter 33, where Python looks when a script says <code>import</code>:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># A font report that uses only fontParts names, so it can run in any</span>
 <span class="c1"># editor that speaks fontParts. It reads the font and changes nothing.</span>
 
@@ -5404,7 +5404,7 @@
     <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">(</span><span class="n">font</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
 </code></pre></div>
-<p>It has no <code>#FLM</code> line and no import. It doesn't use <code>halfmoon</code>, because Tove doesn't have <code>halfmoon</code>. That's the price of a portable file: it can lean on Python and on the agreement, and on nothing of yours.</p>
+<p>It has no <code>#FLM</code> line and no import. It doesn't use Fly or anything you wrote in earlier chapters, because Tove has neither. That's the price of a portable file: it can lean on Python and on the agreement, and on nothing of yours.</p>
 <p><code>summary</code> gathers the facts into a dictionary, as the functions of chapter 95 did. <code>lines</code> turns the facts into text. <code>report</code> prints, and deals with there being no font. Keeping them apart means the part that reads the font can be checked without printing anything, which chapter 139 will use.</p>
 <p><code>widest</code> starts as <code>None</code> and is replaced by any glyph wider than the one held so far. It's the glyph itself that's kept, so <code>lines</code> can ask it for both its name and its width.</p>
 <p>The second file is FontLab's launcher. Save it as <code>plum_report_fontlab.py</code>:</p>

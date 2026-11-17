@@ -12,7 +12,7 @@ Mira answered from her mother's kitchen in four words: "She's right. Fix it." To
 
 ## What you need
 
-`Plum-practice` open with the Font window in front, Fly installed, `halfmoon.py` with chapter 129's settings functions, and `shift_tool.py` from chapter 129.
+`Plum-practice` open with the Font window in front, Fly installed, and `shift_tool.py` from chapter 129, with its settings functions.
 
 I haven't run this chapter in FontLab 9. The whole script ran against the stand-in widgets and the stand-in font from chapter 123, with a stand-in for Fly's commit that can be told to refuse or to fail half-way. The refusal texts are copied from Fly's source; the text of a write that failed half-way is built the way Fly's source builds it, around an error I made up.
 
@@ -109,7 +109,7 @@ Complaint one, and the reason for the second value. After a real change, the slo
 
 ```python
             if changed:
-                halfmoon.save_settings(KEY, {"left": left, "right": right})
+                save_settings(KEY, {"left": left, "right": right})
                 self.runs += 1
                 self.rehearse.setChecked(True)
                 text += f"\nChange {self.runs} from this window. Edit > Undo takes it back."
@@ -126,18 +126,55 @@ The settings are now saved only after a real change, and the run counter counts 
 # Adds to the sidebearings of the glyphs you name, or of the ones
 # selected in the Font window, in the master that's showing.
 # One click is one Undo step, and the tick box comes back after it.
-import halfmoon
+import json
+
 import fly.ap.core.history.glyphs as history
 import fly.ap.core.scripting as scripting
 import fly.ap.metrics.panel.model as metrics
-from fly import fl, qt
+from fly import ap, fl, qt
 from fly.pens import layer_of
+from fly.tr.proxy.fl.objects.glyph import pGlyph
 
 core, gui = qt.QtCore, qt.QtGui
-KEY = "halfmoon.shift"
+KEY = "tools.shift"
 LIMIT = 200
 SHOWN = 8
 DEFAULTS = {"left": 0, "right": 0}
+
+
+def settings_path():
+    return ap.app.paths.userDataFolder / "tool-settings.json"
+
+
+def read_settings_file():
+    try:
+        with open(settings_path(), encoding="utf-8") as f:
+            stored = json.load(f)
+    except FileNotFoundError:
+        return {}
+    except json.JSONDecodeError:
+        return {}
+    if not isinstance(stored, dict):
+        return {}
+    return stored
+
+
+def load_settings(key, defaults):
+    values = dict(defaults)
+    mine = read_settings_file().get(key)
+    if not isinstance(mine, dict):
+        return values
+    for name in defaults:
+        if name in mine and type(mine[name]) == type(defaults[name]):
+            values[name] = mine[name]
+    return values
+
+
+def save_settings(key, values):
+    stored = read_settings_file()
+    stored[key] = values
+    with open(settings_path(), "w", encoding="utf-8") as f:
+        json.dump(stored, f, indent=4, ensure_ascii=False)
 UNTOUCHED = "Nothing was changed."
 
 
@@ -157,7 +194,7 @@ def unique(names):
 def plan_rows(font, master, names, left, right):
     rows = []
     for name in names:
-        rich = halfmoon.rich(font, font[name])
+        rich = pGlyph(font, font[name])
         old = (rich.getLSB(master), rich.getAdvance(master), rich.getRSB(master))
         new = (old[0] + left, old[1] + left + right, old[2] + right)
         rows.append((rich, layer_of(rich.fl, master), old, new))
@@ -222,7 +259,7 @@ class ShiftTool:
         self.left.setRange(-LIMIT, LIMIT)
         self.right = gui.QSpinBox(self.panel)
         self.right.setRange(-LIMIT, LIMIT)
-        saved = halfmoon.load_settings(KEY, DEFAULTS)
+        saved = load_settings(KEY, DEFAULTS)
         self.left.setValue(saved["left"])
         self.right.setValue(saved["right"])
         self.rehearse = gui.QCheckBox("Only show what would happen", self.panel)
@@ -259,7 +296,7 @@ class ShiftTool:
             text, changed = shift(read(self.names, "text"), left, right,
                                   read(self.rehearse, "checked"))
             if changed:
-                halfmoon.save_settings(KEY, {"left": left, "right": right})
+                save_settings(KEY, {"left": left, "right": right})
                 self.runs += 1
                 self.rehearse.setChecked(True)
                 text += f"\nChange {self.runs} from this window. Edit > Undo takes it back."

@@ -14,7 +14,7 @@ A point to settle first. The page doesn't show the font you have open in FontLab
 
 ## What you need
 
-- `Plum-practice` open in FontLab 9, with Fly installed, and `halfmoon.py`.
+- `Plum-practice` open in FontLab 9, with Fly installed.
 - An export folder for the current version with the OTF files in it, from chapters 111 and 112.
 - A web browser.
 
@@ -120,8 +120,17 @@ import html
 from pathlib import Path
 
 import fly.ap.core.scripting as scripting
-import halfmoon
-from fly import fl
+from fly import fl, qt
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
+
+
+# Chapter 39's tell, written out again so this script runs by itself.
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
 
 STYLE = "Regular"
 PAGE_NAME = "proof-glyphs.html"
@@ -178,16 +187,16 @@ def page(title, address, cells, leftovers):
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     package = scripting.current_package()
     folder = latest_export(font, package)
     if folder is None:
-        halfmoon.tell("No export folder for this version. Export first.")
+        tell("No export folder for this version. Export first.")
         return
     source = font_file(folder, package.info.familyName, STYLE)
     if source is None:
-        halfmoon.tell(f"No {STYLE} .otf in {folder.name}.")
+        tell(f"No {STYLE} .otf in {folder.name}.")
         return
     cells = []
     leftovers = []
@@ -223,7 +232,7 @@ Notes on the listing.
 
 `latest_export` doesn't use today's date. The export was made yesterday, so chapter 111's folder for today doesn't exist. It gathers the folders whose names end in this version and takes the last. The names begin with the date written year first, so sorted order is date order. `folders[-1]` is the last item, by chapter 10's counting from the end.
 
-`font_file` reuses chapter 112's `key`, which squeezes a name down to its letters and digits, so `GGPlum-Regular` and `GG Plum` plus `Regular` meet. I've copied `key` into this script, and chapter 114 said a copy is two things to mend. That's fair. If a third script wants it, it belongs in `halfmoon.py`.
+`font_file` reuses chapter 112's `key`, which squeezes a name down to its letters and digits, so `GGPlum-Regular` and `GG Plum` plus `Regular` meet. I've copied `key` into this script so that it runs by itself. Chapter 114 said a copy is two things to mend, and that's fair, but a one-line copy is a small price.
 
 `as_posix()` writes a path with forward slashes whatever the computer. Web addresses always use forward slashes, and on Windows a plain `str` of the path wouldn't.
 

@@ -5336,7 +5336,7 @@
 <ul>
 <li><code>Plum-practice</code> open in FontLab 9, with Fly installed.</li>
 <li>Your suffixed glyphs from Part 2: ten ending in <code>.sc</code>, four in <code>.ss01</code> (<code>a</code>, <code>g</code>, <code>y</code>, <code>ampersand</code>), and <code>zero.alt</code>.</li>
-<li><code>halfmoon.py</code> with <code>tell</code> and <code>ask</code>, and <code>rename_suffix.py</code> from chapter 31.</li>
+<li><code>rename_suffix.py</code> from chapter 31. The script below defines <code>tell</code> and <code>ask</code> from <a href="../../part2-a-toolbox/039-ask-the-user/">chapter 39</a> again, so it runs by itself.</li>
 <li>The <code>smcp</code> feature from chapter 88. If you skipped the write there, today's script adds it.</li>
 </ul>
 <p>I couldn't run the code in FontLab 9. I ran the counting and the text building in plain Python on Plum's glyph names plus those fifteen. The write is the one from chapter 88, and I haven't seen it work.</p>
@@ -5430,10 +5430,26 @@ alt salt
 <div class="highlight"><pre><span></span><code><span class="c1">#FLM: Features From Suffixes</span>
 <span class="c1"># Writes or replaces one feature for each suffix in TAGS.</span>
 <span class="c1"># Does not compile: do that in the Features panel afterward.</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.features.code</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">fea_code</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span>
+
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Halfmoon"</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">ask</span><span class="p">(</span><span class="n">question</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">answer</span> <span class="o">=</span> <span class="n">run_standard_message_box</span><span class="p">(</span>
+        <span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">question</span><span class="p">,</span> <span class="s2">"Question"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Yes</span> <span class="o">|</span> <span class="n">box</span><span class="o">.</span><span class="n">No</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">answer</span> <span class="o">==</span> <span class="n">box</span><span class="o">.</span><span class="n">Yes</span>
+
 
 <span class="n">TAGS</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"sc"</span><span class="p">:</span> <span class="s2">"smcp"</span><span class="p">,</span> <span class="s2">"ss01"</span><span class="p">:</span> <span class="s2">"ss01"</span><span class="p">,</span> <span class="s2">"zero"</span><span class="p">:</span> <span class="s2">"zero"</span><span class="p">}</span>
 <span class="n">DRY_RUN</span> <span class="o">=</span> <span class="kc">True</span>
@@ -5470,7 +5486,7 @@ alt salt
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">font</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="n">glyph</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">glyph</span> <span class="ow">in</span> <span class="n">font</span><span class="o">.</span><span class="n">glyphs</span><span class="p">]</span>
     <span class="n">made</span><span class="p">,</span> <span class="n">used</span> <span class="o">=</span> <span class="n">plan</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">TAGS</span><span class="p">)</span>
@@ -5488,7 +5504,7 @@ alt salt
     <span class="k">if</span> <span class="n">DRY_RUN</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">"Dry run. Nothing written."</span><span class="p">)</span>
         <span class="k">return</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">ask</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Write </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">made</span><span class="p">)</span><span class="si">}</span><span class="s2"> features?"</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ask</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Write </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">made</span><span class="p">)</span><span class="si">}</span><span class="s2"> features?"</span><span class="p">):</span>
         <span class="k">return</span>
     <span class="n">updated</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"prefix"</span><span class="p">:</span> <span class="n">blocks</span><span class="p">[</span><span class="s2">"prefix"</span><span class="p">],</span> <span class="s2">"features"</span><span class="p">:</span> <span class="n">kept</span> <span class="o">+</span> <span class="n">made</span><span class="p">}</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">scripting</span><span class="o">.</span><span class="n">write_feature_blocks</span><span class="p">(</span>

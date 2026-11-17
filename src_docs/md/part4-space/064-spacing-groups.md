@@ -13,7 +13,7 @@ Yesterday's dictionary had one entry for each follower: `d` follows `o`, `q` fol
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py` with `rich` and `tell`.
+- The helper `tell` from chapter 39. The scripts below write it out again, so each one runs by itself.
 - The font as chapters 62 and 63 left it: the Bold `m` with 32 on the right, the Bold `i` with 56 on the left, and the Light `d`, `g` and `q` with 50 on the left.
 
 This chapter reads and prints. It changes nothing in the font. I couldn't run it in FontLab 9, and the numbers come from Plum's source file with those three changes applied.
@@ -23,13 +23,13 @@ This chapter reads and prints. It changes nothing in the font. I couldn't run it
 Before you write Mira's columns down, see whether the font agrees with her. Go through the lowercase and put each letter into a list with the others that have the same left sidebearing. That's the dictionary of lists from chapter 52, where the key was a base glyph. Here the key is a number:
 
 ```python
-import halfmoon
 from fly import fl
+from fly.tr.proxy.fl.objects.glyph import pGlyph
 
 font = fl.CurrentFont()
 groups = {}
 for name in "abcdefghijklmnopqrstuvwxyz":
-    left = halfmoon.rich(font, font[name]).getLSB("Regular")
+    left = pGlyph(font, font[name]).getLSB("Regular")
     if left not in groups:
         groups[left] = []
     groups[left].append(name)
@@ -140,8 +140,8 @@ With families written down, one question can be asked of the whole font: which f
 
 ```python
 MASTERS = ["Light", "Regular", "Bold"]
-model = halfmoon.rich(font, font["o"])
-rich = halfmoon.rich(font, font["c"])
+model = pGlyph(font, font["o"])
+rich = pGlyph(font, font["c"])
 
 offs = [rich.getLSB(master) - model.getLSB(master) for master in MASTERS]
 print(offs)
@@ -165,8 +165,11 @@ And `any(offs)` tells you whether there's anything to report. Chapter 44 used `a
 #FLM: Spacing Groups
 # Checks families of letters that should share a sidebearing,
 # and prints the follower maps for copy_sb.py.
-import halfmoon
-from fly import fl
+from fly import fl, qt
+from fly.ap.ui.dialogs import run_standard_message_box
+from fly.tr.proxy.fl.objects.glyph import pGlyph
+
+TITLE = "Halfmoon"
 
 MASTERS = ["Light", "Regular", "Bold"]
 LEFT = {
@@ -178,6 +181,11 @@ RIGHT = {
     "o": ["b", "p"],
     "l": ["d", "g", "q", "u"],
 }
+
+
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
 
 
 def follower_map(families):
@@ -192,7 +200,7 @@ def follower_map(families):
 
 
 def side_values(font, name, side):
-    rich = halfmoon.rich(font, font[name])
+    rich = pGlyph(font, font[name])
     if side == "left":
         return [rich.getLSB(master) for master in MASTERS]
     return [rich.getRSB(master) for master in MASTERS]
@@ -216,7 +224,7 @@ def report(font, families, side):
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     left_like, left_doubles = follower_map(LEFT)
     right_like, right_doubles = follower_map(RIGHT)

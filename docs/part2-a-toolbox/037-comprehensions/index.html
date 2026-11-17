@@ -5316,7 +5316,7 @@
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li>FontLab 9 with Fly installed, and <code>Plum-practice</code> open.</li>
-<li><code>halfmoon.py</code> as <a href="../036-sort-by-anything/">chapter 36</a> left it.</li>
+<li>The functions from chapters 33 to 36: <code>is_empty</code>, <code>glyphs_of</code> and <code>wider_than</code>. Where a listing needs one, it's shown.</li>
 </ul>
 <p>Every listing in this chapter starts with the usual two lines:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
@@ -5333,7 +5333,7 @@
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>['.notdef', 'A', 'Aacute', 'Abreve', 'Acircumflex', 'Adieresis']
 </code></pre></div>
-<p>Make an empty list. Walk through something. Each time around, work out one value and append it. You've written those three lines in nearly every chapter since, and <code>halfmoon.py</code> has them three times over.</p>
+<p>Make an empty list. Walk through something. Each time around, work out one value and append it. You've written those three lines in nearly every chapter since, and your scripts from the last few chapters have them three times over.</p>
 <p>When people write the same three lines often enough, the language grows a shorter way to say them. This is it:</p>
 <div class="highlight"><pre><span></span><code><span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="n">glyph</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">glyph</span> <span class="ow">in</span> <span class="n">font</span><span class="o">.</span><span class="n">glyphs</span><span class="p">]</span>
 
@@ -5459,15 +5459,15 @@
     <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">glyph</span> <span class="ow">in</span> <span class="n">glyphs_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">is_empty</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">):</span>
-            <span class="n">measured</span> <span class="o">=</span> <span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span>
+            <span class="n">measured</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span>
             <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">glyph</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">measured</span><span class="o">.</span><span class="n">getLSB</span><span class="p">(),</span> <span class="nb">int</span><span class="p">(</span><span class="n">glyph</span><span class="o">.</span><span class="n">width</span><span class="p">),</span> <span class="n">measured</span><span class="o">.</span><span class="n">getRSB</span><span class="p">()))</span>
     <span class="k">return</span> <span class="n">rows</span>
 </code></pre></div>
 <p>And here it is as a comprehension:</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">metrics_rows</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="k">return</span> <span class="p">[(</span><span class="n">glyph</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span><span class="o">.</span><span class="n">getLSB</span><span class="p">(),</span> <span class="nb">int</span><span class="p">(</span><span class="n">glyph</span><span class="o">.</span><span class="n">width</span><span class="p">),</span> <span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span><span class="o">.</span><span class="n">getRSB</span><span class="p">())</span> <span class="k">for</span> <span class="n">glyph</span> <span class="ow">in</span> <span class="n">glyphs_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">is_empty</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="p">[(</span><span class="n">glyph</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span><span class="o">.</span><span class="n">getLSB</span><span class="p">(),</span> <span class="nb">int</span><span class="p">(</span><span class="n">glyph</span><span class="o">.</span><span class="n">width</span><span class="p">),</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span><span class="o">.</span><span class="n">getRSB</span><span class="p">())</span> <span class="k">for</span> <span class="n">glyph</span> <span class="ow">in</span> <span class="n">glyphs_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">is_empty</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)]</span>
 </code></pre></div>
-<p>It works. It's also 170 characters long, you have to scroll sideways to find the <code>for</code>, and it makes the rich glyph twice for every row because there's nowhere to keep it. The loop had a box called <code>r</code> for that. Nobody will thank you for the second version, and that includes you, in a month.</p>
+<p>It works. It's also 170 characters long, you have to scroll sideways to find the <code>for</code>, and it makes the <code>pGlyph</code> twice for every row because there's nowhere to keep it. The loop had a box called <code>measured</code> for that. Nobody will thank you for the second version, and that includes you, in a month.</p>
 <p>My rule is this. Use a comprehension when you can say it in one breath: "the name of each glyph that's wider than 800". Use a loop when:</p>
 <ul>
 <li>the line won't fit on the screen without scrolling;</li>
@@ -5482,14 +5482,19 @@
 </code></pre></div>
 <p>Five lines became one, and you can read it aloud. The short name <code>g</code> is fine in a comprehension, because it lives and dies within the line. In a loop with ten lines in its body, I'd spell it out.</p>
 <h2 id="the-whole-script">The whole script<a class="headerlink" href="#the-whole-script" title="Permanent link">&para;</a></h2>
-<p>This is <code>empty_glyphs.py</code> from chapter 8, rewritten with today's tool and the module:</p>
+<p>This is <code>empty_glyphs.py</code> from chapter 8, rewritten with today's tool and the <code>is_empty</code> function from chapter 33:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Lists the glyphs that have no shapes in them.</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">is_empty</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span><span class="o">.</span><span class="n">isEmpty</span><span class="p">()</span>
+
 
 <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
 
-<span class="n">empty</span> <span class="o">=</span> <span class="p">[</span><span class="n">g</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">font</span><span class="o">.</span><span class="n">glyphs</span> <span class="k">if</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">is_empty</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">g</span><span class="p">)]</span>
+<span class="n">empty</span> <span class="o">=</span> <span class="p">[</span><span class="n">g</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">font</span><span class="o">.</span><span class="n">glyphs</span> <span class="k">if</span> <span class="n">is_empty</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">g</span><span class="p">)]</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">empty</span><span class="p">),</span> <span class="s2">"of"</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">font</span><span class="p">),</span> <span class="s2">"glyphs are empty:"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">empty</span><span class="p">))</span>
@@ -5498,8 +5503,11 @@
 space a.sc b.sc c.sc a.ss01 ampersand.ss01 g.ss01 y.ss01 zero.alt
 </code></pre></div>
 <p>Yours will list whichever practice glyphs you've added and not yet drawn. In chapter 8 this script was a loop with a counter and a <code>print</code> inside it. Now it has three parts that each say one thing: find the font, build the list, report. The comprehension holds the question, and the lines after it decide what to do with the answer. Scripts tend to settle into that shape once comprehensions are available.</p>
-<p>And in <code>halfmoon.py</code>, two functions get shorter:</p>
-<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">glyphs_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<p>And two functions from chapter 34 get shorter. Paste these over the old versions wherever you use them:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">glyphs_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">only_selected</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">font</span><span class="o">.</span><span class="n">glyphs</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">scripting</span><span class="o">.</span><span class="n">names_selected_names</span><span class="p">()]</span>
@@ -5508,7 +5516,7 @@ space a.sc b.sc c.sc a.ss01 ampersand.ss01 g.ss01 y.ss01 zero.alt
 <span class="k">def</span><span class="w"> </span><span class="nf">wider_than</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">700</span><span class="p">,</span> <span class="n">only_selected</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">g</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">glyphs_of</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">only_selected</span><span class="p">)</span> <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">width</span> <span class="o">&gt;</span> <span class="n">limit</span><span class="p">]</span>
 </code></pre></div>
-<p><code>metrics_rows</code> and <code>status_tally</code> stay as loops. Reload the module, run <code>widest_first.py</code> from last week, and check that its output hasn't changed by a character. That's the test from chapter 33 again: if you rewrote a function without changing what it does, its callers can't tell.</p>
+<p><code>metrics_rows</code> and <code>status_tally</code> stay as loops. Put the new <code>glyphs_of</code> into <code>widest_first.py</code> from last week, run it, and check that its output hasn't changed by a character. That's the test from chapter 33 again: if you rewrote a function without changing what it does, its callers can't tell.</p>
 <p>Mira goes back to Oskar's kerning script. The third line reads like a sentence now. The fourth line has two <code>for</code>s in one pair of brackets. She unfolds it on paper, as he told her to, and gets through it.</p>
 <h2 id="what-you-learned">What you learned<a class="headerlink" href="#what-you-learned" title="Permanent link">&para;</a></h2>
 <p>A list comprehension folds the make-a-list loop into one line: what you want, then where it comes from, then an optional <code>if</code> that filters. An <code>if</code> at the front needs an <code>else</code> and picks between two values without filtering. Curly brackets make a dictionary or a set the same way. Use a comprehension to build something you can describe in one breath, and go back to a loop when the line gets long, needs a box in the middle or changes the font.</p>
@@ -5521,11 +5529,11 @@ space a.sc b.sc c.sc a.ss01 ampersand.ss01 g.ss01 y.ss01 zero.alt
 </code></pre></div>
 </li>
 <li>
-<p><code>status_tally</code> in <code>halfmoon.py</code> builds a dictionary with a loop. Try to write it as a dictionary comprehension. You'll find that you can't, at least not with what you know. Say why. What does the loop do on each pass that a comprehension has no way to do?</p>
+<p><code>status_tally</code> from chapter 33 builds a dictionary with a loop. Try to write it as a dictionary comprehension. You'll find that you can't, at least not with what you know. Say why. What does the loop do on each pass that a comprehension has no way to do?</p>
 </li>
 </ol>
 <h2 id="next">Next<a class="headerlink" href="#next" title="Permanent link">&para;</a></h2>
-<p>Mira's scripts now call the module, which calls Fly, which calls FontLab. When something breaks, the error message runs to eight lines and names two files. Chapter 38 reads one from end to end.</p>
+<p>Mira's scripts now call her own functions, which call Fly, which calls FontLab. When something breaks, the error message runs to eight lines and names more than one file. Chapter 38 reads one from end to end.</p>
 
 
 

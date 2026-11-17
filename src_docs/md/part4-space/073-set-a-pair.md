@@ -24,7 +24,7 @@ She could leave it at that, with the number typed in the panel. Today you write 
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py` with `ask` and `tell`.
+- The helpers `ask` and `tell` from chapter 39. The scripts below write them out again, so each one runs by itself.
 - The class `L_T` from chapter 72. Step 3 shows what happens without it.
 - `pair_value.py` from chapter 70, to check the result.
 
@@ -138,10 +138,12 @@ An order whose old and new values are equal isn't an order, and the plan leaves 
 #FLM: Set Pairs
 # Adds, changes or removes the kerning pairs listed in EDITS,
 # in one Undo step, after showing old and new values.
-import halfmoon
 import fly.ap.core.scripting as scripting
 import fly.ap.kerning.batch as kerning_batch
-from fly import fl
+from fly import fl, qt
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
 
 MASTERS = ["Light", "Regular", "Bold"]
 # master: {(first, second): value}. A class has @ in front. None removes a pair.
@@ -150,6 +152,19 @@ EDITS = {
     "Regular": {("@L_T", "@R_O2"): -20},
     "Bold": {("@L_T", "@R_O2"): -20, ("@L_A", "V"): -27},
 }
+
+
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
+
+def ask(question):
+    box = qt.QtGui.QMessageBox
+    answer = run_standard_message_box(
+        qt, fl.MainWindow(), TITLE, question, "Question", box.Yes | box.No
+    )
+    return answer == box.Yes
 
 
 def text(value):
@@ -169,14 +184,14 @@ def plan(package):
 
 def main():
     if fl.CurrentFont() is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     package = scripting.current_package()
     rows = plan(package)
     for master, first, second, old, new in rows:
         print(f"{master:<9}{first:<8}{second:<8}{text(old):>6} to {text(new):>5}")
     print(f"{len(rows)} pairs to write.")
-    if not rows or not halfmoon.ask(f"Write {len(rows)} kerning pairs?"):
+    if not rows or not ask(f"Write {len(rows)} kerning pairs?"):
         return
 
     edits = {}

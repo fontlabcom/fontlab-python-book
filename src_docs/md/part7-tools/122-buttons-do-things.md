@@ -107,7 +107,7 @@ import fly.ap.core.scripting as scripting
 from fly import fl, qt
 
 core, gui = qt.QtCore, qt.QtGui
-KEY = "halfmoon.report"
+KEY = "tools.report"
 SHOWN = 8
 
 
@@ -175,7 +175,7 @@ scripting.show_script_dialog(build, KEY)
 
 The two slots are two lines each, and they look as if they could be one function. They can't yet. Each must remember which text to make, and a slot is called with a `False` and nothing else. Chapter 126 gives you a tidier place to keep such things.
 
-The key is a new one, `"halfmoon.report"`. With chapter 121's key, running this script would close that chapter's window. With its own key, the two can be open side by side.
+The key is a new one, `"tools.report"`. With chapter 121's key, running this script would close that chapter's window. With its own key, the two can be open side by side.
 
 ## Run it
 

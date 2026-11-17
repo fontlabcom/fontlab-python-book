@@ -13,7 +13,7 @@ She doesn't have to. A glyph that knows its code point can be given a name by lo
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py` with `tell`.
+- The `tell` function from [chapter 39](../part2-a-toolbox/039-ask-the-user.md). The script below defines it again, so it runs by itself.
 - `rename_suffix.py` from [chapter 31](../part2-a-toolbox/031-dry-run.md), to remind you of its shape. You'll build this chapter's script on it.
 
 I couldn't run the code in FontLab 9. The outputs below were computed in plain Python from Plum's source file and from the name table in Fly's source. The renaming itself goes the way chapter 31's did, and I haven't seen either of them rename a glyph.
@@ -235,7 +235,6 @@ The rest is chapter 31's shape: collect, plan, show, apply.
 # Gives every glyph called glyph1, glyph2 and so on a name from its code point.
 # Prints a plan first. With DRY_RUN = True it stops there.
 # Afterward, by hand: fix the old names in Features and in kerning classes.
-import halfmoon
 from fly import fl, qt
 import fly.ap.glyphs.names.model as names
 from fly.ap.glyphs.identity_tools.glyph_identity.batch_rename import (
@@ -243,6 +242,15 @@ from fly.ap.glyphs.identity_tools.glyph_identity.batch_rename import (
     plan_renames,
 )
 from fly.ap.glyphs.identity_tools.glyph_identity.unicode_from_names import AGL
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
+
+
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
 
 DRY_RUN = True
 PREFIX = "glyph"
@@ -277,7 +285,7 @@ def collect(font):
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     pairs, skipped = collect(font)
     for name in skipped:

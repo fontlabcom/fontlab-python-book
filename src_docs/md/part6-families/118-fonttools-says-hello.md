@@ -12,7 +12,7 @@ There's a Python package that reads font files with no font editor involved. It'
 
 ## What you need
 
-- `Plum-practice` open in FontLab 9, with Fly installed, and `halfmoon.py` with chapter 116's `latest_export`.
+- `Plum-practice` open in FontLab 9, with Fly installed.
 - The export folder for version 1.002 with five OTF files in it.
 
 I couldn't run the code in FontLab 9, and I don't have files that FontLab exported. I built five small OTF files with fontTools itself, with the reader's glyph names, characters and features, and ran the script on those in plain Python. So the fontTools calls below ran for real. What FontLab's export puts in a file is the part I haven't seen.
@@ -39,7 +39,7 @@ print(TTFont)
 `try` and `except` are chapter 19's, and `ImportError` is the error chapter 4 showed you when a name couldn't be imported. Put together they say: use your own copy if there is one, and FontLab's if not. If you see `fontlab_private` in the printed line, you're on FontLab's copy, and that's fine for everything in this chapter.
 
 !!! note "Installing your own"
-    FontLab's copy is an older one, kept for FontLab, and "private" is a fair warning that it may change. A newer copy goes into the `site-packages` folder where `halfmoon.py` lives (chapter 33), and the usual tool for that is `pip`, run in a terminal with its `--target` option pointing at that folder. I haven't done this with FontLab 9, so I'm not printing a command I can't vouch for. Nothing here needs it.
+    FontLab's copy is an older one, kept for FontLab, and "private" is a fair warning that it may change. A newer copy goes into the `site-packages` folder in your user folder, where Fly lives (chapter 33), and the usual tool for that is `pip`, run in a terminal with its `--target` option pointing at that folder. I haven't done this with FontLab 9, so I'm not printing a command I can't vouch for. Nothing here needs it.
 
 ## Step 2: Open a file
 
@@ -123,14 +123,36 @@ def font_codes(font):
 #FLM: Inspect Export
 # Opens every exported .otf of the current version with fontTools and
 # holds what the file says against the open font. Changes nothing.
+from pathlib import Path
+
 import fly.ap.core.scripting as scripting
-import halfmoon
-from fly import fl
+from fly import fl, qt
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
+
+
+# Chapter 39's tell, written out again so this script runs by itself.
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
 
 try:
     from fontTools.ttLib import TTFont
 except ImportError:
     from fontlab_private.fontTools.ttLib import TTFont
+
+
+# Chapter 115's latest_export, written out again so this script runs by itself.
+def latest_export(font, package):
+    info = package.info
+    ending = f"-v{info.versionMajor}.{info.versionMinor:03d}"
+    exports = Path(font.path).parent / "exports"
+    if not exports.exists():
+        return None
+    folders = [f for f in sorted(exports.iterdir()) if f.name.endswith(ending)]
+    return folders[-1] if folders else None
 
 
 def features(ttfont):
@@ -166,12 +188,12 @@ def code_list(codes):
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     package = scripting.current_package()
-    folder = halfmoon.latest_export(font, package)
+    folder = latest_export(font, package)
     if folder is None:
-        halfmoon.tell("No export folder for this version. Export first.")
+        tell("No export folder for this version. Export first.")
         return
     info = package.info
     wanted = f"Version {info.versionMajor}.{info.versionMinor:03d}"

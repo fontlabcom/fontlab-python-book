@@ -13,7 +13,6 @@ It can, and chapter 110 will ask it to. But first I'd like you to do it yourself
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py` with `tell`.
 - Chapter 102's result: every glyph you compare has the same skeleton in all three masters.
 
 I couldn't run the code in FontLab 9. The sums are plain Python and I ran those. The glyph's coordinates come from Plum's source file.
@@ -141,9 +140,18 @@ Handles get the same treatment as nodes. A handle is a pair of numbers, and it m
 # Works out one glyph between two masters, by hand. Changes nothing.
 import fly.ap.core.scripting as scripting
 import fly.ap.masters.interpolation.model as interpolation
-import halfmoon
-from fly import fl
+from fly import fl, qt
 from fly.pens import layer_of
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
+
+
+# Chapter 39's tell, written out again so this script runs by itself.
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
 
 GLYPH = "hyphen"
 LOW = "Regular"
@@ -176,12 +184,12 @@ def between(first, second, t):
 
 def main():
     if fl.CurrentFont() is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     package = scripting.current_package()
     glyph = package.findName(GLYPH)
     if glyph is None:
-        halfmoon.tell(f"There is no glyph named {GLYPH}.")
+        tell(f"There is no glyph named {GLYPH}.")
         return
     low_layer = layer_of(glyph, LOW)
     high_layer = layer_of(glyph, HIGH)

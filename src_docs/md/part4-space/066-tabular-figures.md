@@ -15,7 +15,7 @@ That's a question with numbers in it, so it's a question for a script.
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed, and the Font window in front.
-- `halfmoon.py` with `rich`, `ask` and `tell`.
+- The helpers `ask` and `tell` from chapter 39. The scripts below write them out again, so each one runs by itself.
 
 The script at the end changes the font, in one Undo step. I couldn't run it in FontLab 9. The measurements come from Plum's source file.
 
@@ -24,14 +24,13 @@ The script at the end changes the font, in one Undo step. I couldn't run it in F
 The figures have names, not digits: the glyph for 0 is called `zero`. Write the ten names down once and ask each for its width:
 
 ```python
-import halfmoon
 from fly import fl
+from fly.tr.proxy.fl.objects.glyph import pGlyph
 
 FIGURES = ["zero", "one", "two", "three", "four",
            "five", "six", "seven", "eight", "nine"]
-
 font = fl.CurrentFont()
-widths = [halfmoon.rich(font, font[name]).getAdvance("Regular") for name in FIGURES]
+widths = [pGlyph(font, font[name]).getAdvance("Regular") for name in FIGURES]
 print(widths)
 print(set(widths), len(set(widths)))
 ```
@@ -53,7 +52,7 @@ The Light gives 456 ten times, and the Bold 490. Mira was right. The figures are
 SIGNS = ["dollar", "Euro", "sterling", "yen"]
 
 for master in ["Light", "Regular", "Bold"]:
-    print(master, [halfmoon.rich(font, font[name]).getAdvance(master) for name in SIGNS])
+    print(master, [pGlyph(font, font[name]).getAdvance(master) for name in SIGNS])
 ```
 
 ```text
@@ -72,7 +71,7 @@ Mira looks at the Bold column of the price list longer than at the others. "They
 
 ```python
 for name in ["zero", "four", "eight"]:
-    rich = halfmoon.rich(font, font[name])
+    rich = pGlyph(font, font[name])
     print(name, rich.getLSB("Bold"), rich.getAdvance("Bold"), rich.getRSB("Bold"))
 ```
 
@@ -173,17 +172,33 @@ Where does `target` come from? From the figures themselves: `max` of their ten w
 #FLM: Make Tabular
 # Gives figures and currency signs one width in each master
 # and centers each shape in it.
-import halfmoon
 import fly.ap.core.history.glyphs as history
 import fly.ap.core.scripting as scripting
 import fly.ap.metrics.panel.model as metrics
-from fly import fl
+from fly import fl, qt
 from fly.pens import layer_of
+from fly.ap.ui.dialogs import run_standard_message_box
+from fly.tr.proxy.fl.objects.glyph import pGlyph
+
+TITLE = "Halfmoon"
 
 MASTERS = ["Light", "Regular", "Bold"]
 FIGURES = ["zero", "one", "two", "three", "four",
            "five", "six", "seven", "eight", "nine"]
 SIGNS = ["dollar", "Euro", "sterling", "yen"]
+
+
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
+
+def ask(question):
+    box = qt.QtGui.QMessageBox
+    answer = run_standard_message_box(
+        qt, fl.MainWindow(), TITLE, question, "Question", box.Yes | box.No
+    )
+    return answer == box.Yes
 
 
 def centered(left, width, right, target):
@@ -195,12 +210,12 @@ def centered(left, width, right, target):
 def plan_rows(font):
     rows = []
     for master in MASTERS:
-        widths = [halfmoon.rich(font, font[name]).getAdvance(master) for name in FIGURES]
+        widths = [pGlyph(font, font[name]).getAdvance(master) for name in FIGURES]
         target = max(widths)
         if len(set(widths)) > 1:
             print(f"{master}: the figures have {len(set(widths))} widths. Using {target}.")
         for name in FIGURES + SIGNS:
-            rich = halfmoon.rich(font, font[name])
+            rich = pGlyph(font, font[name])
             left = rich.getLSB(master)
             width = rich.getAdvance(master)
             right = rich.getRSB(master)
@@ -213,18 +228,18 @@ def plan_rows(font):
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     missing = [name for name in FIGURES + SIGNS if font[name] is None]
     if missing:
-        halfmoon.tell(f"No glyph named: {' '.join(missing)}")
+        tell(f"No glyph named: {' '.join(missing)}")
         return
 
     rows = plan_rows(font)
     for rich, master, dx, width, target in rows:
         print(f"{rich.name:<10}{master:<9}move {dx:+}, width {width} to {target}")
     print(f"{len(rows)} layers to change.")
-    if not rows or not halfmoon.ask(f"Center {len(rows)} layers?"):
+    if not rows or not ask(f"Center {len(rows)} layers?"):
         return
 
     layers = [layer_of(rich.fl, master) for rich, master, dx, width, target in rows]

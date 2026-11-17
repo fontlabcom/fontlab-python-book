@@ -5310,7 +5310,7 @@
 <p>Monday afternoon, 28 December. Ines emptied the names field, selected every glyph in the Font window, and clicked <strong>Shift</strong>. The button stayed pressed in. The window wouldn't move. She clicked again, and a third time, and then sat with her hands in her lap for most of a minute, wondering whether to force FontLab to quit and lose the morning's work. Then the label filled in, three times over.</p>
 <p>Nothing had gone wrong. The tool was busy, and a busy tool that says nothing looks the same as a dead one. Today's script does a long job the polite way: it shows how far it has got, it lets you stop it, and FontLab stays awake the whole time.</p>
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
-<p><code>Plum-practice</code> open, Fly installed, <code>halfmoon.py</code>. The script only measures. It changes nothing in the font, so you can run it, stop it and break it as often as you like.</p>
+<p><code>Plum-practice</code> open and Fly installed. The script only measures. It changes nothing in the font, so you can run it, stop it and break it as often as you like.</p>
 <p>I haven't run this chapter in FontLab 9. The whole script ran against stand-in widgets, a stand-in timer that I ticked by hand, and a stand-in font with the 274 glyph names yours should have by now. The slice counts below come from that run. How long anything takes, and what a frozen window looks like on your machine, I haven't seen.</p>
 <h2 id="step-1-why-the-window-froze">Step 1: Why the window froze<a class="headerlink" href="#step-1-why-the-window-froze" title="Permanent link">&para;</a></h2>
 <p>Chapter 121 described the event loop: FontLab goes round and round, and on each turn it repaints what needs repainting, notices clicks, and calls the slots that are owed a call. The loop does one thing at a time. While it's inside your slot, it isn't repainting and it isn't noticing clicks. It gets back to that work when your slot returns.</p>
@@ -5362,18 +5362,25 @@
 <div class="highlight"><pre><span></span><code><span class="c1">#FLM: Long Job</span>
 <span class="c1"># Measures every glyph in every master, a slice at a time, behind a</span>
 <span class="c1"># progress window with a Cancel button. Changes nothing.</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.tr.proxy.fl.objects.glyph</span><span class="w"> </span><span class="kn">import</span> <span class="n">pGlyph</span>
 
 <span class="n">core</span><span class="p">,</span> <span class="n">gui</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtCore</span><span class="p">,</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span>
-<span class="n">KEY</span> <span class="o">=</span> <span class="s2">"halfmoon.longjob"</span>
+<span class="n">KEY</span> <span class="o">=</span> <span class="s2">"tools.longjob"</span>
 <span class="n">SLICE</span> <span class="o">=</span> <span class="mi">25</span>
 <span class="n">SHOWN</span> <span class="o">=</span> <span class="mi">6</span>
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Long Job"</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">measure</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">master</span><span class="p">):</span>
-    <span class="n">rich</span> <span class="o">=</span> <span class="n">halfmoon</span><span class="o">.</span><span class="n">rich</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+    <span class="n">rich</span> <span class="o">=</span> <span class="n">pGlyph</span><span class="p">(</span><span class="n">font</span><span class="p">,</span> <span class="n">font</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">master</span><span class="p">,</span> <span class="n">rich</span><span class="o">.</span><span class="n">getLSB</span><span class="p">(</span><span class="n">master</span><span class="p">),</span> <span class="n">rich</span><span class="o">.</span><span class="n">getAdvance</span><span class="p">(</span><span class="n">master</span><span class="p">),</span> <span class="n">rich</span><span class="o">.</span><span class="n">getRSB</span><span class="p">(</span><span class="n">master</span><span class="p">))</span>
 
 
@@ -5425,7 +5432,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">font</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"Open a font first."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">masters</span> <span class="o">=</span> <span class="n">scripting</span><span class="o">.</span><span class="n">current_package</span><span class="p">()</span><span class="o">.</span><span class="n">masters</span>
     <span class="n">jobs</span> <span class="o">=</span> <span class="p">[]</span>
@@ -5478,7 +5485,7 @@ Done. 822 layers measured in 36 slices.
 <h2 id="try-it-yourself">Try it yourself<a class="headerlink" href="#try-it-yourself" title="Permanent link">&para;</a></h2>
 <ol>
 <li>Make the label say how far the job has got, as in <code>Measuring... 350 of 822</code>, by calling <code>setLabelText</code> in <code>on_tick</code>. Then change it to say which glyph is being measured. Which of the two would you rather watch?</li>
-<li>After a Cancel the window is gone, and the sentence about where the job stopped is in a panel Ines may not have open. Use <code>halfmoon.tell</code> to say it in a message box as well. Where does the call go so that it appears once, and only after a Cancel?</li>
+<li>After a Cancel the window is gone, and the sentence about where the job stopped is in a panel Ines may not have open. Use the script's <code>tell</code>, chapter 39's message box, to say it in a message box as well. Where does the call go so that it appears once, and only after a Cancel?</li>
 <li>Give <code>finish</code> one more line of output: how many of the measured rows have a negative number on either side. Use the bracketed list from chapter 37 with an <code>if</code>.</li>
 </ol>
 <h2 id="next">Next<a class="headerlink" href="#next" title="Permanent link">&para;</a></h2>

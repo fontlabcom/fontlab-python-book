@@ -14,7 +14,7 @@ A ligature's name already says what it's made of. Today a script reads the rule 
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
 - Two new, empty glyphs called `f_f` and `f_f_i`. Make them as you made the small caps in chapter 8, with **Font > New Glyph…**. They don't need drawings today.
-- `halfmoon.py` with `tell` and `ask`, and `list_features.py` from chapter 87.
+- `list_features.py` from chapter 87. The script below defines `tell` and `ask` from [chapter 39](../part2-a-toolbox/039-ask-the-user.md) again, so it runs by itself.
 
 I couldn't run the code in FontLab 9. I ran the name reading and the sorting in plain Python on Plum's glyph names plus those two. The write is the one from chapter 88, and I haven't seen it work.
 
@@ -185,9 +185,25 @@ A loop that copies every item and changes one on the way through. `found` is a f
 #FLM: Make Ligature Feature
 # Writes or replaces the liga feature from ligature glyph names.
 # Does not compile: do that in the Features panel afterward.
-import halfmoon
-from fly import fl
+from fly import fl, qt
 import fly.ap.core.scripting as scripting
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
+
+
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
+
+def ask(question):
+    box = qt.QtGui.QMessageBox
+    answer = run_standard_message_box(
+        qt, fl.MainWindow(), TITLE, question, "Question", box.Yes | box.No
+    )
+    return answer == box.Yes
+
 
 TAG = "liga"
 LEGACY = {"fi": ["f", "i"], "fl": ["f", "l"]}
@@ -232,7 +248,7 @@ def feature_text(tag, rules):
 def main():
     font = fl.CurrentFont()
     if font is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     names = [glyph.name for glyph in font.glyphs]
     rules = collect(names)
@@ -259,7 +275,7 @@ def main():
     if DRY_RUN:
         print("Dry run. Nothing written.")
         return
-    if not halfmoon.ask(f"{verb} the {TAG} feature with {len(rules)} rules?"):
+    if not ask(f"{verb} the {TAG} feature with {len(rules)} rules?"):
         return
     used = []
     for parts, name in rules:

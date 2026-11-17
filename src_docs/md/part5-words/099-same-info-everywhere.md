@@ -15,7 +15,7 @@ That file is today's new thing. Until now a script's settings sat at its top, in
 ## What you need
 
 - `Plum-practice` open in FontLab 9, with Fly installed.
-- `halfmoon.py`.
+- The `tell` function from [chapter 39](../part2-a-toolbox/039-ask-the-user.md). The script below defines it again, so it runs by itself.
 - A second font to compare. Close FontLab's font, copy `Plum-practice.vfj` in your file manager, name the copy `Plum-practice-copy.vfj`, and open both. In the copy, open **File > Font Info**, change the designer to `S. Sagano` and empty the copyright line. Now you have a family of two that disagrees.
 
 I couldn't run the code in FontLab 9. I ran the script in plain Python with two stand-in fonts and a real settings file, including the broken files below. The way it lists the open fonts is copied from Fly's own tools. One limit shapes the whole chapter: Fly's writer refuses to write into any font except the current one, so the script reports on all open fonts and changes one.
@@ -115,9 +115,17 @@ After `read_settings` returns, the rest of the script can believe the dictionary
 import json
 from pathlib import Path
 
-import halfmoon
-from fly import fl
+from fly import fl, qt
 import fly.ap.core.scripting as scripting
+from fly.ap.ui.dialogs import run_standard_message_box
+
+TITLE = "Halfmoon"
+
+
+def tell(text):
+    box = qt.QtGui.QMessageBox
+    run_standard_message_box(qt, fl.MainWindow(), TITLE, text, "Information", box.Ok)
+
 
 DRY_RUN = True
 FILE_NAME = "family-info.json"
@@ -147,16 +155,16 @@ def differences(package, settings):
 def main():
     current = scripting.current_package()
     if current is None:
-        halfmoon.tell("Open a font first.")
+        tell("Open a font first.")
         return
     path = Path(current.path).parent / FILE_NAME
     try:
         settings = read_settings(path)
     except FileNotFoundError:
-        halfmoon.tell(f"I can't find {FILE_NAME} beside the font.")
+        tell(f"I can't find {FILE_NAME} beside the font.")
         return
     except ValueError as problem:
-        halfmoon.tell(f"{FILE_NAME} can't be used: {problem}")
+        tell(f"{FILE_NAME} can't be used: {problem}")
         return
     packages = [fl.flPackage(item) for item in fl.flWorkspace.instance().packages()]
     todo = []

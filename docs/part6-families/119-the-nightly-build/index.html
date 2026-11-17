@@ -5291,7 +5291,7 @@
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>Plum-practice</code> open in FontLab 9 and saved, with Fly installed.</li>
-<li>The scripts from chapters 97, 112, 114, 115, 116 and 118, and <code>halfmoon.py</code>.</li>
+<li>The scripts from chapters 97, 112, 114, 115, 116 and 118.</li>
 </ul>
 <p>I couldn't run the code in FontLab 9. I ran today's script and the six it calls in plain Python, with stand-ins for FontLab and with font files I built myself, through a whole Friday: a refusal, a first half, an export and a second half. Every block of output below comes from those runs.</p>
 <h2 id="step-1-a-build-has-a-hole-in-the-middle">Step 1: A build has a hole in the middle<a class="headerlink" href="#step-1-a-build-has-a-hole-in-the-middle" title="Permanent link">&para;</a></h2>
@@ -5311,7 +5311,7 @@
 <h2 id="step-2-teach-six-scripts-to-answer">Step 2: Teach six scripts to answer<a class="headerlink" href="#step-2-teach-six-scripts-to-answer" title="Permanent link">&para;</a></h2>
 <p>Each of the six ends by printing. <code>ship_check.py</code> prints <code>Not ready.</code> and you read it and stop. A script that calls <code>ship_check</code> can't read. Printing tells a person. To tell another script, a function has to <code>return</code> something.</p>
 <p>So make the same three changes to each of the six.</p>
-<p>First, move it out of the Scripts folder to the folder where <code>halfmoon.py</code> lives, as chapter 114 did with <code>preflight.py</code>, so it can be imported.</p>
+<p>First, move it out of the Scripts folder to the <code>site-packages</code> folder where Fly lives, as chapter 114 did with <code>preflight.py</code>, so it can be imported.</p>
 <p>Second, change its last line from <code>main()</code> to chapter 114's guard, so that importing it doesn't run it:</p>
 <div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
@@ -5408,12 +5408,21 @@ Note line for 3 masters: 2026-12-18: Version 1.004
 <span class="kn">import</span><span class="w"> </span><span class="nn">bump_version</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">export_family</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fly.ap.core.scripting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">scripting</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">halfmoon</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">inspect_export</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">proof_html</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">proof_text</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">ship_check</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span><span class="p">,</span> <span class="n">qt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fly.ap.ui.dialogs</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_standard_message_box</span>
+
+<span class="n">TITLE</span> <span class="o">=</span> <span class="s2">"Halfmoon"</span>
+
+
+<span class="c1"># Chapter 39's tell, written out again so this script runs by itself.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">qt</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span>
+    <span class="n">run_standard_message_box</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">fl</span><span class="o">.</span><span class="n">MainWindow</span><span class="p">(),</span> <span class="n">TITLE</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"Information"</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+
 
 <span class="n">LOG</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -5486,7 +5495,7 @@ Note line for 3 masters: 2026-12-18: Version 1.004
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">font</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">CurrentFont</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">font</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">font</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
-        <span class="n">halfmoon</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="s2">"Open a saved font first."</span><span class="p">)</span>
+        <span class="n">tell</span><span class="p">(</span><span class="s2">"Open a saved font first."</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">exports</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">font</span><span class="o">.</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">"exports"</span>
     <span class="n">exports</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
