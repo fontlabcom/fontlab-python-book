@@ -57,29 +57,23 @@ Here is what is in the bag. You don't need to remember any of it today.
 
 For most of this book you will use three or four of them. The others wait in the bag until a chore needs them.
 
-## Step 1: Install uv
+## Step 1: Install the installer
 
-Some of the packages need helpers from the internet, and FontLab has no way to fetch them by itself. A small free program called **uv** does the fetching. You install it once, and after that you never start it yourself. The installer finds it.
+FontLab brings its own Python, but no package installer. **Instamix** supplies that missing piece. It sets up **uv**, the program that fetches Python packages, and a separate Python environment with the same version and architecture as FontLab. Both read the same package folder.
 
-On a Mac, open the **Terminal** app. You will find it in **Applications > Utilities**, or press ++cmd+space++ and type `Terminal`.
+Download the current [install.vfpy](https://code.fontlab.com/fontlab-python-instamix/install.vfpy) from the Instamix documentation site. You need version **1.0.9 or newer**. In FontLab, choose **File > Open** and select that file. You can also double-click it if your system opens `.vfpy` files with FontLab.
 
-A window opens with a line of text ending in `%` or `$`. That is the **prompt**. It is the same idea as the Scripting panel, with one difference: here you are talking to macOS, not to FontLab. Paste this line and press ++return++:
+This file works before Instamix is installed. It fetches and checks the package, including its distribution metadata. Keep the internet connection open and read the Output panel. Once it finishes, check in the Scripting panel:
 
-```text
-curl -LsSf https://astral.sh/uv/install.sh | sh
+```python
+from importlib.metadata import version
+
+print(version("fontlab-python-instamix"))
 ```
 
-That line downloads the uv installer from the people who make uv and runs it. A few lines scroll by. When the prompt comes back, check that it worked:
+You need `1.0.9` or a later version. This matters if you have an older installation: 1.0.8 had a failed-upgrade bug that could remove other files recorded by an old installer. Use the current standalone installer before upgrading those tools. A current generated installer also checks that its provider has the corrected rollback support.
 
-```text
-uv --version
-```
-
-You should get an answer that starts with `uv` and a version number. If Terminal says `command not found`, close the Terminal window, open a new one, and ask again. A new window picks up what the installer changed.
-
-On Windows, the uv website at `https://docs.astral.sh/uv/` gives the matching line for PowerShell.
-
-You can close Terminal now. That was the only time this chapter needs it.
+You do not need to install uv separately. Instamix finds or downloads it when a package needs it.
 
 ## Step 2: Put the packages side by side
 
@@ -134,19 +128,11 @@ Installing dependency fontlab-echopy>=0.1.0 from /Users/mira/fontlab-scripting/f
 
 A **dependency** is a package that another package needs. You will see that word a lot in the next minute. FontLab may stop responding while this runs. Leave it alone. A script and the FontLab window take turns, and while a script is busy, FontLab can't redraw itself or answer your clicks.
 
-When everything is done, the last lines look like this:
+Read the final result in the Output panel. A successful install records Fly under `com.fontlab.fly`; **Scripts > Instamix** provides the list and uninstall commands. Use **Refresh Scripts** if that submenu is not visible yet.
 
-```text
-Installed fontlab-fly 0.1.0 as com.fontlab.fly (copied); log: /Users/mira/Library/Application Support/FontLab/FontLab 9/Extensions/com.fontlab.fly/install.log
-Scripts > Extensions lists and uninstalls extensions. Use Refresh Scripts if needed.
-Restart FontLab to load it.
-```
+An error is a reason to read the named requirement or path before trying again. A missing or incompatible neighbor, an unavailable dependency version, or a file you edited can stop installation. Keep your edited files. Corrected Instamix restores the project's earlier files and receipts if its replacement fails; dependencies installed separately may remain. If restoration itself fails, the error names a retained recovery folder. Keep it.
 
-Your version number and folder names will differ. The line to look for is the last one.
-
-If you see `Install FAILED` in its place, the same line tells you where the log file is. The most common cause is a missing neighbor: the Output panel then names the package it could not find. Put that folder where it belongs and double-click `install.vfpy` again. Running the installer twice does no harm.
-
-If you see `uv not found`, go back to step 1.
+A timeout does not tell you whether work stopped. Check the output and installed records before repeating the operation.
 
 ## Step 4: Restart FontLab
 
@@ -190,6 +176,18 @@ ImportError: cannot import name 'fontlab' from 'fly'
 
 There may be a folder path at the end of your message. A new kind of error for the list on the wall, and it reads plainly: Fly has no tool by that name. The tools have the short names from the table near the top of this chapter. Fix the line and run it again.
 
+## One extra package
+
+Some later scripts need a package from the Python Package Index, PyPI. Once Instamix is installed, a script can ask for one directly:
+
+```python
+from fontlab_instamix import install_packages
+
+install_packages("fonttools>=4")
+```
+
+The requirement uses the distribution's PyPI name. Its Python import name can differ: `fonttools` is imported as `fontTools`. Instamix refreshes import caches after installation; it does not reload a module that is already running. Compiled packages must match FontLab's Python and architecture. Don't use Terminal's unrelated Python as a substitute.
+
 ## The first question
 
 You have earned something for all that installing. Put this in the Scripting panel, with `Plum-practice` open:
@@ -222,9 +220,9 @@ Mira runs it, reads the number, and crosses out the first line on Oskar's sheet:
 "I know," says Ines. "But now you know how you know."
 
 ??? info "Going deeper: where it all went"
-    The installer put everything inside FontLab's own data folder. On a Mac that is `~/Library/Application Support/FontLab/FontLab 9`. The packages are in `python/3.11/site-packages` there. Each package also gets a folder under `Extensions` with a file called `install.log`, which records every file the installer created.
+    The installer uses FontLab's data folder. On a Mac its default is `~/Library/Application Support/FontLab/FontLab 9`; on Windows it is normally `Documents/FontLab/FontLab 9`. The packages are in `python/3.11/site-packages` there. Instamix keeps extension payloads under `Extensions/Library` and ownership records in `Extensions/.instamix`.
 
-    FontLab now has a new menu, **Scripts > Extensions**, with **List Extensions** and one **Uninstall** item for each package. Uninstalling removes what the installer created and nothing else.
+    **Scripts > Instamix** contains **List Extensions** and uninstall commands. Uninstall removes recorded unchanged files and reports files it keeps because you changed them. Separately installed shared Python dependencies remain.
 
     If you cloned the repositories with Git, the installer links to your folders and does not copy them. Move or delete `fontlab-scripting` and the packages stop working, so keep the folder where it is.
 
@@ -234,7 +232,7 @@ You can now install a FontLab package: open its `install.vfpy` in FontLab, then 
 
 ## Try it yourself
 
-1. Choose **Scripts > Extensions > List Extensions** and read the Output panel. Look for a line that mentions Fly. I haven't seen this list myself, so I can't tell you how many lines to expect.
+1. Choose **Scripts > Instamix > List Extensions** and read the Output panel. Look for a line that mentions Fly. I haven't seen this list myself, so I can't tell you how many lines to expect.
 2. Run `from fly import fl, ap, tr` as a one-line script. Then change `tr` to `tR` and run it again. Which error do you get, and which rule from chapter 3 did you break?
 3. Open another font you have, any font, and run `count.py`. Write the number down. Then check it against what the Font window says. If the two numbers differ, look at how the Font window is filtered before you blame the script.
 

@@ -4885,6 +4885,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Run it">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-source-project-or-a-ready-extension" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A source project or a ready extension?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -5244,6 +5261,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Run it">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-source-project-or-a-ready-extension" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A source project or a ready extension?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -5310,15 +5344,15 @@
 <p>Thursday, 31 December. The studio shuts at one. At ten Oskar's cousin Rita rings again from Porto: she has FontLab 9, she has two people who space type all day, and she would like the Shift tool and the Suffix Picker before the year is out. Ines starts writing her an email. It has eleven steps by the time she stops: find this folder, make that folder, copy these two files here and those two there, mind the capital letters.</p>
 <p>Eleven steps is eleven places to go wrong, and Rita will go wrong at step three, as anyone would. Today you put the tools in one folder, laid out so that one file in it can do all eleven steps. Then you write a short script that checks the folder before it leaves the building.</p>
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
-<p><code>shift_tool.py</code> and the two launchers from chapter 132, and <code>suffix_picker.py</code> with its launcher, from chapter 132's first exercise. If you skipped that exercise, leave those two files out, and your output will have no Suffix Picker lines. You also need a copy of <code>install.vfpy</code>. It comes with Fly: it's in the folder you downloaded in chapter 4, next to Fly's own <code>pyproject.toml</code>.</p>
-<p>I haven't run this chapter in FontLab 9. The checking script is plain Python and I ran it as printed, on a folder built the way this chapter describes. I also loaded the real <code>install.vfpy</code> in plain Python and asked its own checks about the same folder; they agreed with the script every time. What the installer does once it starts copying, I've read in its source and haven't watched.</p>
+<p><code>shift_tool.py</code> and the two launchers from chapter 132, and <code>suffix_picker.py</code> with its launcher, from chapter 132's first exercise. If you skipped that exercise, leave those two files out, and your output will have no Suffix Picker lines. You also need Instamix 1.0.9 or newer, installed as in chapter 4. It will generate the current <code>install.vfpy</code> for this folder.</p>
+<p>I haven't run this chapter in FontLab 9. The checking script is plain Python and I ran it as printed, on a folder built the way this chapter describes. The check below reads the project with Instamix's parser, without installing it. These checks do not establish that the windows and menus work in FontLab.</p>
 <h2 id="step-1-what-the-installer-wants">Step 1: What the installer wants<a class="headerlink" href="#step-1-what-the-installer-wants" title="Permanent link">&para;</a></h2>
-<p><code>install.vfpy</code> is one file, the same file in every FontLab tool that uses it. You don't edit it. You put a copy in your folder, and it reads what to do from a second file beside it, <code>pyproject.toml</code>.</p>
+<p><code>install.vfpy</code> is a generated entry point. You don't edit it. Instamix writes the current shared bootstrap into your folder; it reads what to do from a second file beside it, <code>pyproject.toml</code>. Older copies can have different bootstrap checks, so generate a new one for a new delivery.</p>
 <p>Open it in FontLab 9 (double-click it, or drop it on FontLab's window) and it does this, all inside FontLab's own data folder:</p>
 <ul>
 <li>It puts each <strong>package</strong> you list where Python looks for modules, the <code>site-packages</code> folder from chapter 33.</li>
 <li>It copies everything in your folder's <code>Scripts</code> folder into FontLab's Scripts folder, keeping the folders, so <code>Scripts/Halfmoon/Shift Sidebearings.py</code> lands in the <strong>Halfmoon</strong> submenu.</li>
-<li>It writes a log of every file it made, and adds two lines to <strong>Scripts &gt; Extensions</strong>: one that lists what's installed and one that uninstalls yours.</li>
+<li>It records the deployed files in its ownership ledger and adds list and uninstall commands under <strong>Scripts &gt; Instamix</strong>. The extension payload stays under <code>Extensions/Library</code>; scripts run from their normal deployed locations.</li>
 </ul>
 <p>Then it asks for a restart. So the folder you send needs four things in it:</p>
 <div class="highlight"><pre><span></span><code>spacing-tools/
@@ -5363,18 +5397,22 @@
 <p><code>pyproject.toml</code> is a settings file that Python tools agree to read. The format is called TOML. It looks like the JSON of chapter 129 with the brackets taken off: names in square brackets start a table, and under each one come lines of <code>name = value</code>.</p>
 <div class="highlight"><pre><span></span><code>[project]
 name = "spacing-tools"
+version = "1.0.0"
+dependencies = ["fontlab-fly&gt;=1.3.0"]
 
 [tool.fontlab-install]
 id = "com.example.spacing-tools"
 packages = ["spacing_tools"]
 </code></pre></div>
-<p><code>[project]</code> holds the name the tools go by. <code>[tool.fontlab-install]</code> is the installer's own table. Its <code>id</code> is how FontLab's data folder will tell your tools from everyone else's, so it has to be yours alone, and the custom is to write it backwards from the general to the particular, with dots: kind of outfit, its name, the thing. <code>com.example</code> is the stand-in this book uses; put your own studio's web address there, backwards. Small letters, digits and hyphens only. <code>packages</code> lists the package folders. There's no line for the Scripts folder, because the installer looks for a folder called <code>Scripts</code>, with that capital, by itself.</p>
+<p><code>[project]</code> holds the distribution name, this delivery's version and the distribution requirements. Here the tools need Fly 1.3.0 or later. <code>[tool.fontlab-install]</code> is the installer's own table. Its <code>id</code> is how FontLab's data folder will tell your tools from everyone else's, so it has to be yours alone, and the custom is to write it backwards from the general to the particular, with dots: kind of outfit, its name, the thing. <code>com.example</code> is the stand-in this book uses; put your own studio's web address there, backwards. Small letters, digits and hyphens only. <code>packages</code> lists the package folders. There's no line for the Scripts folder, because the installer looks for a folder called <code>Scripts</code>, with that capital, by itself.</p>
 <p>Python can read TOML with a module that comes with it:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">tomllib</span>
 
 <span class="n">text</span> <span class="o">=</span> <span class="s2">"""</span>
 <span class="s2">[project]</span>
 <span class="s2">name = "spacing-tools"</span>
+<span class="s2">version = "1.0.0"</span>
+<span class="s2">dependencies = ["fontlab-fly&gt;=1.3.0"]</span>
 
 <span class="s2">[tool.fontlab-install]</span>
 <span class="s2">id = "com.example.spacing-tools"</span>
@@ -5386,29 +5424,22 @@ packages = ["spacing_tools"]
 <div class="highlight"><pre><span></span><code>['spacing_tools']
 </code></pre></div>
 <p><code>tomllib.loads</code> takes text and gives a dictionary, as <code>json.load</code> gave you one from a file. A table is a dictionary, and the dot in <code>[tool.fontlab-install]</code> makes one inside another, so you go down through three keys to reach the list.</p>
+<p>Now generate the installer from a terminal where Instamix is available:</p>
+<div class="highlight"><pre><span></span><code>uvx<span class="w"> </span>--from<span class="w"> </span><span class="s2">"fontlab-python-instamix&gt;=1.0.9"</span><span class="w"> </span>fontlab-instamix<span class="w"> </span>stub<span class="w"> </span>spacing-tools
+</code></pre></div>
+<p>Run that command from the folder containing <code>spacing-tools</code>. It writes <code>spacing-tools/install.vfpy</code>. If a previous installer is there, inspect it first; add <code>--force</code> only when you intend to replace that file. The generated bootstrap checks the provider's migration and rollback capabilities before deploying the project.</p>
 <h2 id="step-4-the-mistake-that-looks-like-a-tidy-up">Step 4: The mistake that looks like a tidy-up<a class="headerlink" href="#step-4-the-mistake-that-looks-like-a-tidy-up" title="Permanent link">&para;</a></h2>
 <p>Here's the one I'd have made. The folder <code>spacing_tools</code> holds three files, and one of them has an odd name, holds one line that does nothing and looks like clutter. Delete <code>__init__.py</code>, and send the folder.</p>
-<p>On Rita's machine the installer stops with this:</p>
-<div class="highlight"><pre><span></span><code>RuntimeError: pyproject.toml must list the wheel packages, each with __init__.py.
-</code></pre></div>
-<p>That's the installer's real sentence, and it's a fair one once you know what it means, but it names a file that Rita never heard of and a word, "wheel", that this book hasn't used. She would write back "it doesn't work", and you'd be guessing from another country. The fix isn't to explain the sentence to her. It's to catch the fault yourself, in words you chose, before the folder goes.</p>
+<p>Your launchers import a package you no longer sent. Rita would write back "it doesn't work", and you'd be guessing from another country. Catch that missing file before sending anything, in a sentence that says which file and why. The check below reads Instamix's actual project contract, then checks the package and menu files you intend to deliver.</p>
 <h2 id="the-whole-script">The whole script<a class="headerlink" href="#the-whole-script" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><span class="c1">#FLM: Check Package</span>
 <span class="c1"># Reads a folder of tools and says whether install.vfpy has what it</span>
 <span class="c1"># needs. Changes nothing.</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">tomllib</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">fontlab_instamix.bootstrap</span><span class="w"> </span><span class="kn">import</span> <span class="n">BootstrapError</span><span class="p">,</span> <span class="n">read_project</span>
+
 <span class="n">FOLDER</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span> <span class="o">/</span> <span class="s2">"spacing-tools"</span>
-
-
-<span class="k">def</span><span class="w"> </span><span class="nf">id_problem</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
-    <span class="n">parts</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"."</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="ow">or</span> <span class="s2">""</span> <span class="ow">in</span> <span class="n">parts</span><span class="p">:</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">"id is </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">text</span><span class="p">)</span><span class="si">}</span><span class="s2">. It needs two or more words joined by dots."</span>
-    <span class="k">if</span> <span class="n">text</span> <span class="o">!=</span> <span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">" "</span> <span class="ow">in</span> <span class="n">text</span> <span class="ow">or</span> <span class="s2">"_"</span> <span class="ow">in</span> <span class="n">text</span><span class="p">:</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">"id is </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">text</span><span class="p">)</span><span class="si">}</span><span class="s2">. Use small letters, digits and hyphens only."</span>
-    <span class="k">return</span> <span class="s2">""</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">launchers</span><span class="p">(</span><span class="n">folder</span><span class="p">):</span>
@@ -5433,16 +5464,13 @@ packages = ["spacing_tools"]
     <span class="k">if</span> <span class="n">problems</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">[],</span> <span class="n">problems</span>
 
-    <span class="n">project</span> <span class="o">=</span> <span class="n">tomllib</span><span class="o">.</span><span class="n">loads</span><span class="p">((</span><span class="n">folder</span> <span class="o">/</span> <span class="s2">"pyproject.toml"</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">())</span>
-    <span class="k">if</span> <span class="s2">"name"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">project</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"project"</span><span class="p">,</span> <span class="p">{}):</span>
-        <span class="n">problems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"[project] needs a name."</span><span class="p">)</span>
-    <span class="n">table</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"tool"</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"fontlab-install"</span><span class="p">,</span> <span class="p">{})</span>
-    <span class="n">trouble</span> <span class="o">=</span> <span class="n">id_problem</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"id"</span><span class="p">,</span> <span class="s2">""</span><span class="p">))</span>
-    <span class="k">if</span> <span class="n">trouble</span><span class="p">:</span>
-        <span class="n">problems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">trouble</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">project</span> <span class="o">=</span> <span class="n">read_project</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">BootstrapError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[],</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">)]</span>
 
     <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"packages"</span><span class="p">,</span> <span class="p">[]):</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">project</span><span class="o">.</span><span class="n">packages</span><span class="p">:</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">folder</span> <span class="o">/</span> <span class="n">name</span> <span class="o">/</span> <span class="s2">"__init__.py"</span><span class="p">)</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
             <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"package   </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -5472,8 +5500,8 @@ packages = ["spacing_tools"]
 <span class="n">main</span><span class="p">()</span>
 </code></pre></div>
 <p>Save it as <code>check_package.py</code>, and set <code>FOLDER</code> to where your <code>spacing-tools</code> is.</p>
-<p><code>check</code> asks the cheap questions first, as chapter 131's tool did: if either of the two files is missing there's nothing to read, so it says so and stops. <code>read_text()</code> is new: it opens the file, reads it all and closes it, the three lines of chapter 27 in one. <code>is_dir()</code> is the sibling of chapter 111's <code>is_file()</code>, true for a folder. The two <code>.get</code> calls with <code>{}</code> walk down the tables without tripping when one is absent, which is chapter 22's trick used twice in a row.</p>
-<p><code>id_problem</code> gives back a sentence, or an empty string for "no problem". It tests what the installer tests, more loosely: two or more parts between dots, none of them empty, nothing but small letters, digits and hyphens. The installer's own test is stricter in ways that rarely bite, such as refusing an id that starts with a digit.</p>
+<p><code>check</code> asks the cheap questions first, as chapter 131's tool did: if either of the two files is missing there's nothing to read, so it says so and stops. <code>read_text()</code> is new: it opens the file, reads it all and closes it, the three lines of chapter 27 in one. <code>is_dir()</code> is the sibling of chapter 111's <code>is_file()</code>, true for a folder. <code>read_project</code> reads the same metadata the installer will use. It returns facts about the package without deploying any files. A malformed TOML file still raises Python's <code>TOMLDecodeError</code>.</p>
+<p><code>BootstrapError</code> describes a missing or unusable installer table, including an invalid reverse-domain id. The check reports that message instead of maintaining its own, slightly different rule for ids.</p>
 <p><code>launchers</code> walks the Scripts folder two levels down, a loop inside a loop, because that's how deep the menu goes: categories, then scripts. For each launcher, <code>check</code> reads the first line and looks for <code>#FLM:</code>. <code>splitlines()[:1]</code> gives a list holding the first line, or an empty list for an empty file, so the test can't trip over a file with nothing in it. <code>path.parent</code> is the folder a path sits in, and <code>.name</code> of that is the category.</p>
 <h2 id="run-it">Run it<a class="headerlink" href="#run-it" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code>spacing-tools
@@ -5488,8 +5516,15 @@ Ready to send.
 2. Unzip spacing-tools and double-click install.vfpy.
 3. Restart FontLab. The tools are in Scripts &gt; Halfmoon.
 </code></pre></div>
-<p>Line one matters. Your tools import <code>fly</code>, and the installer can fetch what a package depends on from the public package index, where Fly isn't. So Fly goes in first, by hand, with its own <code>install.vfpy</code>.</p>
-<p>There's a difference between your copy and hers that's worth knowing. For a folder that's a plain unzipped copy, the installer copies the package into FontLab's data folder, and Rita's tools stay as they were on the day you sent them. To change them you send a new folder and she opens the new <code>install.vfpy</code>, which replaces the launchers at the same paths. The installer will call your tools version 0.0.0, because it reads version numbers from a place this book doesn't go. Put a date in the zip's name instead.</p>
+<p>Line one makes the dependency explicit for Rita. The metadata also declares <code>fontlab-fly&gt;=1.3.0</code>. Instamix can use a compatible sibling checkout or ask uv to resolve a distribution requirement; it refuses an incompatible source instead of silently changing it. Check the release instructions for any version not yet available from PyPI.</p>
+<p>For a plain unzipped source folder, Instamix copies the package into FontLab's data folder. Rita's tools stay at the version you sent. A Git checkout can be installed editably, so its folder must stay in place. This example declares version <code>1.0.0</code>; increase it for the next delivery. Other projects can derive a version from their build metadata or Git history. There is no universal <code>0.0.0</code> rule.</p>
+<h3 id="a-source-project-or-a-ready-extension">A source project or a ready extension?<a class="headerlink" href="#a-source-project-or-a-ready-extension" title="Permanent link">&para;</a></h3>
+<p>This chapter sends a source project with <code>pyproject.toml</code>. Instamix also installs ready <strong>extensions</strong>: a reverse-domain folder such as <code>com.example.spacing-tools.fontlabext</code>, with <code>manifest.fontlabextj</code> at its root. A <code>.fontlabextz</code> is a ZIP containing one or more whole <code>.fontlabext</code> folders, including their folder names. Its download filename does not define their identities; each manifest id must match its enclosing folder.</p>
+<p>For a single script, Instamix can build that second form without running the script:</p>
+<div class="highlight"><pre><span></span><code>fontlab-instamix<span class="w"> </span>wrap<span class="w"> </span>width_report.py<span class="w"> </span>--out<span class="w"> </span>dist<span class="w"> </span>--id<span class="w"> </span>com.example.width-report<span class="w"> </span>--name<span class="w"> </span><span class="s2">"Width Report"</span><span class="w"> </span>--version<span class="w"> </span><span class="m">1</span>.0.0<span class="w"> </span>--zip
+</code></pre></div>
+<p>That creates a manifest and a script deployment rule. It does not package the imported <code>spacing_tools</code> module automatically: send this chapter's complete source project when its launchers need that package. For several ready extensions, <code>fontlab-instamix pack</code> puts their whole folders into one <code>.fontlabextz</code>. Inside FontLab, <code>fontlab_instamix.gui.install_selected()</code> can select archives or manifests; <code>folder=True</code> selects an extension folder.</p>
+<p>An upgrade can refuse an owner-edited or unowned conflicting path. Keep the files it names; do not delete them merely to make the installer green. Instamix 1.0.9 restores the project's earlier deployed files and receipts on failure. Separately installed dependencies can remain. If restoration fails, keep the recovery directory named in the error. A timeout is an unknown outcome, so inspect the installation before retrying.</p>
 <h2 id="break-it-on-purpose">Break it on purpose<a class="headerlink" href="#break-it-on-purpose" title="Permanent link">&para;</a></h2>
 <p>Make the tidy-up from step 4: delete <code>spacing_tools/__init__.py</code>, and run the check.</p>
 <div class="highlight"><pre><span></span><code>spacing-tools
@@ -5500,14 +5535,14 @@ Ready to send.
 </code></pre></div>
 <p>The same fault, caught on your side, in a sentence that says which file and why. Put it back.</p>
 <p>Then change the <code>id</code> line to <code>id = "Spacing Tools"</code>:</p>
-<div class="highlight"><pre><span></span><code>  PROBLEM   id is 'Spacing Tools'. It needs two or more words joined by dots.
+<div class="highlight"><pre><span></span><code>  PROBLEM   [tool.fontlab-install] id must be a reverse-DNS id like com.example.tool
 </code></pre></div>
-<p>The installer refuses that id too, with <code>pyproject.toml needs [tool.fontlab-install] id = "com.example.name".</code> Put it right. Last, delete the closing bracket of the <code>packages</code> line:</p>
+<p>This is the installer's own metadata error, caught by the check before deployment. Put it right. Last, delete the closing bracket of the <code>packages</code> line:</p>
 <div class="highlight"><pre><span></span><code>TOMLDecodeError: Unclosed array (at end of document)
 </code></pre></div>
 <p>That one isn't caught, and the script stops with Python's own error. It's readable enough for you, and you're the only one who runs this script, so I've left it. The rule from chapter 131 was about messages for people who didn't write the tool.</p>
 <h2 id="what-you-learned">What you learned<a class="headerlink" href="#what-you-learned" title="Permanent link">&para;</a></h2>
-<p>A package is a folder with an <code>__init__.py</code> in it, and Python imports it by the folder's name. <code>install.vfpy</code> reads <code>pyproject.toml</code> beside it, places the packages where Python looks, copies the <code>Scripts</code> folder into FontLab's menu, and keeps a log so that it can take everything out again. TOML is tables of <code>name = value</code>, and <code>tomllib.loads</code> turns it into dictionaries. Before you send tools to someone who can't ask you questions, run the checks that their machine would run, and word the answers yourself.</p>
+<p>A package is a folder with an <code>__init__.py</code> in it, and Python imports it by the folder's name. <code>install.vfpy</code> reads <code>pyproject.toml</code> beside it, places the packages where Python looks, copies the <code>Scripts</code> folder into FontLab's menu, and records ownership so that removal can preserve edited files. TOML is tables of <code>name = value</code>, and <code>tomllib.loads</code> turns it into dictionaries. Before you send tools to someone who can't ask you questions, run the checks that their machine would run, and word the answers yourself.</p>
 <h2 id="try-it-yourself">Try it yourself<a class="headerlink" href="#try-it-yourself" title="Permanent link">&para;</a></h2>
 <ol>
 <li>Add <code>live_panel.py</code> from chapter 128 to the package and give it a launcher. The check should show three menu lines.</li>

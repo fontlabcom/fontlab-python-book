@@ -5333,7 +5333,7 @@
 <p>"It's correct," she says, "and it's in the wrong place. I'm looking at the <code>n</code>. The numbers are over there. Can't they sit under the glyph, where the space is?"</p>
 <p>They can. This chapter puts two numbers and a line into the Glyph window, drawn by FontLab every time it draws the glyph. You won't open a window, connect a button or start a timer. You'll write one small class, put it in a folder with a particular name, and FontLab will find it and call it.</p>
 <h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
-<p><code>Plum-practice</code> open, Fly installed at version 1.3.0 or later, and the app package that came with it. You need chapter 126 for classes and chapter 128 for the word <em>callback</em>. No helpers from earlier chapters are used today.</p>
+<p><code>Plum-practice</code> open, Fly installed at version 1.3.0 or later, and Fontlabapp 1.2.31 or newer. This is the minimum for the lowercase bundle suffixes used here. You need chapter 126 for classes and chapter 128 for the word <em>callback</em>. No helpers from earlier chapters are used today.</p>
 <p>I haven't run this chapter in FontLab 9. I loaded the finished folder with the same loader FontLab uses at start, and I called the class on hand-made glyph measurements in plain Python; the numbers below come from that. What I have not seen is the drawing itself: the line and the numbers appearing in a real Glyph window. The people who wrote the plugin system say the same about their own reporters, so treat the picture as the part to check first.</p>
 <h2 id="step-1-a-class-built-on-another-class">Step 1: A class built on another class<a class="headerlink" href="#step-1-a-class-built-on-another-class" title="Permanent link">&para;</a></h2>
 <p>Every class you have written so far started from nothing. A class can also start from another class and change only what differs:</p>
@@ -5413,21 +5413,26 @@ Shift is ready.
 <p>A reporter isn't run from the Scripts menu. It lives in a folder, called a bundle, inside FontLab's user data folder, the one chapter 129 wrote the settings file into:</p>
 <div class="highlight"><pre><span></span><code>Extensions/
     reporters/
-        Sidebearings.fontlabReporter/
+        Sidebearings.fontlabreporter/
             plugin.json
             sidebearings.py
 </code></pre></div>
-<p>The folder's name ends in <code>.fontlabReporter</code> and sits in <code>reporters</code>; both say what kind of plugin this is. <code>sidebearings.py</code> holds the class. <code>plugin.json</code> is a JSON file, the format from chapter 99, that introduces it:</p>
+<p>The folder's name ends in <code>.fontlabreporter</code> and sits in <code>reporters</code>; both say what kind of plugin this is. <code>sidebearings.py</code> holds the class. <code>plugin.json</code> is a JSON file, the format from chapter 99, that introduces it:</p>
 <div class="highlight"><pre><span></span><code><span class="p">{</span>
 <span class="w">  </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"spacing_sidebearings"</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Halfmoon Sidebearings"</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">"kind"</span><span class="p">:</span><span class="w"> </span><span class="s2">"reporter"</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0.0"</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">"entry"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sidebearings:Sidebearings"</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">"min_app_version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0.0"</span>
+<span class="w">  </span><span class="nt">"min_app_version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.2.31"</span>
 <span class="p">}</span>
 </code></pre></div>
 <p><code>entry</code> is the file's name without <code>.py</code>, a colon, and the class's name. <code>id</code> must equal the class's <code>name</code>, and <code>name</code> must equal its <code>title</code>. Saying the same thing in two places looks wasteful, and it's there on purpose: FontLab can read the JSON and list the plugin without running any of your Python, and when it does run it, a mismatch tells it the two files have drifted apart.</p>
+<p>Use lowercase suffixes for every new bundle: <code>.fontlabreporter</code>, <code>.fontlabfilter</code>, <code>.fontlabtool</code>, <code>.fontlabpalette</code> and <code>.fontlabgeneral</code>. App 1.2.31 also accepts the former title-case suffixes so existing tools remain discoverable. Do not install both spellings as separate copies.</p>
+<p>Instamix can wrap this draft for delivery after you have saved <code>sidebearings.py</code>:</p>
+<div class="highlight"><pre><span></span><code>fontlab-instamix<span class="w"> </span>wrap<span class="w"> </span>sidebearings.py<span class="w"> </span>--out<span class="w"> </span>dist<span class="w"> </span>--id<span class="w"> </span>com.example.sidebearings<span class="w"> </span>--name<span class="w"> </span><span class="s2">"Halfmoon Sidebearings"</span><span class="w"> </span>--version<span class="w"> </span><span class="m">1</span>.0.0<span class="w"> </span>--kind<span class="w"> </span>reporter<span class="w"> </span>--plugin-id<span class="w"> </span>spacing_sidebearings<span class="w"> </span>--entry<span class="w"> </span>sidebearings:Sidebearings<span class="w"> </span>--min-app-version<span class="w"> </span><span class="m">1</span>.2.31<span class="w"> </span>--zip
+</code></pre></div>
+<p>The wrapper validates this metadata without importing the draft. It puts the canonical reporter bundle inside a <code>.fontlabext</code> with a manifest, then packs the whole extension folder into <code>.fontlabextz</code>. It does not prove that the reporter draws correctly; the Glyph-window check below is still needed.</p>
 <p>FontLab looks for bundles when it starts. Make the folders, save the two files, and restart.</p>
 <h2 id="the-whole-script">The whole script<a class="headerlink" href="#the-whole-script" title="Permanent link">&para;</a></h2>
 <p>Save this as <code>sidebearings.py</code> in the bundle folder:</p>

@@ -537,10 +537,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#step-1-install-uv" class="md-nav__link">
+  <a href="#step-1-install-the-installer" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 1: Install uv
+        Step 1: Install the installer
       
     </span>
   </a>
@@ -585,6 +585,17 @@
     <span class="md-ellipsis">
       
         Step 5: Reach into the bag
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#one-extra-package" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        One extra package
       
     </span>
   </a>
@@ -5192,10 +5203,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#step-1-install-uv" class="md-nav__link">
+  <a href="#step-1-install-the-installer" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 1: Install uv
+        Step 1: Install the installer
       
     </span>
   </a>
@@ -5240,6 +5251,17 @@
     <span class="md-ellipsis">
       
         Step 5: Reach into the bag
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#one-extra-package" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        One extra package
       
     </span>
   </a>
@@ -5391,18 +5413,16 @@
 </tbody>
 </table>
 <p>For most of this book you will use three or four of them. The others wait in the bag until a chore needs them.</p>
-<h2 id="step-1-install-uv">Step 1: Install uv<a class="headerlink" href="#step-1-install-uv" title="Permanent link">&para;</a></h2>
-<p>Some of the packages need helpers from the internet, and FontLab has no way to fetch them by itself. A small free program called <strong>uv</strong> does the fetching. You install it once, and after that you never start it yourself. The installer finds it.</p>
-<p>On a Mac, open the <strong>Terminal</strong> app. You will find it in <strong>Applications &gt; Utilities</strong>, or press <span class="keys"><kbd class="key-command">Cmd</kbd><span>+</span><kbd class="key-space">Space</kbd></span> and type <code>Terminal</code>.</p>
-<p>A window opens with a line of text ending in <code>%</code> or <code>$</code>. That is the <strong>prompt</strong>. It is the same idea as the Scripting panel, with one difference: here you are talking to macOS, not to FontLab. Paste this line and press <span class="keys"><kbd class="key-enter">Enter</kbd></span>:</p>
-<div class="highlight"><pre><span></span><code>curl -LsSf https://astral.sh/uv/install.sh | sh
+<h2 id="step-1-install-the-installer">Step 1: Install the installer<a class="headerlink" href="#step-1-install-the-installer" title="Permanent link">&para;</a></h2>
+<p>FontLab brings its own Python, but no package installer. <strong>Instamix</strong> supplies that missing piece. It sets up <strong>uv</strong>, the program that fetches Python packages, and a separate Python environment with the same version and architecture as FontLab. Both read the same package folder.</p>
+<p>Download the current <a href="https://code.fontlab.com/fontlab-python-instamix/install.vfpy">install.vfpy</a> from the Instamix documentation site. You need version <strong>1.0.9 or newer</strong>. In FontLab, choose <strong>File &gt; Open</strong> and select that file. You can also double-click it if your system opens <code>.vfpy</code> files with FontLab.</p>
+<p>This file works before Instamix is installed. It fetches and checks the package, including its distribution metadata. Keep the internet connection open and read the Output panel. Once it finishes, check in the Scripting panel:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">importlib.metadata</span><span class="w"> </span><span class="kn">import</span> <span class="n">version</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">version</span><span class="p">(</span><span class="s2">"fontlab-python-instamix"</span><span class="p">))</span>
 </code></pre></div>
-<p>That line downloads the uv installer from the people who make uv and runs it. A few lines scroll by. When the prompt comes back, check that it worked:</p>
-<div class="highlight"><pre><span></span><code>uv --version
-</code></pre></div>
-<p>You should get an answer that starts with <code>uv</code> and a version number. If Terminal says <code>command not found</code>, close the Terminal window, open a new one, and ask again. A new window picks up what the installer changed.</p>
-<p>On Windows, the uv website at <code>https://docs.astral.sh/uv/</code> gives the matching line for PowerShell.</p>
-<p>You can close Terminal now. That was the only time this chapter needs it.</p>
+<p>You need <code>1.0.9</code> or a later version. This matters if you have an older installation: 1.0.8 had a failed-upgrade bug that could remove other files recorded by an old installer. Use the current standalone installer before upgrading those tools. A current generated installer also checks that its provider has the corrected rollback support.</p>
+<p>You do not need to install uv separately. Instamix finds or downloads it when a package needs it.</p>
 <h2 id="step-2-put-the-packages-side-by-side">Step 2: Put the packages side by side<a class="headerlink" href="#step-2-put-the-packages-side-by-side" title="Permanent link">&para;</a></h2>
 <p>Make a new folder somewhere you won't delete it by accident. Your home folder is a good place. Call it <code>fontlab-scripting</code>.</p>
 <p>Into that folder you will put eight packages, each in its own folder. Seven come from the <code>fontlabcom</code> account on GitHub. TypeRig comes from its author's account, <code>kateliev</code>.</p>
@@ -5470,14 +5490,9 @@
 <div class="highlight"><pre><span></span><code>Installing dependency fontlab-echopy&gt;=0.1.0 from /Users/mira/fontlab-scripting/fontlab-echopy
 </code></pre></div>
 <p>A <strong>dependency</strong> is a package that another package needs. You will see that word a lot in the next minute. FontLab may stop responding while this runs. Leave it alone. A script and the FontLab window take turns, and while a script is busy, FontLab can't redraw itself or answer your clicks.</p>
-<p>When everything is done, the last lines look like this:</p>
-<div class="highlight"><pre><span></span><code>Installed fontlab-fly 0.1.0 as com.fontlab.fly (copied); log: /Users/mira/Library/Application Support/FontLab/FontLab 9/Extensions/com.fontlab.fly/install.log
-Scripts &gt; Extensions lists and uninstalls extensions. Use Refresh Scripts if needed.
-Restart FontLab to load it.
-</code></pre></div>
-<p>Your version number and folder names will differ. The line to look for is the last one.</p>
-<p>If you see <code>Install FAILED</code> in its place, the same line tells you where the log file is. The most common cause is a missing neighbor: the Output panel then names the package it could not find. Put that folder where it belongs and double-click <code>install.vfpy</code> again. Running the installer twice does no harm.</p>
-<p>If you see <code>uv not found</code>, go back to step 1.</p>
+<p>Read the final result in the Output panel. A successful install records Fly under <code>com.fontlab.fly</code>; <strong>Scripts &gt; Instamix</strong> provides the list and uninstall commands. Use <strong>Refresh Scripts</strong> if that submenu is not visible yet.</p>
+<p>An error is a reason to read the named requirement or path before trying again. A missing or incompatible neighbor, an unavailable dependency version, or a file you edited can stop installation. Keep your edited files. Corrected Instamix restores the project's earlier files and receipts if its replacement fails; dependencies installed separately may remain. If restoration itself fails, the error names a retained recovery folder. Keep it.</p>
+<p>A timeout does not tell you whether work stopped. Check the output and installed records before repeating the operation.</p>
 <h2 id="step-4-restart-fontlab">Step 4: Restart FontLab<a class="headerlink" href="#step-4-restart-fontlab" title="Permanent link">&para;</a></h2>
 <p>Do what the last line says. Quit FontLab and start it again.</p>
 <p>FontLab reads its list of packages once, when it starts. Until you restart, it doesn't know that anything new arrived.</p>
@@ -5499,6 +5514,13 @@ Restart FontLab to load it.
 <div class="highlight"><pre><span></span><code>ImportError: cannot import name 'fontlab' from 'fly'
 </code></pre></div>
 <p>There may be a folder path at the end of your message. A new kind of error for the list on the wall, and it reads plainly: Fly has no tool by that name. The tools have the short names from the table near the top of this chapter. Fix the line and run it again.</p>
+<h2 id="one-extra-package">One extra package<a class="headerlink" href="#one-extra-package" title="Permanent link">&para;</a></h2>
+<p>Some later scripts need a package from the Python Package Index, PyPI. Once Instamix is installed, a script can ask for one directly:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fontlab_instamix</span><span class="w"> </span><span class="kn">import</span> <span class="n">install_packages</span>
+
+<span class="n">install_packages</span><span class="p">(</span><span class="s2">"fonttools&gt;=4"</span><span class="p">)</span>
+</code></pre></div>
+<p>The requirement uses the distribution's PyPI name. Its Python import name can differ: <code>fonttools</code> is imported as <code>fontTools</code>. Instamix refreshes import caches after installation; it does not reload a module that is already running. Compiled packages must match FontLab's Python and architecture. Don't use Terminal's unrelated Python as a substitute.</p>
 <h2 id="the-first-question">The first question<a class="headerlink" href="#the-first-question" title="Permanent link">&para;</a></h2>
 <p>You have earned something for all that installing. Put this in the Scripting panel, with <code>Plum-practice</code> open:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fly</span><span class="w"> </span><span class="kn">import</span> <span class="n">fl</span>
@@ -5518,15 +5540,15 @@ Restart FontLab to load it.
 <p>"I know," says Ines. "But now you know how you know."</p>
 <details class="info">
 <summary>Going deeper: where it all went</summary>
-<p>The installer put everything inside FontLab's own data folder. On a Mac that is <code>~/Library/Application Support/FontLab/FontLab 9</code>. The packages are in <code>python/3.11/site-packages</code> there. Each package also gets a folder under <code>Extensions</code> with a file called <code>install.log</code>, which records every file the installer created.</p>
-<p>FontLab now has a new menu, <strong>Scripts &gt; Extensions</strong>, with <strong>List Extensions</strong> and one <strong>Uninstall</strong> item for each package. Uninstalling removes what the installer created and nothing else.</p>
+<p>The installer uses FontLab's data folder. On a Mac its default is <code>~/Library/Application Support/FontLab/FontLab 9</code>; on Windows it is normally <code>Documents/FontLab/FontLab 9</code>. The packages are in <code>python/3.11/site-packages</code> there. Instamix keeps extension payloads under <code>Extensions/Library</code> and ownership records in <code>Extensions/.instamix</code>.</p>
+<p><strong>Scripts &gt; Instamix</strong> contains <strong>List Extensions</strong> and uninstall commands. Uninstall removes recorded unchanged files and reports files it keeps because you changed them. Separately installed shared Python dependencies remain.</p>
 <p>If you cloned the repositories with Git, the installer links to your folders and does not copy them. Move or delete <code>fontlab-scripting</code> and the packages stop working, so keep the folder where it is.</p>
 </details>
 <h2 id="what-you-learned">What you learned<a class="headerlink" href="#what-you-learned" title="Permanent link">&para;</a></h2>
 <p>You can now install a FontLab package: open its <code>install.vfpy</code> in FontLab, then restart. Fly is the one package your scripts ask, and <code>from fly import fl</code> is how they ask. You also know two new errors apart: <code>ModuleNotFoundError</code> means the package isn't installed, and <code>ImportError</code> means the package is there but the name you asked for isn't.</p>
 <h2 id="try-it-yourself">Try it yourself<a class="headerlink" href="#try-it-yourself" title="Permanent link">&para;</a></h2>
 <ol>
-<li>Choose <strong>Scripts &gt; Extensions &gt; List Extensions</strong> and read the Output panel. Look for a line that mentions Fly. I haven't seen this list myself, so I can't tell you how many lines to expect.</li>
+<li>Choose <strong>Scripts &gt; Instamix &gt; List Extensions</strong> and read the Output panel. Look for a line that mentions Fly. I haven't seen this list myself, so I can't tell you how many lines to expect.</li>
 <li>Run <code>from fly import fl, ap, tr</code> as a one-line script. Then change <code>tr</code> to <code>tR</code> and run it again. Which error do you get, and which rule from chapter 3 did you break?</li>
 <li>Open another font you have, any font, and run <code>count.py</code>. Write the number down. Then check it against what the Font window says. If the two numbers differ, look at how the Font window is filtered before you blame the script.</li>
 </ol>

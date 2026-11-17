@@ -12,7 +12,7 @@ They can. This chapter puts two numbers and a line into the Glyph window, drawn 
 
 ## What you need
 
-`Plum-practice` open, Fly installed at version 1.3.0 or later, and the app package that came with it. You need chapter 126 for classes and chapter 128 for the word *callback*. No helpers from earlier chapters are used today.
+`Plum-practice` open, Fly installed at version 1.3.0 or later, and Fontlabapp 1.2.31 or newer. This is the minimum for the lowercase bundle suffixes used here. You need chapter 126 for classes and chapter 128 for the word *callback*. No helpers from earlier chapters are used today.
 
 I haven't run this chapter in FontLab 9. I loaded the finished folder with the same loader FontLab uses at start, and I called the class on hand-made glyph measurements in plain Python; the numbers below come from that. What I have not seen is the drawing itself: the line and the numbers appearing in a real Glyph window. The people who wrote the plugin system say the same about their own reporters, so treat the picture as the part to check first.
 
@@ -131,12 +131,12 @@ A reporter isn't run from the Scripts menu. It lives in a folder, called a bundl
 ```text
 Extensions/
     reporters/
-        Sidebearings.fontlabReporter/
+        Sidebearings.fontlabreporter/
             plugin.json
             sidebearings.py
 ```
 
-The folder's name ends in `.fontlabReporter` and sits in `reporters`; both say what kind of plugin this is. `sidebearings.py` holds the class. `plugin.json` is a JSON file, the format from chapter 99, that introduces it:
+The folder's name ends in `.fontlabreporter` and sits in `reporters`; both say what kind of plugin this is. `sidebearings.py` holds the class. `plugin.json` is a JSON file, the format from chapter 99, that introduces it:
 
 ```json
 {
@@ -145,11 +145,21 @@ The folder's name ends in `.fontlabReporter` and sits in `reporters`; both say w
   "kind": "reporter",
   "version": "1.0.0",
   "entry": "sidebearings:Sidebearings",
-  "min_app_version": "1.0.0"
+  "min_app_version": "1.2.31"
 }
 ```
 
 `entry` is the file's name without `.py`, a colon, and the class's name. `id` must equal the class's `name`, and `name` must equal its `title`. Saying the same thing in two places looks wasteful, and it's there on purpose: FontLab can read the JSON and list the plugin without running any of your Python, and when it does run it, a mismatch tells it the two files have drifted apart.
+
+Use lowercase suffixes for every new bundle: `.fontlabreporter`, `.fontlabfilter`, `.fontlabtool`, `.fontlabpalette` and `.fontlabgeneral`. App 1.2.31 also accepts the former title-case suffixes so existing tools remain discoverable. Do not install both spellings as separate copies.
+
+Instamix can wrap this draft for delivery after you have saved `sidebearings.py`:
+
+```sh
+fontlab-instamix wrap sidebearings.py --out dist --id com.example.sidebearings --name "Halfmoon Sidebearings" --version 1.0.0 --kind reporter --plugin-id spacing_sidebearings --entry sidebearings:Sidebearings --min-app-version 1.2.31 --zip
+```
+
+The wrapper validates this metadata without importing the draft. It puts the canonical reporter bundle inside a `.fontlabext` with a manifest, then packs the whole extension folder into `.fontlabextz`. It does not prove that the reporter draws correctly; the Glyph-window check below is still needed.
 
 FontLab looks for bundles when it starts. Make the folders, save the two files, and restart.
 

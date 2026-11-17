@@ -10,19 +10,19 @@ Eleven steps is eleven places to go wrong, and Rita will go wrong at step three,
 
 ## What you need
 
-`shift_tool.py` and the two launchers from chapter 132, and `suffix_picker.py` with its launcher, from chapter 132's first exercise. If you skipped that exercise, leave those two files out, and your output will have no Suffix Picker lines. You also need a copy of `install.vfpy`. It comes with Fly: it's in the folder you downloaded in chapter 4, next to Fly's own `pyproject.toml`.
+`shift_tool.py` and the two launchers from chapter 132, and `suffix_picker.py` with its launcher, from chapter 132's first exercise. If you skipped that exercise, leave those two files out, and your output will have no Suffix Picker lines. You also need Instamix 1.0.9 or newer, installed as in chapter 4. It will generate the current `install.vfpy` for this folder.
 
-I haven't run this chapter in FontLab 9. The checking script is plain Python and I ran it as printed, on a folder built the way this chapter describes. I also loaded the real `install.vfpy` in plain Python and asked its own checks about the same folder; they agreed with the script every time. What the installer does once it starts copying, I've read in its source and haven't watched.
+I haven't run this chapter in FontLab 9. The checking script is plain Python and I ran it as printed, on a folder built the way this chapter describes. The check below reads the project with Instamix's parser, without installing it. These checks do not establish that the windows and menus work in FontLab.
 
 ## Step 1: What the installer wants
 
-`install.vfpy` is one file, the same file in every FontLab tool that uses it. You don't edit it. You put a copy in your folder, and it reads what to do from a second file beside it, `pyproject.toml`.
+`install.vfpy` is a generated entry point. You don't edit it. Instamix writes the current shared bootstrap into your folder; it reads what to do from a second file beside it, `pyproject.toml`. Older copies can have different bootstrap checks, so generate a new one for a new delivery.
 
 Open it in FontLab 9 (double-click it, or drop it on FontLab's window) and it does this, all inside FontLab's own data folder:
 
 - It puts each **package** you list where Python looks for modules, the `site-packages` folder from chapter 33.
 - It copies everything in your folder's `Scripts` folder into FontLab's Scripts folder, keeping the folders, so `Scripts/Halfmoon/Shift Sidebearings.py` lands in the **Halfmoon** submenu.
-- It writes a log of every file it made, and adds two lines to **Scripts > Extensions**: one that lists what's installed and one that uninstalls yours.
+- It records the deployed files in its ownership ledger and adds list and uninstall commands under **Scripts > Instamix**. The extension payload stays under `Extensions/Library`; scripts run from their normal deployed locations.
 
 Then it asks for a restart. So the folder you send needs four things in it:
 
@@ -87,13 +87,15 @@ One thing to do on your own machine first. Your loose `shift_tool.py` and `suffi
 ```text
 [project]
 name = "spacing-tools"
+version = "1.0.0"
+dependencies = ["fontlab-fly>=1.3.0"]
 
 [tool.fontlab-install]
 id = "com.example.spacing-tools"
 packages = ["spacing_tools"]
 ```
 
-`[project]` holds the name the tools go by. `[tool.fontlab-install]` is the installer's own table. Its `id` is how FontLab's data folder will tell your tools from everyone else's, so it has to be yours alone, and the custom is to write it backwards from the general to the particular, with dots: kind of outfit, its name, the thing. `com.example` is the stand-in this book uses; put your own studio's web address there, backwards. Small letters, digits and hyphens only. `packages` lists the package folders. There's no line for the Scripts folder, because the installer looks for a folder called `Scripts`, with that capital, by itself.
+`[project]` holds the distribution name, this delivery's version and the distribution requirements. Here the tools need Fly 1.3.0 or later. `[tool.fontlab-install]` is the installer's own table. Its `id` is how FontLab's data folder will tell your tools from everyone else's, so it has to be yours alone, and the custom is to write it backwards from the general to the particular, with dots: kind of outfit, its name, the thing. `com.example` is the stand-in this book uses; put your own studio's web address there, backwards. Small letters, digits and hyphens only. `packages` lists the package folders. There's no line for the Scripts folder, because the installer looks for a folder called `Scripts`, with that capital, by itself.
 
 Python can read TOML with a module that comes with it:
 
@@ -103,6 +105,8 @@ import tomllib
 text = """
 [project]
 name = "spacing-tools"
+version = "1.0.0"
+dependencies = ["fontlab-fly>=1.3.0"]
 
 [tool.fontlab-install]
 id = "com.example.spacing-tools"
@@ -118,17 +122,19 @@ print(project["tool"]["fontlab-install"]["packages"])
 
 `tomllib.loads` takes text and gives a dictionary, as `json.load` gave you one from a file. A table is a dictionary, and the dot in `[tool.fontlab-install]` makes one inside another, so you go down through three keys to reach the list.
 
+Now generate the installer from a terminal where Instamix is available:
+
+```sh
+uvx --from "fontlab-python-instamix>=1.0.9" fontlab-instamix stub spacing-tools
+```
+
+Run that command from the folder containing `spacing-tools`. It writes `spacing-tools/install.vfpy`. If a previous installer is there, inspect it first; add `--force` only when you intend to replace that file. The generated bootstrap checks the provider's migration and rollback capabilities before deploying the project.
+
 ## Step 4: The mistake that looks like a tidy-up
 
 Here's the one I'd have made. The folder `spacing_tools` holds three files, and one of them has an odd name, holds one line that does nothing and looks like clutter. Delete `__init__.py`, and send the folder.
 
-On Rita's machine the installer stops with this:
-
-```text
-RuntimeError: pyproject.toml must list the wheel packages, each with __init__.py.
-```
-
-That's the installer's real sentence, and it's a fair one once you know what it means, but it names a file that Rita never heard of and a word, "wheel", that this book hasn't used. She would write back "it doesn't work", and you'd be guessing from another country. The fix isn't to explain the sentence to her. It's to catch the fault yourself, in words you chose, before the folder goes.
+Your launchers import a package you no longer sent. Rita would write back "it doesn't work", and you'd be guessing from another country. Catch that missing file before sending anything, in a sentence that says which file and why. The check below reads Instamix's actual project contract, then checks the package and menu files you intend to deliver.
 
 ## The whole script
 
@@ -136,19 +142,11 @@ That's the installer's real sentence, and it's a fair one once you know what it 
 #FLM: Check Package
 # Reads a folder of tools and says whether install.vfpy has what it
 # needs. Changes nothing.
-import tomllib
 from pathlib import Path
 
+from fontlab_instamix.bootstrap import BootstrapError, read_project
+
 FOLDER = Path.home() / "spacing-tools"
-
-
-def id_problem(text):
-    parts = text.split(".")
-    if len(parts) < 2 or "" in parts:
-        return f"id is {repr(text)}. It needs two or more words joined by dots."
-    if text != text.lower() or " " in text or "_" in text:
-        return f"id is {repr(text)}. Use small letters, digits and hyphens only."
-    return ""
 
 
 def launchers(folder):
@@ -173,16 +171,13 @@ def check(folder):
     if problems:
         return [], problems
 
-    project = tomllib.loads((folder / "pyproject.toml").read_text())
-    if "name" not in project.get("project", {}):
-        problems.append("[project] needs a name.")
-    table = project.get("tool", {}).get("fontlab-install", {})
-    trouble = id_problem(table.get("id", ""))
-    if trouble:
-        problems.append(trouble)
+    try:
+        project = read_project(folder)
+    except BootstrapError as error:
+        return [], [str(error)]
 
     lines = []
-    for name in table.get("packages", []):
+    for name in project.packages:
         if (folder / name / "__init__.py").is_file():
             lines.append(f"package   {name}")
         else:
@@ -214,9 +209,9 @@ main()
 
 Save it as `check_package.py`, and set `FOLDER` to where your `spacing-tools` is.
 
-`check` asks the cheap questions first, as chapter 131's tool did: if either of the two files is missing there's nothing to read, so it says so and stops. `read_text()` is new: it opens the file, reads it all and closes it, the three lines of chapter 27 in one. `is_dir()` is the sibling of chapter 111's `is_file()`, true for a folder. The two `.get` calls with `{}` walk down the tables without tripping when one is absent, which is chapter 22's trick used twice in a row.
+`check` asks the cheap questions first, as chapter 131's tool did: if either of the two files is missing there's nothing to read, so it says so and stops. `read_text()` is new: it opens the file, reads it all and closes it, the three lines of chapter 27 in one. `is_dir()` is the sibling of chapter 111's `is_file()`, true for a folder. `read_project` reads the same metadata the installer will use. It returns facts about the package without deploying any files. A malformed TOML file still raises Python's `TOMLDecodeError`.
 
-`id_problem` gives back a sentence, or an empty string for "no problem". It tests what the installer tests, more loosely: two or more parts between dots, none of them empty, nothing but small letters, digits and hyphens. The installer's own test is stricter in ways that rarely bite, such as refusing an id that starts with a digit.
+`BootstrapError` describes a missing or unusable installer table, including an invalid reverse-domain id. The check reports that message instead of maintaining its own, slightly different rule for ids.
 
 `launchers` walks the Scripts folder two levels down, a loop inside a loop, because that's how deep the menu goes: categories, then scripts. For each launcher, `check` reads the first line and looks for `#FLM:`. `splitlines()[:1]` gives a list holding the first line, or an empty list for an empty file, so the test can't trip over a file with nothing in it. `path.parent` is the folder a path sits in, and `.name` of that is the category.
 
@@ -240,9 +235,23 @@ Now zip the folder and send it, with a note of three lines, not eleven:
 3. Restart FontLab. The tools are in Scripts > Halfmoon.
 ```
 
-Line one matters. Your tools import `fly`, and the installer can fetch what a package depends on from the public package index, where Fly isn't. So Fly goes in first, by hand, with its own `install.vfpy`.
+Line one makes the dependency explicit for Rita. The metadata also declares `fontlab-fly>=1.3.0`. Instamix can use a compatible sibling checkout or ask uv to resolve a distribution requirement; it refuses an incompatible source instead of silently changing it. Check the release instructions for any version not yet available from PyPI.
 
-There's a difference between your copy and hers that's worth knowing. For a folder that's a plain unzipped copy, the installer copies the package into FontLab's data folder, and Rita's tools stay as they were on the day you sent them. To change them you send a new folder and she opens the new `install.vfpy`, which replaces the launchers at the same paths. The installer will call your tools version 0.0.0, because it reads version numbers from a place this book doesn't go. Put a date in the zip's name instead.
+For a plain unzipped source folder, Instamix copies the package into FontLab's data folder. Rita's tools stay at the version you sent. A Git checkout can be installed editably, so its folder must stay in place. This example declares version `1.0.0`; increase it for the next delivery. Other projects can derive a version from their build metadata or Git history. There is no universal `0.0.0` rule.
+
+### A source project or a ready extension?
+
+This chapter sends a source project with `pyproject.toml`. Instamix also installs ready **extensions**: a reverse-domain folder such as `com.example.spacing-tools.fontlabext`, with `manifest.fontlabextj` at its root. A `.fontlabextz` is a ZIP containing one or more whole `.fontlabext` folders, including their folder names. Its download filename does not define their identities; each manifest id must match its enclosing folder.
+
+For a single script, Instamix can build that second form without running the script:
+
+```sh
+fontlab-instamix wrap width_report.py --out dist --id com.example.width-report --name "Width Report" --version 1.0.0 --zip
+```
+
+That creates a manifest and a script deployment rule. It does not package the imported `spacing_tools` module automatically: send this chapter's complete source project when its launchers need that package. For several ready extensions, `fontlab-instamix pack` puts their whole folders into one `.fontlabextz`. Inside FontLab, `fontlab_instamix.gui.install_selected()` can select archives or manifests; `folder=True` selects an extension folder.
+
+An upgrade can refuse an owner-edited or unowned conflicting path. Keep the files it names; do not delete them merely to make the installer green. Instamix 1.0.9 restores the project's earlier deployed files and receipts on failure. Separately installed dependencies can remain. If restoration fails, keep the recovery directory named in the error. A timeout is an unknown outcome, so inspect the installation before retrying.
 
 ## Break it on purpose
 
@@ -261,10 +270,10 @@ The same fault, caught on your side, in a sentence that says which file and why.
 Then change the `id` line to `id = "Spacing Tools"`:
 
 ```text
-  PROBLEM   id is 'Spacing Tools'. It needs two or more words joined by dots.
+  PROBLEM   [tool.fontlab-install] id must be a reverse-DNS id like com.example.tool
 ```
 
-The installer refuses that id too, with `pyproject.toml needs [tool.fontlab-install] id = "com.example.name".` Put it right. Last, delete the closing bracket of the `packages` line:
+This is the installer's own metadata error, caught by the check before deployment. Put it right. Last, delete the closing bracket of the `packages` line:
 
 ```text
 TOMLDecodeError: Unclosed array (at end of document)
@@ -274,7 +283,7 @@ That one isn't caught, and the script stops with Python's own error. It's readab
 
 ## What you learned
 
-A package is a folder with an `__init__.py` in it, and Python imports it by the folder's name. `install.vfpy` reads `pyproject.toml` beside it, places the packages where Python looks, copies the `Scripts` folder into FontLab's menu, and keeps a log so that it can take everything out again. TOML is tables of `name = value`, and `tomllib.loads` turns it into dictionaries. Before you send tools to someone who can't ask you questions, run the checks that their machine would run, and word the answers yourself.
+A package is a folder with an `__init__.py` in it, and Python imports it by the folder's name. `install.vfpy` reads `pyproject.toml` beside it, places the packages where Python looks, copies the `Scripts` folder into FontLab's menu, and records ownership so that removal can preserve edited files. TOML is tables of `name = value`, and `tomllib.loads` turns it into dictionaries. Before you send tools to someone who can't ask you questions, run the checks that their machine would run, and word the answers yourself.
 
 ## Try it yourself
 
