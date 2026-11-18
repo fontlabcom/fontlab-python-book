@@ -1,11 +1,11 @@
 # this_file: pyproject.toml
 [build-system]
-requires = ["setuptools>=77"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling>=1.27", "hatch-vcs>=0.4"]
+build-backend = "hatchling.build"
 
 [project]
 name = "fontlab-python-book"
-version = "0.1.0"
+dynamic = ["version"]
 description = "Build the FontLab Python book documentation"
 requires-python = ">=3.13"
 dependencies = [
@@ -19,6 +19,12 @@ dependencies = [
 [project.scripts]
 fontlab-python-book = "fontlab_python_book:main"
 
-[tool.setuptools.packages.find]
-where = ["src"]
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.version.raw-options]
+fallback_version = "0.1.0"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/fontlab_python_book"]
 

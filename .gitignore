@@ -221,3 +221,9 @@ __marimo__/
 _private/
 .DS_Store
 vendor/
+
+# Python and macOS (pypitrust)
+*.py[cod]
+.venv/
+__version__.py
+_version.py

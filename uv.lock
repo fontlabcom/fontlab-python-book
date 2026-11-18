@@ -181,7 +181,6 @@ wheels = [
 
 [[package]]
 name = "fontlab-python-book"
-version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "fire" },
